@@ -1,0 +1,583 @@
+package com.perez.schedulebynfc;
+
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import Support.CreateMonth;
+import Support.EventClass;
+import Support.LocalEventService;
+import Support.LocalTime;
+import Support.MonthClass;
+
+/**
+ * Created by User on 12/10/2016.
+ */
+
+public class MainShowFragment extends Fragment {
+    View rootView;
+    Context context;
+    LayoutInflater inflater;
+    LinearLayout ll_WeekZero, ll_WeekOne, ll_WeekTwo, ll_WeekThree, ll_WeekFour, ll_WeekFive;
+
+    List<RelativeLayout> rl_weeks = new ArrayList<RelativeLayout>();
+    MonthClass monthToShow;
+
+    int year;
+    int month;
+    List<TextView> listOfTextViews;
+    ArrayList<LinearLayout> listOfVerticalRL = new ArrayList<LinearLayout>();
+    List<Total> listOfWeeks = new ArrayList<Total>();
+    Total MonthTotal = new Total();
+
+    TextView[][] tvDay = new TextView[7][6];
+    List<TextView> tvWeek = new ArrayList<TextView>();
+
+
+    public static MainShowFragment newInstance(int year, int month) {
+        MainShowFragment myFragment = new MainShowFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("year_CurrentView", year);
+        args.putInt("month_CurrentView", month);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        System.out.println("MainShowFragment - onCreateView");
+        this.inflater = inflater;
+        context = getActivity();
+        rootView = inflater.inflate(R.layout.fragment_show_main, container, false);
+
+        listOfTextViews = new ArrayList<TextView>();
+        Bundle b = getArguments();
+        year = b.getInt("year_CurrentView");
+        month = b.getInt("month_CurrentView");
+        month++;
+        //loadInitialMonth();
+
+        listOfWeeks.add(new Total());
+        listOfWeeks.add(new Total());
+        listOfWeeks.add(new Total());
+        listOfWeeks.add(new Total());
+        listOfWeeks.add(new Total());
+        listOfWeeks.add(new Total());
+        TextView tv = (TextView) rootView.findViewById(R.id.tvTest);
+        tv.setText("year= " + year + " " + " month= " + month);
+        try {
+            initialization();
+        } catch (Exception e) {
+
+        }
+        LinearLayout rlFix = (LinearLayout) rootView.findViewById(R.id.rlFix);
+
+        return rootView;
+
+    }
+
+    private void loadInitialMonth() {
+
+        CreateMonth monthToLoad = new CreateMonth(getActivity(), year, month);
+        monthToShow = monthToLoad.loadAndGetMonth();
+    }
+
+    private void initialization() {
+        initializationWeekColumns();
+        loadLayout();
+    }
+
+
+    private void initializationWeekColumns() {
+        ll_WeekZero = (LinearLayout) rootView.findViewById(R.id.ll_vertical_w0);
+        ll_WeekZero.removeAllViews();
+        listOfVerticalRL.add(ll_WeekZero);
+
+        ll_WeekOne = (LinearLayout) rootView.findViewById(R.id.ll_vertical_w1);
+        ll_WeekOne.removeAllViews();
+        listOfVerticalRL.add(ll_WeekOne);
+
+        ll_WeekTwo = (LinearLayout) rootView.findViewById(R.id.ll_vertical_w2);
+        ll_WeekTwo.removeAllViews();
+        listOfVerticalRL.add(ll_WeekTwo);
+
+        ll_WeekThree = (LinearLayout) rootView.findViewById(R.id.ll_vertical_w3);
+        ll_WeekThree.removeAllViews();
+        listOfVerticalRL.add(ll_WeekThree);
+
+        ll_WeekFour = (LinearLayout) rootView.findViewById(R.id.ll_vertical_w4);
+        ll_WeekFour.removeAllViews();
+        listOfVerticalRL.add(ll_WeekFour);
+
+        ll_WeekFive = (LinearLayout) rootView.findViewById(R.id.ll_vertical_w5);
+        ll_WeekFive.removeAllViews();
+        listOfVerticalRL.add(ll_WeekFive);
+    }
+
+
+    @Override
+    public Context getContext() {
+        return context;
+    }
+
+    //Perez - criar o layout
+    private void loadLayout() {
+        CreateMonth monthToLoad = new CreateMonth(getActivity(), year, month);
+        long timeStartOfWeek = monthToLoad.getStartWeeksToShow();
+
+        loadColumns(timeStartOfWeek);
+
+
+        //loadWeeks(timeStartOfWeek);
+
+        //loadTotalWeeks();
+        loadBottom();
+
+
+    }
+
+    private void loadBottom() {
+    }
+
+    private void loadColumns(long timeStartOfWeek) {
+       // System.out.println("loadColumns");
+        long week_milli = 604800000;
+        for (int week = 0; week < 6; week++) {
+            ViewGroup layout = getLayout(week);
+            if (week == 0) {
+                createLeftColumn(layout);
+            } else {
+                long initial_week_time = timeStartOfWeek + ((week - 1) * week_milli);
+                createWeekColumns(week, initial_week_time, layout);
+                //createInitialWeek(week, timeStartOfWeek);
+                //
+            }
+
+        }
+    }
+
+    void createWeekColumns(int week, long timeStartOfWeek, ViewGroup layout) {
+
+        long iniWeek;
+        long total = 0;
+        createHeaderColumns(week, timeStartOfWeek, layout);
+        long dayTime = 86400000;
+        for (int day = 0; day < 7; day++) {
+
+            //createHeaderColumns(week, timeStartOfWeek, layout); //-> so para verificar que esta correto
+            iniWeek = timeStartOfWeek + (dayTime * day);
+            createDays(week, day, iniWeek, layout);
+            total = total + iniWeek;
+        }
+        createTotalWeekHour(week, layout);
+    }
+
+    private void createDays(int local_week, int local_day, long timeStartOfWeek, ViewGroup layout) {
+        final int week = local_week - 1;
+        final int day = local_day;
+        //System.out.println("local_week= " + week + "    local_day= " + day);
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        RelativeLayout rlDay = (RelativeLayout) inflater.inflate(R.layout.item_day_rl, layout, false);
+        RelativeLayout rl_day = (RelativeLayout) rlDay.findViewById(R.id.rlDay);
+
+        tvDay[day][week] = (TextView) rlDay.findViewById(R.id.tvMainValue);
+        TextView tvSecondValue = (TextView) rlDay.findViewById(R.id.tvSecondValue);
+        tvSecondValue.setText("" + LocalTime.getDay(timeStartOfWeek));
+
+
+        DaySchedule(new Position(day, week, timeStartOfWeek));
+
+        rl_day.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // do you work here
+
+                Context context = getContext();
+                CharSequence text = "Hello Dialog day=!" + day + " | week= " + week;
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
+        //loadAnimation(rlDay, (1000-local_week*70)*local_week);
+        layout.addView(rlDay);
+
+        //return monthToShow.getListOfWeeks().get(local_week-1).getListOfDays().get(local_day-1).getDayTotalDuration();
+    }
+
+    private void createHeaderColumns(int pos, long timeStartOfWeek, ViewGroup layout) {
+        //     System.out.println(timeStartOfWeek + " >>>> " + pos + " >>>> " + timeStartOfWeek);
+        int week = LocalTime.getWeekOfMonth(timeStartOfWeek);
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        RelativeLayout rlWeek = (RelativeLayout) inflater.inflate(R.layout.item_week_rl, layout, false);
+
+        RelativeLayout ll_Week = (RelativeLayout) rlWeek.findViewById(R.id.rlHeaderWeek);
+        TextView tvWeek = (TextView) rlWeek.findViewById(R.id.tvHeaderWeek);
+        if (week < 10)
+            tvWeek.setText("W0" + week);
+        else
+            tvWeek.setText("W" + week);
+
+        ll_Week.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // do you work here
+
+                Context context = getContext();
+                CharSequence text = "title week";
+                int duration = Toast.LENGTH_LONG;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
+        layout.addView(rlWeek);
+    }
+
+    private void createTotalWeekHour(int col, ViewGroup layout) {
+        long totalDuration = listOfWeeks.get(col - 1).getTotalHours();
+        String durationString = "-";
+        if (totalDuration != 0) {
+
+            System.out.println("col= " + col + " > " + listOfWeeks.get(col - 1).getTotalHours());
+
+
+            long numOfDays = 0;
+            if (totalDuration >= 86400000) {
+                numOfDays = totalDuration / 86400000;
+                numOfDays = numOfDays * 24;
+            }
+           // System.out.println("numOfDays= " + numOfDays);
+
+            //System.out.println("totalDuration= " + totalDuration);
+
+            int minutes = (int) ((totalDuration / (1000 * 60)) % 60);
+            int hours = (int) ((totalDuration / (1000 * 60 * 60)) % 24);
+            hours = (int) numOfDays + hours;
+            if (hours > 0 || minutes > 0) {
+                if (minutes < 10)
+                    durationString = hours + ".0" + minutes;
+                else
+                    durationString = hours + "." + minutes;
+
+            }
+        }
+        setTvTotalHoursWeek(col, durationString, layout);
+    }
+
+    private void loadWeeks(long timeStartOfWeek) {
+
+        long dayTime = 86400000;
+        long weekTime = dayTime * 7;
+        for (int w = 1; w < 7; w++) {
+            for (int i = 1; i < 7; i++) {
+                long timeToStartLocalWeek = timeStartOfWeek + (weekTime * (w - 1)) + (dayTime * (i - 1));
+                createDay(w, i);
+            }
+        }
+    }
+
+    private void loadTotalWeeks() {
+    }
+
+    private void createDay(int w, int i) {
+        monthToShow.getDurationSpecificMonth();
+    }
+
+
+    private void createLeftColumn(ViewGroup layout) {
+      //  System.out.println("createLeftColumn");
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        // for the current Locale :
+        //   DateFormatSymbols symbols = new DateFormatSymbols();
+        String[] dayNames = symbols.getShortWeekdays();
+
+        for (String s : dayNames) {
+       //     System.out.print(s + " ");
+        }
+
+        for (int i = 0; i < 9; i++) {
+            LinearLayout item_left = (LinearLayout) inflater.inflate(R.layout.item_left_rl, layout, false);
+
+            LinearLayout ll_Week = (LinearLayout) item_left.findViewById(R.id.rlDayLeft);
+            // rl_weeks.add(ll_Week);
+
+            TextView tvMainValue = (TextView) item_left.findViewById(R.id.tvDayWeek);
+            if ((i == 0) || (i == 8)) {
+                tvMainValue.setText("");
+            } else {
+                if (i == 7) {
+                    String output = dayNames[1].substring(0, 1).toUpperCase() + dayNames[1].substring(1);
+                    tvMainValue.setText("" + output);
+
+                } else {
+                    String output = dayNames[i + 1].substring(0, 1).toUpperCase() + dayNames[i + 1].substring(1);
+                    tvMainValue.setText("" + output);
+                }
+            }
+
+            layout.addView(item_left);
+        }
+    }
+
+
+    /*private void createTitleRL(int i) {
+         LayoutInflater inflater = LayoutInflater.from(getContext());
+         ViewGroup viewLayout = getLayout(i);
+         RelativeLayout rlWeek = (RelativeLayout) inflater.inflate(R.layout.item_week_rl, viewLayout, false);
+
+         RelativeLayout ll_Week = (RelativeLayout) rlWeek.findViewById(R.id.rlHeaderWeek);
+         TextView tvWeek = (TextView) rlWeek.findViewById(R.id.tvHeaderWeek);
+         tvWeek.setText("W0"+i);
+
+         ll_Week.setOnClickListener(new View.OnClickListener() {
+
+             @Override
+             public void onClick(View v) {
+                 // do you work here
+
+                 Context context = getContext();
+                 CharSequence text = "title week";
+                 int duration = Toast.LENGTH_LONG;
+
+                 Toast toast = Toast.makeText(context, text, duration);
+                 toast.show();
+             }
+         });
+         viewLayout.addView(rlWeek);
+     }
+ */
+    private ViewGroup getLayout(int i) {
+        switch (i) {
+            case 0:
+                return ll_WeekZero;
+            case 1:
+                return ll_WeekOne;
+
+            case 2:
+                return ll_WeekTwo;
+
+            case 3:
+                return ll_WeekThree;
+
+            case 4:
+                return ll_WeekFour;
+
+            case 5:
+                return ll_WeekFive;
+
+
+            default:
+                return ll_WeekZero;
+        }
+    }
+
+
+    private void setTvTotalHoursWeek(final int local_week, String duration, ViewGroup layout) {
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        RelativeLayout rlDay = (RelativeLayout) inflater.inflate(R.layout.item_total_rl, layout, false);
+
+        RelativeLayout ll_WeekOne = (RelativeLayout) rlDay.findViewById(R.id.rlTotalWeek);
+        TextView tvMainValue = (TextView) rlDay.findViewById(R.id.tvTotalWeek);
+
+        tvMainValue.setText(duration);
+
+
+        //loadAnimation(rlDay, (1000-local_week*70)*local_week);
+        layout.addView(rlDay);
+    }
+
+
+    private void loadAnimation(View ll_WeekOne, long time) {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.animation);
+        animation.setDuration(time);
+        ll_WeekOne.setAnimation(animation);
+        ll_WeekOne.animate();
+        animation.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    public class Position {
+        int row;
+        int col;
+        long time;
+
+        public Position(int row, int col, long time) {
+            this.row = row;
+            this.col = col;
+            this.time = time;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public long getTime() {
+            return time;
+        }
+    }
+
+    private void DaySchedule(Position position) {
+        long time = position.getTime();
+        int row = position.getRow();
+        int col = position.getCol();
+
+        LocalEventService lEventService = new LocalEventService(context);
+
+        List<EventClass> listOfEvents = lEventService.getEventsForDay(time, (time + 86400000));
+        DayClassTMP dayObject = new DayClassTMP(listOfEvents);
+        setTextView(row, col, dayObject.toString());
+
+        listOfWeeks.get(col).addTotalHours(dayObject.getTotalDuration());
+
+        System.out.println("size events= " + listOfEvents.size() + " | week= " + col + " | day= " + row + " | time= " + dayObject.getTotalDuration() + ">>>" +dayObject.toString());
+        //System.out.println(col + " + " + row + "total week= " + listOfWeeks.get(col).getTotalHours());
+        if (false)
+            addTotalMonth(0);
+
+
+    }
+
+    private void incWeekFinish(int col) {
+
+        // listWeekCount.get(col).addCount();
+    }
+
+    private synchronized void addTotalMonth(long time) {
+        MonthTotal.addTotalHours(time);
+    }
+
+    private void setTextView(int row, int col, String duration) {
+        tvDay[row][col].setText("" + duration);
+    }
+
+    private synchronized void addWeekDuration(int col, long duration) {
+
+        incWeekFinish(col);
+        testWeekFinish(col);
+        //tvDay[row][col].setText(""+duration);
+    }
+
+    private void testWeekFinish(int col) {
+
+    }
+
+
+    public class DayClassTMP {
+        private List<EventClass> listOfEvents;
+
+        long totalDuration;
+        String durationString;
+
+
+        public DayClassTMP(List<EventClass> listOfEvents) {
+            this.listOfEvents = listOfEvents;
+            setDuration();
+        }
+
+        public void setDuration() {
+            long totalDuration = 0;
+
+            for (EventClass event : listOfEvents
+                    ) {
+                System.out.println("totalDuration= " + totalDuration);
+                totalDuration = totalDuration + event.getData().getDuration();
+
+            }
+
+
+            this.totalDuration = totalDuration;
+
+
+            int minutes = (int) ((totalDuration / (1000 * 60)) % 60);
+            int hours = (int) ((totalDuration / (1000 * 60 * 60)) % 24);
+
+            long numOfHours= 0;
+            if (totalDuration >= 86400000) {
+                numOfHours = totalDuration / 86400000;
+                numOfHours = numOfHours * 24;
+                hours = hours + (int)numOfHours;
+            }
+
+            //if(totalDuration>86400000)
+
+
+            if (hours > 0 || minutes > 0) {
+                if (minutes < 10)
+                    this.durationString = hours + ".0" + minutes;
+                else
+                    this.durationString = hours + "." + minutes;
+            } else {
+                this.durationString = "-";
+            }
+        }
+
+        public long getTotalDuration() {
+            return totalDuration;
+        }
+
+        @Override
+        public String toString() {
+            return durationString;
+        }
+    }
+
+    private class Total {
+        private int count;
+        private long totalHours;
+
+        public Total() {
+            this.count = 0;
+            this.totalHours = 0;
+
+        }
+
+        public long getTotalHours() {
+            return this.totalHours;
+        }
+
+        public void addTotalHours(long time) {
+            this.totalHours = this.totalHours + time;
+        }
+    }
+
+}
