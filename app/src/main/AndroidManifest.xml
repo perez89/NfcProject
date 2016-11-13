@@ -26,7 +26,7 @@
 
 
         <activity android:name=".NfcActivity"
-            android:launchMode="singleTask">
+            >
             <intent-filter >
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>

@@ -6,6 +6,8 @@ import android.content.Context;
 import java.util.List;
 
 import Support.LocalEventService;
+import Support.LocalPreferences;
+import Support.LocalTime;
 
 /**
  * Created by User on 07/10/2016.
@@ -29,10 +31,13 @@ public class RegisterNfc {
 
 
     /* Other methods protected by singleton-ness */
-    public void newNfcDetected(Context context, long calendarID) {
+    public synchronized void newNfcDetected(Context context, long calendarID) {
         startLocalEvent(context);
         System.out.println("newNfcDetected");
-
+        if(!allow(context))
+        {
+            return;
+        }
 
         listEventsDay = getEvents();
 
@@ -60,6 +65,17 @@ public class RegisterNfc {
                 closeEvent(eventID);
             }
         }
+    }
+
+    private boolean allow(Context context) {
+        LocalPreferences lPref = LocalPreferences.getInstance();
+        String tmp = lPref.getPreference("lastNfcDetected", context);
+        if(tmp == null || tmp.equals(""))
+            return false;
+
+        String time = "" + LocalTime.getCurrentMilliseconds();
+        lPref.setPreference("lastNfcDetected", time, context);
+        return true;
     }
 
     private void startLocalEvent(Context context) {
