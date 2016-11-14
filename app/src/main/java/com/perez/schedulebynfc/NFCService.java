@@ -1,34 +1,46 @@
 package com.perez.schedulebynfc;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 /**
  * Created by User on 11/11/2016.
  */
 public class NFCService extends Service {
-    @Nullable
+
     @Override
     public IBinder onBind(Intent intent) {
-        Worker _worker = new Worker();
-        _worker.start();
         return null;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+
+
+        NfcWorker _nfcWorker = new NfcWorker(getApplicationContext());
+        _nfcWorker.start();
+
+        // If we get killed, after returning from here, restart
+        return START_STICKY;
     }
 
-    public class Worker extends Thread {
+    public class NfcWorker extends Thread {
+        Context _context;
+        public NfcWorker(Context applicationContext) {
+            _context = applicationContext;
+        }
 
         @Override
         public void run() {
-//inserir o novo evento ou fechar o evento
-
+        //inserir o novo evento ou fechar o evento
+            System.out.println("NFCService - NfcWorker THREAD");
+            long idCalendar = MainActivity.getIdCalendar();
+            RegisterNfc.getInstance().newNfcDetected(_context, idCalendar);
         }
-
     }
 }
+
