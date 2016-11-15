@@ -98,13 +98,11 @@ public class LocalEventService {
         return eventClass;
     }
 
-    public void createNewEvent(int eventNumbDay, long calendarID) {
-
-        long currentMillis = LocalTime.getCurrentMilliseconds();
+    public void createNewEvent(int eventNumbDay, long calendarID, long currentMilleseconds) {
 
         ContentValues values = new ContentValues();
-        values.put(CalendarContract.Events.DTSTART, currentMillis);
-        values.put(CalendarContract.Events.DTEND, currentMillis);
+        values.put(CalendarContract.Events.DTSTART, currentMilleseconds);
+        values.put(CalendarContract.Events.DTEND, currentMilleseconds);
         values.put(CalendarContract.Events.TITLE, "Work - " + eventNumbDay);
         values.put(CalendarContract.Events.DESCRIPTION, "Open - " + eventNumbDay);
         values.put(CalendarContract.Events.CALENDAR_ID, calendarID);

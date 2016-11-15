@@ -67,7 +67,8 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 // Perform action on click
                 //System.out.println("MainFragment - btSimulateNFC - calendarID = " + calendarID);
-                RegisterNfc.getInstance().newNfcDetected(context, idCalendar);
+                long currentMilleseconds = LocalTime.getCurrentMilliseconds();
+                RegisterNfc.getInstance().newNfcDetected(context, idCalendar, currentMilleseconds);
                 //LocalCalendar.getCallendares(getActivity());
                //  LocalCalendar.getEvents(getActivity());
                 //RegisterNfc.deleteEvents(getActivity(), 0, 0);

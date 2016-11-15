@@ -29,7 +29,7 @@ public class RegisterNfc {
 
 
     /* Other methods protected by singleton-ness */
-    public void newNfcDetected(Context context, long calendarID) {
+    public void newNfcDetected(Context context, long calendarID, long currentMilleseconds) {
         startLocalEvent(context);
         System.out.println("newNfcDetected");
 
@@ -42,7 +42,7 @@ public class RegisterNfc {
             //criar novo evento para este dia
             //checkYesterdayLastEvent();
             System.out.println("is empty");
-            createEvent(0, calendarID);
+            createEvent(0, calendarID, currentMilleseconds);
 
         } else {
             System.out.println("NOT is empty");
@@ -53,7 +53,7 @@ public class RegisterNfc {
                 //ultimo evento esta fechado e é necessário criar novo evento
                 //criar novo evento para este dia
                 System.out.println("NOT is empty - create event");
-                createEvent(listEventsDay.size(), calendarID);
+                createEvent(listEventsDay.size(), calendarID, currentMilleseconds);
             } else { //no
                 //ultimo evento está aberto, necessário fecha-lo
                 System.out.println("NOT is empty - close event");
@@ -72,8 +72,8 @@ public class RegisterNfc {
 
 
 
-    private void createEvent(int i, long calendarID) {
-        lEventService.createNewEvent(i+1, calendarID);
+    private void createEvent(int i, long calendarID, long currentMilleseconds) {
+        lEventService.createNewEvent(i+1, calendarID, currentMilleseconds);
     }
 
     private void closeEvent(long eventID) {
