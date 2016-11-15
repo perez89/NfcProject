@@ -83,7 +83,7 @@ public class NFCService extends Service {
         }
 
         private void registerNFC(long currentMilleseconds) {
-            System.out.println("NFCService - NfcWorker THREAD");
+            System.out.println("NFCService - registerNFC");
             long idCalendar = MainActivity.getIdCalendar();
             RegisterNfc.getInstance().newNfcDetected(_context, idCalendar, currentMilleseconds);
         }
