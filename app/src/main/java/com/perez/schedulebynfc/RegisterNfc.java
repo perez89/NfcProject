@@ -6,6 +6,7 @@ import android.content.Context;
 import java.util.List;
 
 import Support.LocalEventService;
+import Support.LocalTime;
 
 /**
  * Created by User on 07/10/2016.
@@ -42,6 +43,7 @@ public class RegisterNfc {
             //criar novo evento para este dia
             //checkYesterdayLastEvent();
             System.out.println("is empty");
+            System.out.println(LocalTime.getHour(currentMilleseconds) + " : " +LocalTime.getMinute(currentMilleseconds)+" - "+LocalTime.getDay(currentMilleseconds) + "/ " + LocalTime.getMonth(currentMilleseconds) + " / " + LocalTime.getYear(currentMilleseconds) );
             createEvent(0, calendarID, currentMilleseconds);
 
         } else {

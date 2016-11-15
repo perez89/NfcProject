@@ -11,6 +11,7 @@ import android.widget.Toast;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import Support.LocalCalendar;
 import Support.LocalTime;
 
 import static com.perez.schedulebynfc.MainActivity.getDefaults;
@@ -55,7 +56,10 @@ public class NFCService extends Service {
                     if(verifyRangeBetweenNfcDetection(currentMilleseconds)) {
                         System.out.println("registerNFC");
                         registerNFC(currentMilleseconds);
-                        notificationRegistered(true, currentMilleseconds);
+                        try{
+                        notificationRegistered(true, currentMilleseconds);}catch (Exception e){
+                            System.out.println("error= " + e.getMessage());
+                        }
                     }else{
                         //notificationNotRegistered();
                     }
@@ -84,11 +88,13 @@ public class NFCService extends Service {
                             .setSmallIcon(R.drawable.icon_nfc)
                             .setContentTitle("NFC Schedule")
                             .setContentText(""+content);
+
             // Sets an ID for the notification
             int mNotificationId = 001;
             // Gets an instance of the NotificationManager service
             NotificationManager mNotifyMgr =
-                    (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
+                    (NotificationManager) _context.getSystemService(_context.NOTIFICATION_SERVICE);
+
             mNotifyMgr.cancelAll();
             // Builds the notification and issues it.
             mNotifyMgr.notify(mNotificationId, mBuilder.build());
@@ -112,9 +118,20 @@ public class NFCService extends Service {
 
         private void registerNFC(long currentMilleseconds) {
             System.out.println("NFCService - registerNFC");
-            long idCalendar = MainActivity.getIdCalendar();
+            long idCalendar = checkLocalCalendar();
+            System.out.print(idCalendar + " ID ");
             RegisterNfc.getInstance().newNfcDetected(_context, idCalendar, currentMilleseconds);
         }
+        private long  checkLocalCalendar() {
+            System.out.println("checkLocalCalendar");
+            long calendarID = LocalCalendar.verifyCalendar(_context);
+            System.out.println("1 - calendarID= " + calendarID);
+            if (calendarID < 1)
+                calendarID = LocalCalendar.createCalendar(_context);
+            System.out.println("2 - calendarID= " + calendarID);
+            return calendarID;
+        }
     }
+
 }
 

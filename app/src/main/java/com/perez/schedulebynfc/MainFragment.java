@@ -22,7 +22,6 @@ public class MainFragment extends Fragment {
     private Button btCreateCalendar, btSimulateNFC;
     private View rootView;
     private Context context;
-    private long idCalendar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +45,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        idCalendar = MainActivity.getIdCalendar();
+
     }
 
     private void setContext(){
@@ -68,7 +67,8 @@ public class MainFragment extends Fragment {
                 // Perform action on click
                 //System.out.println("MainFragment - btSimulateNFC - calendarID = " + calendarID);
                 long currentMilleseconds = LocalTime.getCurrentMilliseconds();
-                RegisterNfc.getInstance().newNfcDetected(context, idCalendar, currentMilleseconds);
+
+                //RegisterNfc.getInstance().newNfcDetected(context, idCalendar, currentMilleseconds);
                 //LocalCalendar.getCallendares(getActivity());
                //  LocalCalendar.getEvents(getActivity());
                 //RegisterNfc.deleteEvents(getActivity(), 0, 0);
