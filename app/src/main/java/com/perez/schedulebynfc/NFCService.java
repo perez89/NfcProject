@@ -1,9 +1,11 @@
 package com.perez.schedulebynfc;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import java.util.concurrent.locks.Lock;
@@ -47,12 +49,15 @@ public class NFCService extends Service {
         public void run() {
             System.out.println("Thread running");
             if(NfcWorker._lock.tryLock()){
-                System.out.println("Inside lock");
+               // System.out.println("Inside lock");
                 try{
                     long currentMilleseconds = LocalTime.getCurrentMilliseconds();
                     if(verifyRangeBetweenNfcDetection(currentMilleseconds)) {
                         System.out.println("registerNFC");
                         registerNFC(currentMilleseconds);
+                        notificationRegistered(true, currentMilleseconds);
+                    }else{
+                        //notificationNotRegistered();
                     }
 
                 }catch (Exception e){
@@ -64,6 +69,29 @@ public class NFCService extends Service {
 
                 }
             }
+        }
+
+        private void notificationRegistered(boolean inOrOut, long currentMilleseconds) {
+            String content = "";
+            if(inOrOut){
+                content = "Entrada";
+            }else{
+                content = "Saida";
+            }
+            content = content + " : " + currentMilleseconds;
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(_context)
+                            .setSmallIcon(R.drawable.icon_nfc)
+                            .setContentTitle("NFC Schedule")
+                            .setContentText(""+content);
+            // Sets an ID for the notification
+            int mNotificationId = 001;
+            // Gets an instance of the NotificationManager service
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
+            mNotifyMgr.cancelAll();
+            // Builds the notification and issues it.
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
         }
 
         private boolean verifyRangeBetweenNfcDetection(long currentMilleseconds) {
