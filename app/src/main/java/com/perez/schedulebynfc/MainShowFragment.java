@@ -34,7 +34,7 @@ public class MainShowFragment extends Fragment {
     Context context;
     LayoutInflater inflater;
     LinearLayout ll_WeekZero, ll_WeekOne, ll_WeekTwo, ll_WeekThree, ll_WeekFour, ll_WeekFive;
-
+    int count_column_finish;
     List<RelativeLayout> rl_weeks = new ArrayList<RelativeLayout>();
     MonthClass monthToShow;
 
@@ -65,6 +65,7 @@ public class MainShowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         System.out.println("MainShowFragment - onCreateView");
+        count_column_finish=0;
         this.inflater = inflater;
         context = getActivity();
         rootView = inflater.inflate(R.layout.fragment_show_main, container, false);
@@ -150,7 +151,7 @@ public class MainShowFragment extends Fragment {
         //loadWeeks(timeStartOfWeek);
 
         //loadTotalWeeks();
-        loadBottom();
+
 
 
     }
@@ -162,17 +163,23 @@ public class MainShowFragment extends Fragment {
        // System.out.println("loadColumns");
         long week_milli = 604800000;
         for (int week = 0; week < 6; week++) {
-            ViewGroup layout = getLayout(week);
+            final ViewGroup layout = getLayout(week);
             if (week == 0) {
-                createLeftColumn(layout);
+
+                        createLeftColumn(layout);
+
+
             } else {
-                long initial_week_time = timeStartOfWeek + ((week - 1) * week_milli);
-                createWeekColumns(week, initial_week_time, layout);
+                final long initial_week_time = timeStartOfWeek + ((week - 1) * week_milli);
+                final int finalWeek = week;
+                createWeekColumns(finalWeek, initial_week_time, layout);
+
                 //createInitialWeek(week, timeStartOfWeek);
                 //
             }
 
         }
+
     }
 
     void createWeekColumns(int week, long timeStartOfWeek, ViewGroup layout) {
@@ -260,6 +267,8 @@ public class MainShowFragment extends Fragment {
     private void createTotalWeekHour(int col, ViewGroup layout) {
         long totalDuration = listOfWeeks.get(col - 1).getTotalHours();
         String durationString = "-";
+
+
         if (totalDuration != 0) {
 
             System.out.println("col= " + col + " > " + listOfWeeks.get(col - 1).getTotalHours());
@@ -286,25 +295,10 @@ public class MainShowFragment extends Fragment {
             }
         }
         setTvTotalHoursWeek(col, durationString, layout);
-    }
-
-    private void loadWeeks(long timeStartOfWeek) {
-
-        long dayTime = 86400000;
-        long weekTime = dayTime * 7;
-        for (int w = 1; w < 7; w++) {
-            for (int i = 1; i < 7; i++) {
-                long timeToStartLocalWeek = timeStartOfWeek + (weekTime * (w - 1)) + (dayTime * (i - 1));
-                createDay(w, i);
-            }
+        addTotalMonth(totalDuration);
+        if(isColumnsFinish()){
+            loadBottom();
         }
-    }
-
-    private void loadTotalWeeks() {
-    }
-
-    private void createDay(int w, int i) {
-        monthToShow.getDurationSpecificMonth();
     }
 
 
@@ -341,36 +335,14 @@ public class MainShowFragment extends Fragment {
             }
 
             layout.addView(item_left);
+            addTotalMonth(0);
+            if(isColumnsFinish()){
+                loadBottom();
+            }
         }
     }
 
 
-    /*private void createTitleRL(int i) {
-         LayoutInflater inflater = LayoutInflater.from(getContext());
-         ViewGroup viewLayout = getLayout(i);
-         RelativeLayout rlWeek = (RelativeLayout) inflater.inflate(R.layout.item_week_rl, viewLayout, false);
-
-         RelativeLayout ll_Week = (RelativeLayout) rlWeek.findViewById(R.id.rlHeaderWeek);
-         TextView tvWeek = (TextView) rlWeek.findViewById(R.id.tvHeaderWeek);
-         tvWeek.setText("W0"+i);
-
-         ll_Week.setOnClickListener(new View.OnClickListener() {
-
-             @Override
-             public void onClick(View v) {
-                 // do you work here
-
-                 Context context = getContext();
-                 CharSequence text = "title week";
-                 int duration = Toast.LENGTH_LONG;
-
-                 Toast toast = Toast.makeText(context, text, duration);
-                 toast.show();
-             }
-         });
-         viewLayout.addView(rlWeek);
-     }
- */
     private ViewGroup getLayout(int i) {
         switch (i) {
             case 0:
@@ -471,15 +443,6 @@ public class MainShowFragment extends Fragment {
 
         System.out.println("size events= " + listOfEvents.size() + " | week= " + col + " | day= " + row + " | time= " + dayObject.getTotalDuration() + ">>>" +dayObject.toString());
         //System.out.println(col + " + " + row + "total week= " + listOfWeeks.get(col).getTotalHours());
-        if (false)
-            addTotalMonth(0);
-
-
-    }
-
-    private void incWeekFinish(int col) {
-
-        // listWeekCount.get(col).addCount();
     }
 
     private synchronized void addTotalMonth(long time) {
@@ -490,17 +453,9 @@ public class MainShowFragment extends Fragment {
         tvDay[row][col].setText("" + duration);
     }
 
-    private synchronized void addWeekDuration(int col, long duration) {
-
-        incWeekFinish(col);
-        testWeekFinish(col);
-        //tvDay[row][col].setText(""+duration);
+    private synchronized boolean isColumnsFinish() {
+           return MonthTotal.isFinish();
     }
-
-    private void testWeekFinish(int col) {
-
-    }
-
 
     public class DayClassTMP {
         private List<EventClass> listOfEvents;
@@ -570,12 +525,19 @@ public class MainShowFragment extends Fragment {
             this.totalHours = 0;
 
         }
+        public boolean isFinish(){
+            if(count==6)
+                return true;
+            else
+                return false;
+        }
 
         public long getTotalHours() {
             return this.totalHours;
         }
 
         public void addTotalHours(long time) {
+            count++;
             this.totalHours = this.totalHours + time;
         }
     }
