@@ -12,8 +12,6 @@ import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
 
-import com.perez.schedulebynfc.MainActivity;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -45,56 +43,58 @@ public class LocalEventService {
     }
 
     private EventClass getLastEvent() {
+        long idCalendar = getIdCalendar();
         EventClass eventClass = null;
+        if(idCalendar>0) {
+            // List<Integer> listIdEvents = new ArrayList<Integer>();
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 0, 0, 0);
+            //long startDay = calendar.getTimeInMillis();
+            calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 23, 59, 59);
+            //long endDay = calendar.getTimeInMillis();
+            LocalTime.DayRange dayRange = new LocalTime.DayRange();
+            long startDay = dayRange.getStartDay();
+            long endDay = dayRange.getEndDay();
 
-        // List<Integer> listIdEvents = new ArrayList<Integer>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 0, 0, 0);
-        //long startDay = calendar.getTimeInMillis();
-        calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 23, 59, 59);
-        //long endDay = calendar.getTimeInMillis();
-        LocalTime.DayRange dayRange = new LocalTime.DayRange();
-        long startDay = dayRange.getStartDay();
-        long endDay = dayRange.getEndDay();
 
+            String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+            String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
 
-        String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
-        String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
-        String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(MainActivity.getIdCalendar())};
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                //return ;
+            }
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return ;
+            Cursor cur = context.getContentResolver().query(CalendarContract.Events.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    CalendarContract.Events.DTSTART + " DESC LIMIT 1");
+
+            if (cur != null) {
+                long eventID = 0;
+                long startTime = 0;
+                long endTime = 0;
+
+                //avancar para ultimo evento
+                cur.moveToFirst();
+
+                eventID = cur.getLong(0);
+                startTime = cur.getLong(1);
+                endTime = cur.getLong(2);
+
+                eventClass = new EventClass(eventID, startTime, endTime);
+
+            }
+            cur.close();
         }
-
-        Cursor cur = context.getContentResolver().query(CalendarContract.Events.CONTENT_URI,
-                projection,
-                selection,
-                selectionArgs,
-                CalendarContract.Events.DTSTART + " DESC LIMIT 1");
-
-        if (cur != null) {
-            long eventID = 0;
-            long startTime = 0;
-            long endTime = 0;
-
-            //avancar para ultimo evento
-            cur.moveToFirst();
-
-            eventID = cur.getLong(0);
-            startTime = cur.getLong(1);
-            endTime = cur.getLong(2);
-
-            eventClass = new EventClass(eventID, startTime, endTime);
-
-        }
-        cur.close();
         return eventClass;
     }
 
@@ -104,7 +104,7 @@ public class LocalEventService {
         values.put(CalendarContract.Events.DTSTART, currentMilleseconds);
         values.put(CalendarContract.Events.DTEND, currentMilleseconds);
         values.put(CalendarContract.Events.TITLE, "Work - " + eventNumbDay);
-        values.put(CalendarContract.Events.DESCRIPTION, "Open - " + eventNumbDay);
+        values.put(CalendarContract.Events.DESCRIPTION, "Open - Using App");
         values.put(CalendarContract.Events.CALENDAR_ID, calendarID);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault() + "");
         values.put(CalendarContract.Events.EVENT_END_TIMEZONE, TimeZone.getDefault() + "");
@@ -132,91 +132,108 @@ public class LocalEventService {
     }
 
     public void closeEvent(long eventID) {
+        long idCalendar = getIdCalendar();
 
-        long startTimeEvent = getEventStartTime(eventID);
-        long currentMilliseconds = LocalTime.getCurrentMilliseconds();
-        ContentResolver cr = context.getContentResolver();
-        ContentValues values = new ContentValues();
+        if(idCalendar>0){
+            long startTimeEvent = getEventStartTime(eventID);
+            long currentMilliseconds = LocalTime.getCurrentMilliseconds();
+            ContentResolver cr = context.getContentResolver();
+            ContentValues values = new ContentValues();
 
-        // change the hour (close) of last event
+            // change the hour (close) of last event
 
-        values.put(CalendarContract.Events.DESCRIPTION, "CLOSE - " + eventID);
-        values.put(CalendarContract.Events.DTSTART, startTimeEvent);
-        values.put(CalendarContract.Events.DTEND, currentMilliseconds);
-        // values.put(CalendarContract.Events.DTEND, ""+currentMilliseconds);
-        // Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
-        String where = CalendarContract.Events._ID + " = " + eventID + " AND " + CalendarContract.Events.CALENDAR_ID + " = " + MainActivity.getIdCalendar();
+            values.put(CalendarContract.Events.DESCRIPTION, "Close - Using App");
+            values.put(CalendarContract.Events.DTSTART, startTimeEvent);
+            values.put(CalendarContract.Events.DTEND, currentMilliseconds);
+            // values.put(CalendarContract.Events.DTEND, ""+currentMilliseconds);
+            // Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
+            String where = CalendarContract.Events._ID + " = " + eventID + " AND " + CalendarContract.Events.CALENDAR_ID + " = " + idCalendar;
 
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+
+            int rows = cr.update(CalendarContract.Events.CONTENT_URI, values, where, null);
         }
-
-        int rows = cr.update(CalendarContract.Events.CONTENT_URI, values, where, null);
-
     }
 
     public List<Long> getEventsIDsSpecificDay() {
+        long idCalendar = getIdCalendar();
         List<Long> listIdEvents = new ArrayList<Long>();
+        System.out.println("getEventsIDsSpecificDay id= " + idCalendar);
+        if(idCalendar>0) {
+            LocalTime.DayRange dayRange = new LocalTime.DayRange();
+            long startDay = dayRange.getStartDay();
+            long endDay = dayRange.getEndDay();
+            //86400000 -> number of milleseconds of a day
+            System.out.println("startDay= " + startDay + " | endDay= " + endDay + " | MainActivity.getIdCalendar()= " + idCalendar);
+            String[] projection = new String[]{BaseColumns._ID};
+            String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
 
-        LocalTime.DayRange dayRange = new LocalTime.DayRange();
-        long startDay = dayRange.getStartDay();
-        long endDay = dayRange.getEndDay();
-        //86400000 -> number of milleseconds of a day
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                //return ;
+            }
+            Cursor cur = context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+            System.out.println("1 - ABCDEF");
+            while (cur.moveToNext()) {
+                System.out.println("2 - ABCDEF");
+                listIdEvents.add(cur.getLong(0));
+            }
 
-        String[] projection = new String[]{BaseColumns._ID};
-        String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
-        String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(MainActivity.getIdCalendar())};
-
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return ;
+            cur.close();
         }
-        Cursor cur = context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
-        // System.out.println("1 - ABCDEF");
-        while (cur.moveToNext()) {
-            // System.out.println("2 - ABCDEF");
-            listIdEvents.add(cur.getLong(0));
-        }
-
-        cur.close();
         return listIdEvents;
     }
 
-    private long getEventStartTime(long idEvent) {
-        String[] projection =
-                new String[]{
-                        CalendarContract.Events.DTSTART
-                };
-        String selection = CalendarContract.Events._ID + " = ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
-        String[] selectionArgs = new String[]{Long.toString(idEvent), Long.toString(MainActivity.getIdCalendar())};
+    private long getIdCalendar() {
+        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, context);
+        if(value==null)
+            value="0";
+        return (Long.parseLong(value));
+    }
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+    private long getEventStartTime(long idEvent) {
+        long idCalendar = getIdCalendar();
+
+        if(idCalendar>0) {
+            String[] projection =
+                    new String[]{
+                            CalendarContract.Events.DTSTART
+                    };
+            String selection = CalendarContract.Events._ID + " = ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(idEvent), Long.toString(idCalendar)};
+
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            }
+            Cursor calCursor =
+                    context.getContentResolver().
+                            query(CalendarContract.Events.CONTENT_URI,
+                                    projection,
+                                    selection,
+                                    selectionArgs,
+                                    CalendarContract.Events._ID + " ASC");
+            calCursor.moveToFirst();
+            long startTime = parseLong(calCursor.getString(0));
+            calCursor.close();
+            return startTime;
         }
-        Cursor calCursor =
-                context.getContentResolver().
-                        query(CalendarContract.Events.CONTENT_URI,
-                                projection,
-                                selection,
-                                selectionArgs,
-                                CalendarContract.Events._ID + " ASC");
-        calCursor.moveToFirst();
-        long startTime = parseLong(calCursor.getString(0));
-        calCursor.close();
-        return startTime;
+        return 0;
     }
 
     public void deleteEvents(long startTime, long endTime) {
@@ -236,39 +253,43 @@ public class LocalEventService {
     }
 
     public List<EventClass> getEventsForDay(long startDay, long endDay) {
+        long idCalendar = getIdCalendar();
         List<EventClass> listOfEvents = new ArrayList<EventClass>();
-        String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
-        String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
-        String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(MainActivity.getIdCalendar())};
+        if(idCalendar>0) {
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return ;
+            String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+            String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
+
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                //return ;
+            }
+            Cursor cursor = context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+
+            if (cursor == null || cursor.getCount() == 0) {
+
+            } else {
+
+            }
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(0);
+                long dtStart = cursor.getLong(1);
+                long dtEnd = cursor.getLong(2);
+                EventClass event;
+
+                event = new EventClass(id, dtStart, dtEnd);
+                listOfEvents.add(event);
+            }
+
+            cursor.close();
         }
-        Cursor cursor = context.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
-
-        if(cursor == null || cursor.getCount() == 0){
-
-        }else{
-
-        }
-        while (cursor.moveToNext()) {
-            long id = cursor.getLong(0);
-            long dtStart = cursor.getLong(1);
-            long dtEnd = cursor.getLong(2);
-            EventClass event;
-
-            event = new EventClass(id, dtStart, dtEnd);
-            listOfEvents.add(event);
-        }
-
-        cursor.close();
         return listOfEvents;
     }
 

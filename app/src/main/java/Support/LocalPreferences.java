@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
  */
 
 public class LocalPreferences {
+    public static final String ID_CALENDAR = "pref_calendar_id";
     private static LocalPreferences instance = null;
     private LocalPreferences() {
         // Exists only to defeat instantiation.

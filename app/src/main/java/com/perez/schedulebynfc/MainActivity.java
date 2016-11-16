@@ -20,11 +20,11 @@ import Support.LocalCalendar;
 import Support.LocalPreferences;
 
 public class MainActivity extends AppCompatActivity {
+
     MainShowFragment[] ArrayOfEvents;
     final String move_next = "next";
     final String move_previous = "previous";
     //NfcAdapter nfcAdapter;
-    private static long idCalendar;
     CurrentTimeShow currentTimeToShow;
     ImageButton btPrevious, btNext;
     TextView tvCurrentDate;
@@ -228,18 +228,18 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    public static long getIdCalendar() {
-        return idCalendar;
-    }
-
     private void checkLocalCalendar() {
         System.out.println("checkLocalCalendar");
-        long calendarID = LocalCalendar.verifyCalendar(this);
+        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, this);
+        if(value==null)
+            value="0";
+        long calendarID = Long.parseLong(value);
         System.out.println("1 - calendarID= " + calendarID);
+
         if (calendarID < 1)
             calendarID = LocalCalendar.createCalendar(this);
         System.out.println("2 - calendarID= " + calendarID);
-        idCalendar = calendarID;
+
     }
 
     public static void setDefaults(String key, String value, Context context) {
