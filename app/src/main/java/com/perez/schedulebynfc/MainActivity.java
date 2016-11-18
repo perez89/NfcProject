@@ -9,9 +9,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import java.text.DateFormatSymbols;
 
@@ -26,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
     final String move_previous = "previous";
     //NfcAdapter nfcAdapter;
     CurrentTimeShow currentTimeToShow;
-    ImageButton btPrevious, btNext;
-    TextView tvCurrentDate;
+    TextSwitcher tsSwitcher;
+   // TextView tvCurrentDate;
     Bundle savedInstanceState;
 
     @Override
@@ -51,11 +56,12 @@ public class MainActivity extends AppCompatActivity {
             //MainShowFragment frag = ArrayOfEvents[1];
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
             // Add the fragment to the 'fragment_container' FrameLayout
             String tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
 
             if(new_frag!=null)
-                fragmentTransaction.replace(R.id.fragment_container, new_frag, tag).commit();
+                fragmentTransaction.replace(R.id.fragment_container, new MainFragment(), tag).commit();
         }
         System.out.println("debug-2");
     }
@@ -78,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
            // MainShowFragment frag_new = ArrayOfEvents[1];
             tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container, frag_new, tag).commit();
+            changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'l');
         }
         if (move.equals(move_next)) {
             tag = getTag(currentTimeToShow.getMonth_previous(), currentTimeToShow.getYear_previous());
@@ -87,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
             //MainShowFragment frag_new = ArrayOfEvents[1];
             tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left).add(R.id.fragment_container, frag_new, tag).commit();
+            changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'd');
         }
-        changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView());
+
         System.out.println("refreshFragment-2");
     }
 
@@ -104,20 +112,58 @@ public class MainActivity extends AppCompatActivity {
 
     private void textViews() {
         System.out.println("textViews");
-        tvCurrentDate = (TextView) findViewById(R.id.tvCurrentDate);
-        changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView());
+        tsSwitcher = (TextSwitcher) findViewById(R.id.tsSwitcher);
+       // tvCurrentDate = (TextView) findViewById(R.id.tvCurrentDate);
+        changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'n');
 
     }
 
-    private void changeTextViewMonth(String month, String year) {
+    private void changeTextViewMonth(final String month, final String year, char _dir) {
         System.out.println("changeTextViewMonth");
+
         System.out.println("current = " + month + " year=" + year);
-        tvCurrentDate.setText(month + "  " + year);
+        Animation in;
+        Animation out;
+        switch(_dir){
+            case 'd':
+                in = AnimationUtils.loadAnimation(this,R.anim.slide_in_right);
+                out = AnimationUtils.loadAnimation(this,R.anim.slide_out_left);
+                tsSwitcher.setInAnimation(in);
+                tsSwitcher.setOutAnimation(out);
+                break;
+            case 'l':
+                in = AnimationUtils.loadAnimation(this,R.anim.slide_in_left);
+                out = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
+                tsSwitcher.setInAnimation(in);
+                tsSwitcher.setOutAnimation(out);
+                break;
+            case 'n': ;
+                break;
+
+        }
+        tsSwitcher.removeAllViews();
+
+        tsSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+
+            public View makeView() {
+                // TODO Auto-generated method stub
+                // create new textView and set the properties like clolr, size etc
+                TextView myText = new TextView(MainActivity.this);
+                myText.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL);
+
+
+                return myText;
+            }
+        });
+        tsSwitcher.setText(month + "  " + year);
+       // tvCurrentDate.setText(month + "  " + year);
     }
 
     private void buttons() {
         System.out.println("buttons");
-        btPrevious = (ImageButton) findViewById(R.id.ibPreviousMonth);
+        final ImageButton btPrevious = (ImageButton) findViewById(R.id.ibPreviousMonth);
+        final ImageButton btNext = (ImageButton) findViewById(R.id.ibNextMonth);
+
         btPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,12 +173,36 @@ public class MainActivity extends AppCompatActivity {
                 refreshFragment(move_previous);
                 new LoadFragment().execute(currentTimeToShow.getMonth_previous(), currentTimeToShow.getYear_previous(), 0);
 
+                btPrevious.setEnabled(false);
+                btNext.setEnabled(false);
 
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(700);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        MainActivity.this.runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                btNext.setEnabled(true);
+                                btPrevious.setEnabled(true);
+
+                            }
+                        });
+                    }
+                }).start();
             }
         });
 
 
-        btNext = (ImageButton) findViewById(R.id.ibNextMonth);
+
         btNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +212,30 @@ public class MainActivity extends AppCompatActivity {
                 removeFrag("first");
                 refreshFragment(move_next);
                 new LoadFragment().execute(currentTimeToShow.getMonth_next(), currentTimeToShow.getYear_next(), 2);
+                btNext.setEnabled(false);
+                btPrevious.setEnabled(false);
+                new Thread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(700);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        MainActivity.this.runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                btNext.setEnabled(true);
+                                btPrevious.setEnabled(true);
+
+                            }
+                        });
+                    }
+                }).start();
             }
         });
 

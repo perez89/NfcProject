@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.perez.schedulebynfc.MainActivity">
+
     <LinearLayout
         android:id="@+id/llTopMenu"
         android:layout_width="match_parent"
@@ -15,38 +16,40 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-           >
+            android:orientation="horizontal">
 
             <ImageButton
-                android:clickable="true"
                 android:id="@+id/ibPreviousMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rotate" />
+                android:background="@drawable/rotate"
+                android:clickable="true" />
 
-            <TextView
+            <TextSwitcher
+                android:id="@+id/tsSwitcher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="32dp"
-                android:id="@+id/tvCurrentDate"
-                android:layout_marginRight="32dp"
-                android:text="Set 2016" />
+                android:layout_marginRight="32dp">
+
+
+            </TextSwitcher>
 
             <ImageButton
-                android:clickable="true"
                 android:id="@+id/ibNextMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/ic_media_play" />
+                android:background="@android:drawable/ic_media_play"
+                android:clickable="true" />
         </LinearLayout>
     </LinearLayout>
+
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container"
-        android:layout_marginTop="14dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/llTopMenu" />
+        android:layout_below="@+id/llTopMenu"
+        android:layout_marginTop="14dp" />
 
 </RelativeLayout>
