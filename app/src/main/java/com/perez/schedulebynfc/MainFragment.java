@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +30,7 @@ import Support.LocalTime;
 /**
  * Created by User on 07/10/2016.
  */
-public class MainFragment extends Fragment implements Handler.Callback{
+public class MainFragment extends Fragment implements UiThreadCallback {
 
     private Button btCreateCalendar, btSimulateNFC;
     private View rootView;
@@ -39,7 +41,7 @@ public class MainFragment extends Fragment implements Handler.Callback{
     List<TextView> listWeekTotalTime;
     TextView[][] tvDayTime = new TextView[7][5];
     TextView[][] tvDay = new TextView[7][5];
-
+    private CustomHandlerThread mHandlerThread;
    // Handler mhandler;
 
     public static MainFragment newInstance(int year, int month) {
@@ -64,13 +66,29 @@ public class MainFragment extends Fragment implements Handler.Callback{
         System.out.println("initialization-1");
         initialization();
         System.out.println("initialization-2");
-        startWorker(year, month);
+        startHandlerThread(year, month);
+        //startWorker(year, month);
 
         //getCalendars();
         //getCalendars();
 
         return rootView;
 
+    }
+
+    private void startHandlerThread(int year, int month) {
+        mHandlerThread = new CustomHandlerThread("HandlerThread");
+        mHandlerThread.setUiThreadCallback(this);
+        mHandlerThread.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mHandlerThread != null){
+            mHandlerThread.quit();
+            mHandlerThread.interrupt();
+        }
     }
 
     private void startWorker(int year, int month) {
@@ -731,5 +749,69 @@ public class MainFragment extends Fragment implements Handler.Callback{
         }
 
 
+    }
+
+
+
+    public class CustomHandlerThread extends HandlerThread {
+
+        CustomHandler mHandler;
+        // use weak reference to avoid activity being leaked
+        private WeakReference<UiThreadCallback> mUiThreadCallback;
+
+        public CustomHandlerThread(String name){
+            super(name);
+        }
+
+        // Get a reference to worker thread's handler after looper is prepared
+        @Override
+        protected void onLooperPrepared() {
+            super.onLooperPrepared();
+            mHandler = new CustomHandler(getLooper());
+        }
+
+        // Used by UI thread to send message to worker thread's message queue
+        public void addMessage(int message){
+            if(mHandler != null) {
+                mHandler.sendEmptyMessage(message);
+            }
+        }
+
+        // The UiThreadCallback is used to send message to UI thread
+        public void setUiThreadCallback(UiThreadCallback callback){
+            this.mUiThreadCallback = new WeakReference<UiThreadCallback>(callback);
+        }
+
+        // Custom Handler. It pause the thread for some time and send a message back to UI Thread
+        private class CustomHandler extends Handler {
+            public CustomHandler(Looper looper) {
+                super(looper);
+            }
+
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 1:
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e){}
+                        if(mUiThreadCallback != null && mUiThreadCallback.get() != null){
+                            mUiThreadCallback.get().publishToUiThread(null);
+                        }
+                        break;
+                    case 2:
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e){}
+                        if(mUiThreadCallback != null && mUiThreadCallback.get() != null){
+                            mUiThreadCallback.get().publishToUiThread(null);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 }
