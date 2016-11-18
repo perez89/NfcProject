@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:card_view="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -29,111 +29,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="7">
+                        android:weightSum="6">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:weightSum="9">
-
-                            <TextView
-                                android:id="@+id/tvWeek0"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="  " />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Seg" />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Ter" />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Qua" />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Qui" />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Sex" />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Sab" />
-
-                            <TextView
-                                android:id="@+id/tvDayOfWeek7"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Dom" />
-
-                            <TextView
-                                android:id="@+id/tvTotalPartial"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="Total" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ll_vertical_w1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:id="@+id/ll_vertical_w0"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center_horizontal"
                             android:orientation="vertical"
@@ -143,6 +44,161 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek0"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Seg" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Ter" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Qua" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Qui" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Sex" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Sab" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvDayOfWeek7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true"
+                                    android:gravity="center"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Dom" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/tvTotalPartial"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+
+                                    android:layout_centerHorizontal="true"
+                                    android:paddingBottom="@dimen/padding_square"
+                                    android:paddingTop="@dimen/padding_square"
+                                    android:text="Total" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_vertical_w1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:weightSum="9">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
                                 <TextView
                                     android:id="@+id/tvWeek1"
                                     android:layout_width="wrap_content"
@@ -159,12 +215,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D1"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
 
                                         android:layout_width="wrap_content"
@@ -186,11 +243,11 @@
                                             android:id="@+id/tvFloatW1D1"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
@@ -202,12 +259,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D2"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -228,11 +286,11 @@
                                             android:id="@+id/tvFloatW1D2"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
@@ -244,12 +302,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D3"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -270,11 +329,11 @@
                                             android:id="@+id/tvFloatW1D3"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
@@ -286,12 +345,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D4"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D4"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -312,11 +372,11 @@
                                             android:id="@+id/tvFloatW1D4"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
@@ -328,12 +388,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D5"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D5"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -354,11 +415,11 @@
                                             android:id="@+id/tvFloatW1D5"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
@@ -370,12 +431,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D6"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D6"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -396,16 +458,15 @@
                                             android:id="@+id/tvFloatW1D6"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
                             </RelativeLayout>
-
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -413,12 +474,13 @@
                                 android:layout_weight="1">
 
                                 <android.support.v7.widget.CardView
-                                    android:layout_margin="2dp"
+                                    android:id="@+id/cvW1D7"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
                                     android:clickable="true"
-                                    android:id="@+id/cvW1D7"
                                     card_view:cardCornerRadius="4dp">
+
                                     <RelativeLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -439,42 +501,56 @@
                                             android:id="@+id/tvFloatW1D7"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_centerVertical="true"
                                             android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
                                             android:paddingBottom="@dimen/padding_square"
                                             android:paddingTop="@dimen/padding_square"
-                                            android:text="11" />
+                                            android:text="-" />
 
                                     </RelativeLayout>
                                 </android.support.v7.widget.CardView>
                             </RelativeLayout>
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical">
-                                >
 
-                                <TextView
-                                    android:id="@+id/tvTotalPartialW1H"
-                                    android:layout_width="wrap_content"
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW1Total"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:maxLength="4"
-                                    android:text="99h" />
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
 
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
 
-                            </LinearLayout>
+                                        <TextView
+                                            android:id="@+id/tvW1Total"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
 
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/ll_vertical_w2"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_horizontal"
@@ -485,6 +561,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
+
                                 <TextView
                                     android:id="@+id/tvWeek2"
                                     android:layout_width="wrap_content"
@@ -495,101 +572,346 @@
                                     android:text="W02" />
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/tvFloatW2D1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="21" />
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/tvFloatW2D2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="22" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW2D3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="23" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW2D4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="23" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW2D5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="23" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW2D6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="23" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW2D7"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="23" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical">
-                                >
-
-                                <TextView
-                                    android:id="@+id/tvTotalPartialW2H"
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:maxLength="4"
-                                    android:text="7h" />
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
 
+                                    <RelativeLayout
 
-                            </LinearLayout>
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2D7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW2D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW2D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW2Total"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvW2Total"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/ll_vertical_w3"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_horizontal"
@@ -600,6 +922,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
+
                                 <TextView
                                     android:id="@+id/tvWeek3"
                                     android:layout_width="wrap_content"
@@ -610,101 +933,345 @@
                                     android:text="W03" />
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/tvFloatW3D1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="31" />
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/tvFloatW3D2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="32" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW3D3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="33" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW3D4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="34" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW3D5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="35" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW3D6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="36" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW3D7"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="37" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical">
-                                >
-
-                                <TextView
-                                    android:id="@+id/tvTotalPartialW3H"
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:maxLength="4"
-                                    android:text="7h" />
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
 
+                                    <RelativeLayout
 
-                            </LinearLayout>
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3D7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW3D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW3D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW3Total"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvW3Total"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/ll_vertical_w4"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_horizontal"
@@ -715,6 +1282,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
+
                                 <TextView
                                     android:id="@+id/tvWeek4"
                                     android:layout_width="wrap_content"
@@ -725,103 +1293,346 @@
                                     android:text="W04" />
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/tvFloatW4D1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="41" />
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/tvFloatW4D2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="42" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW4D3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="43" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW4D4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="44" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW4D5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="45" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW4D6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="46" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW4D7"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="47" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical">
-                                >
-
-                                <TextView
-                                    android:id="@+id/tvTotalPartialW4H"
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
 
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:maxLength="4"
-                                    android:text="7h" />
+                                    <RelativeLayout
 
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
 
-                            </LinearLayout>
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4D7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW4D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW4D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW4Total"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvW4Total"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
 
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/ll_vertical_w5"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_horizontal"
@@ -832,6 +1643,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
+
                                 <TextView
                                     android:id="@+id/tvWeek5"
                                     android:layout_width="wrap_content"
@@ -842,226 +1654,357 @@
                                     android:text="W05" />
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/tvFloatW5D1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="51" />
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/tvFloatW5D2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="52" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW5D3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="53" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW5D4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="54" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW5D5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="55" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW5D6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="56" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW5D7"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="57" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical">
-                                >
-
-                                <TextView
-                                    android:id="@+id/tvTotalPartialW5H"
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
 
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:maxLength="4"
-                                    android:text="7h" />
+                                    <RelativeLayout
 
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
 
-                            </LinearLayout>
-                        </LinearLayout>
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
 
-                        <LinearLayout
-                            android:id="@+id/ll_vertical_w6"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical"
-                            android:weightSum="9">
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1">
-                                <TextView
-                                    android:id="@+id/tvWeek6"
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_centerHorizontal="true"
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:text="W06" />
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D2"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/tvFloatW6D1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="61" />
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/tvFloatW6D2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="62" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW6D3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="53" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW6D4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="54" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW6D5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="65" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW6D6"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="66" />
-
-                            <TextView
-                                android:id="@+id/tvFloatW6D7"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:paddingBottom="@dimen/padding_square"
-                                android:paddingTop="@dimen/padding_square"
-                                android:text="67" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_horizontal"
-                                android:orientation="vertical">
-                                >
-
-                                <TextView
-                                    android:id="@+id/tvTotalPartialW6H"
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
 
-                                    android:paddingBottom="@dimen/padding_square"
-                                    android:paddingTop="@dimen/padding_square"
-                                    android:maxLength="4"
-                                    android:text="7h" />
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
 
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
 
-                            </LinearLayout>
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D3"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D4"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D4"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D5"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D6"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5D7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvFloatDayW5D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:layout_alignParentTop="true"
+                                            android:layout_marginRight="4dp"
+                                            android:text="21"
+                                            android:textSize="@dimen/size_small_day" />
+
+                                        <TextView
+                                            android:id="@+id/tvFloatW5D7"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <android.support.v7.widget.CardView
+                                    android:id="@+id/cvW5Total"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="2dp"
+                                    android:clickable="true"
+                                    card_view:cardCornerRadius="4dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:clickable="true">
+
+                                        <TextView
+                                            android:id="@+id/tvW5Total"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_centerVertical="true"
+                                            android:paddingBottom="@dimen/padding_square"
+                                            android:paddingTop="@dimen/padding_square"
+                                            android:text="-" />
+
+                                    </RelativeLayout>
+                                </android.support.v7.widget.CardView>
+                            </RelativeLayout>
                         </LinearLayout>
+
+
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal">
+
                     <TextView
 
+                        android:id="@+id/tvTest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ola Luis Perez"
-                        android:id="@+id/tvTest"/>
+                        android:text="ola Luis Perez" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

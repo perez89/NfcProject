@@ -6,7 +6,6 @@ import android.content.Context;
 import java.util.List;
 
 import Support.LocalEventService;
-import Support.LocalPreferences;
 import Support.LocalTime;
 
 /**
@@ -31,13 +30,10 @@ public class RegisterNfc {
 
 
     /* Other methods protected by singleton-ness */
-    public synchronized void newNfcDetected(Context context, long calendarID) {
+    public void newNfcDetected(Context context, long calendarID, long currentMilleseconds) {
         startLocalEvent(context);
-        System.out.println("newNfcDetected");
-        if(!allow(context))
-        {
-            return;
-        }
+        //System.out.println("currentMilleseconds= "  + currentMilleseconds);
+
 
         listEventsDay = getEvents();
 
@@ -46,36 +42,25 @@ public class RegisterNfc {
             //lista de eventos para este dia está vazia
             //criar novo evento para este dia
             //checkYesterdayLastEvent();
-            System.out.println("is empty");
-            createEvent(0, calendarID);
+            System.out.println("Day event list empty");
+            System.out.println(LocalTime.getHour(currentMilleseconds) + " : " +LocalTime.getMinute(currentMilleseconds)+" - "+LocalTime.getDay(currentMilleseconds) + "/ " + LocalTime.getMonth(currentMilleseconds) + " / " + LocalTime.getYear(currentMilleseconds) );
+            createEvent(0, calendarID, currentMilleseconds);
 
         } else {
-            System.out.println("NOT is empty");
             //lista de eventos para este dia nao está vazia
             //analisar ultimo evento
             long eventID = isLastEventClose();
             if (eventID < 1) { //yes
                 //ultimo evento esta fechado e é necessário criar novo evento
                 //criar novo evento para este dia
-                System.out.println("NOT is empty - create event");
-                createEvent(listEventsDay.size(), calendarID);
+                System.out.println("LAST event close - create event");
+                createEvent(listEventsDay.size(), calendarID, currentMilleseconds);
             } else { //no
                 //ultimo evento está aberto, necessário fecha-lo
-                System.out.println("NOT is empty - close event");
+                System.out.println("LAST event open - close event");
                 closeEvent(eventID);
             }
         }
-    }
-
-    private boolean allow(Context context) {
-        LocalPreferences lPref = LocalPreferences.getInstance();
-        String tmp = lPref.getPreference("lastNfcDetected", context);
-        if(tmp == null || tmp.equals(""))
-            return false;
-
-        String time = "" + LocalTime.getCurrentMilliseconds();
-        lPref.setPreference("lastNfcDetected", time, context);
-        return true;
     }
 
     private void startLocalEvent(Context context) {
@@ -88,8 +73,8 @@ public class RegisterNfc {
 
 
 
-    private void createEvent(int i, long calendarID) {
-        lEventService.createNewEvent(i+1, calendarID);
+    private void createEvent(int i, long calendarID, long currentMilleseconds) {
+        lEventService.createNewEvent(i+1, calendarID, currentMilleseconds);
     }
 
     private void closeEvent(long eventID) {

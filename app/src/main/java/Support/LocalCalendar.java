@@ -9,13 +9,11 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
 
-import com.perez.schedulebynfc.MainActivity;
-
 import java.util.TimeZone;
 
+import static Support.LocalEventService.context;
 import static android.R.attr.id;
 import static com.perez.schedulebynfc.MainActivity.getDefaults;
-import static com.perez.schedulebynfc.MainActivity.setDefaults;
 
 /**
  * Created by User on 10/10/2016.
@@ -72,7 +70,7 @@ public class LocalCalendar {
         long idCalendar = Long.valueOf(uri.getLastPathSegment());
         System.out.println("Calendar created ID= " + idCalendar);
 
-        setIdCalendar(idCalendar, context);
+        setPrefsIdCalendar(idCalendar, context);
         return idCalendar;
     }
 
@@ -174,7 +172,18 @@ public class LocalCalendar {
         return id;
     }
 
+    private static long getIdCalendar() {
+        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, context);
+        if(value==null)
+            value="0";
+        return (Long.parseLong(value));
+    }
+
     public static void getEvents(Context context) {
+        long idCalendar = getIdCalendar();
+        if(idCalendar>0){
+
+
         String[] projection =
                 new String[]{
                         CalendarContract.Events._ID,
@@ -189,7 +198,7 @@ public class LocalCalendar {
                         CalendarContract.Events.CALENDAR_ID
                 };
         String selection = CalendarContract.Events.CALENDAR_ID + " = ?";
-        String[] selectionArgs = new String[]{Long.toString(MainActivity.getIdCalendar())};
+        String[] selectionArgs = new String[]{Long.toString(idCalendar)};
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
         }
@@ -210,17 +219,17 @@ public class LocalCalendar {
             String accType = calCursor.getString(6);
             int level = calCursor.getInt(7);
             String display = calCursor.getString(8);
-            long idCalendar = calCursor.getLong(9);
+            idCalendar = calCursor.getLong(9);
 
             System.out.println("id= " + id + "  | accName= " + accName + "  | start= " + start + "  | end= " + end +
                     "  | owner= " + owner + "  | vis= " + vis + "  | accType= " + accType + "  | level= " + level + "  | display= " + display + " | idCalendar= " + idCalendar);
         }
         calCursor.close();
+        }
     }
 
-    private static void setIdCalendar(long idCalendar, Context context){
-        String idCalendarValue = String.valueOf(idCalendar);
-        setDefaults("idCalendar_Key", idCalendarValue, context);
+    private static void setPrefsIdCalendar(long idCalendar, Context context){
+        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, ""+idCalendar, context);
     }
 
     public static long getIdCalendar(Context context){
