@@ -31,6 +31,9 @@ public class LocalPreferences {
 
     public String getPreference(String key, Context context) {
         String value;
+        if(context == null){
+            System.out.println("context==null");
+        }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         value = preferences.getString(key, null);
 
