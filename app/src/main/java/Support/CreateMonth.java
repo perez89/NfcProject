@@ -2,6 +2,7 @@ package Support;
 
 import android.content.Context;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
@@ -11,22 +12,22 @@ import java.util.List;
  */
 
 public class CreateMonth{
-    private Context context;
+    WeakReference<Context> mWeakRefContext;
     private MonthClass monthObj;
     long startWeeksToShow;
     int year;
     int month;
 
     public CreateMonth(Context c, int year, int month) {
-        this.context = c;
+        mWeakRefContext= new WeakReference<Context>(c);
         this.year = year;
         this.month = month;
-        LocalTime.WeeksToShow lTime;
+       // LocalTime.WeeksToShow lTime;
 
         try {
-            lTime = new LocalTime.WeeksToShow(year, month);
+            //lTime = new LocalTime.WeeksToShow(year, month);
             System.out.println("yearmonth = "+ year + " " + month);
-            startWeeksToShow = lTime.getStartMonth();
+            startWeeksToShow =  LocalTime.getInitialTimeOfLayout(year, month);
             System.out.println("startWeeksToShow = "+ startWeeksToShow);
 
         } catch (ParseException e) {
@@ -48,7 +49,7 @@ public class CreateMonth{
 
         monthObj = new MonthClass(year, month);
         WeekClass weekObject = createWeek(startWeeksToShow);
-        LocalEventService lEventService = new LocalEventService(context);
+        LocalEventService lEventService = new LocalEventService(mWeakRefContext);
         while(true){
             List<EventClass> listOfEvents = lEventService.getEventsForDay(startWeeksToShow, startWeeksToShow+86400000);
             DayClass dayObject = createDay(startWeeksToShow);

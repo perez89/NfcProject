@@ -13,7 +13,8 @@ import android.os.Bundle;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            startService(new Intent(getBaseContext(), NFCService.class));
+            //REMOVI O getBaseContext() - se algo correr mal voltar a substituir
+            startService(new Intent(getApplicationContext(), NFCService.class));
             //setContentView(R.layout.activity_nfc_activity);
             //Toast.makeText(this, "NfcActivity",                Toast.LENGTH_LONG).show();
             finish();

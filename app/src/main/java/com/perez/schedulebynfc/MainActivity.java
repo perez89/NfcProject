@@ -1,10 +1,6 @@
 package com.perez.schedulebynfc;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,10 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import java.text.DateFormatSymbols;
@@ -26,88 +22,113 @@ import Support.LocalPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
-    MainShowFragment[] ArrayOfEvents;
-    final String move_next = "next";
-    final String move_previous = "previous";
+  //  MainFragment[] ArrayOfEvents;
+    final String MOVE_NEXT = "next";
+    final String MOVE_PREVIOUS = "previous";
     //NfcAdapter nfcAdapter;
     CurrentTimeShow currentTimeToShow;
     TextSwitcher tsSwitcher;
    // TextView tvCurrentDate;
-    Bundle savedInstanceState;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         System.out.println("onCreate");
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            return;
+        }
         setContentView(R.layout.activity_main);
-        ArrayOfEvents = new MainShowFragment[3];
-        this.savedInstanceState = savedInstanceState;
-        initialization();
+       // ArrayOfEvents = new MainFragment[3];
+        initialization(savedInstanceState);
         //test(savedInstanceState);
     }
 
-    private void debug(MainShowFragment new_frag) {
 
-        System.out.println("debug-1");
-        if (findViewById(R.id.fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-            //MainShowFragment frag = ArrayOfEvents[1];
-            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            // Add the fragment to the 'fragment_container' FrameLayout
-            String tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
-
-            if(new_frag!=null)
-                fragmentTransaction.replace(R.id.fragment_container, new MainFragment(), tag).commit();
-        }
-        System.out.println("debug-2");
-    }
-
-    private String getTag(int month, int year) {
-        return ("frag_tag_" + month + "_" + year);
-    }
 
     void refreshFragment(String move) {
         System.out.println("refreshFragment");
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment frag_new = ArrayOfEvents[1];
+        //Fragment frag_new = ArrayOfEvents[1];
         String tag;
-        if (move.equals(move_previous)) {
+        MainFragment new_frag = MainFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+        String tag_new = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+
+        if (move.equals(MOVE_PREVIOUS)) {
             tag = getTag(currentTimeToShow.getMonth_next(), currentTimeToShow.getYear_next());
             Fragment frag = fragmentManager.findFragmentByTag(tag);
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right).remove(frag);
 
            // MainShowFragment frag_new = ArrayOfEvents[1];
-            tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container, frag_new, tag).commit();
+
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container, new_frag, tag_new).commit();
             changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'l');
         }
-        if (move.equals(move_next)) {
+        if (move.equals(MOVE_NEXT)) {
             tag = getTag(currentTimeToShow.getMonth_previous(), currentTimeToShow.getYear_previous());
             Fragment frag = fragmentManager.findFragmentByTag(tag);
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left).remove(frag);
 
             //MainShowFragment frag_new = ArrayOfEvents[1];
-            tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left).add(R.id.fragment_container, frag_new, tag).commit();
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left).add(R.id.fragment_container, new_frag, tag_new).commit();
             changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'd');
         }
-
-        System.out.println("refreshFragment-2");
+    }
+    private String getTag(int month, int year) {
+        return ("frag_tag_" + month + "_" + year);
     }
 
-    private void initialization() {
+    private void initialization(Bundle savedInstanceState) {
         System.out.println("initialization");
+        LocalCalendar.getCalendars(this);
         checkLocalCalendar();
+        //deleteCalendarUnderSameAccount(this);
+       // LocalCalendar.getCalendars(this);
         currentTimeToShow = CurrentTimeShow.getInstance();
-        loadFirstTime();
+
+        loadFragment();
+        laodBottomFrag();
+        //loadFirstTime();
         buttons();
         textViews();
         verifyNfc();
+    }
+
+    private void laodBottomFrag() {
+        if (findViewById(R.id.fragment_container_bottom) != null) {
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            //Fragment frag_new = ArrayOfEvents[1];
+            BottomFragment new_frag = BottomFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            String tag_new = "TAG_BOTTOM";
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container_bottom, new_frag, tag_new).commit();
+        }
+    }
+
+    private void loadFragment() {
+        if (findViewById(R.id.fragment_container) != null) {
+
+            //MainShowFragment frag = ArrayOfEvents[1];
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+          MainFragment new_frag = MainFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            String tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            if(new_frag!=null)
+                fragmentTransaction.replace(R.id.fragment_container, new_frag, tag).commit();
+        }
+        if (findViewById(R.id.fragment_container_bottom) != null) {
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            MainFragment new_frag = MainFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            String tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            if(new_frag!=null)
+                fragmentTransaction.replace(R.id.fragment_container, new_frag, tag).commit();
+        }
     }
 
     private void textViews() {
@@ -119,28 +140,60 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeTextViewMonth(final String month, final String year, char _dir) {
-        System.out.println("changeTextViewMonth");
-
-        System.out.println("current = " + month + " year=" + year);
         Animation in;
         Animation out;
-        switch(_dir){
+
+      /*  switch(_dir) {
+            case 'd':
+                out = AnimationUtils.loadAnimation(this,R.anim.slide_out_left);
+                tsSwitcher.setOutAnimation(out);
+                tsSwitcher.animate();
+                break;
+            case 'l':
+                out = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
+                tsSwitcher.setOutAnimation(out);
+                tsSwitcher.animate();
+                break;
+        }
+
+        switch(_dir) {
             case 'd':
                 in = AnimationUtils.loadAnimation(this,R.anim.slide_in_right);
-                out = AnimationUtils.loadAnimation(this,R.anim.slide_out_left);
                 tsSwitcher.setInAnimation(in);
-                tsSwitcher.setOutAnimation(out);
+                tsSwitcher.animate();
                 break;
             case 'l':
                 in = AnimationUtils.loadAnimation(this,R.anim.slide_in_left);
+                tsSwitcher.setInAnimation(in);
+                tsSwitcher.animate();
+                break;
+        }*/
+
+        /*
+        System.out.println("changeTextViewMonth");
+
+        System.out.println("current = " + month + " year=" + year);
+
+        switch(_dir){
+            case 'd':
+                in = AnimationUtils.loadAnimation(this,R.anim.slide_in_left);
                 out = AnimationUtils.loadAnimation(this,R.anim.slide_out_right);
+                tsSwitcher.setInAnimation(in);
+
+                tsSwitcher.setOutAnimation(out);
+                break;
+            case 'l':
+
+                in = AnimationUtils.loadAnimation(this,R.anim.slide_in_right);
+                out = AnimationUtils.loadAnimation(this,R.anim.slide_out_left);
+
                 tsSwitcher.setInAnimation(in);
                 tsSwitcher.setOutAnimation(out);
                 break;
             case 'n': ;
                 break;
 
-        }
+        }*/
         tsSwitcher.removeAllViews();
 
         tsSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
@@ -169,9 +222,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 currentTimeToShow.previousMonth();
                 System.out.println("move back<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                removeFrag("last");
-                refreshFragment(move_previous);
-                new LoadFragment().execute(currentTimeToShow.getMonth_previous(), currentTimeToShow.getYear_previous(), 0);
+
+                refreshFragment(MOVE_PREVIOUS);
 
                 btPrevious.setEnabled(false);
                 btNext.setEnabled(false);
@@ -209,9 +261,10 @@ public class MainActivity extends AppCompatActivity {
                 currentTimeToShow.nextMonth();
                 System.out.println("move next>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
-                removeFrag("first");
-                refreshFragment(move_next);
-                new LoadFragment().execute(currentTimeToShow.getMonth_next(), currentTimeToShow.getYear_next(), 2);
+               // removeFrag("first");
+                refreshFragment(MOVE_NEXT);
+                //new LoadFragment().execute(currentTimeToShow.getMonth_next(), currentTimeToShow.getYear_next(), 2);
+
                 btNext.setEnabled(false);
                 btPrevious.setEnabled(false);
                 new Thread(new Runnable() {
@@ -252,66 +305,41 @@ public class MainActivity extends AppCompatActivity {
         //}
     }
 
-    private void loadFirstTime() {
+   /* private void loadFirstTime() {
         new LoadFragment().execute(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView(), 1);
         new LoadFragment().execute(currentTimeToShow.getMonth_previous(), currentTimeToShow.getYear_previous(), 0);
         new LoadFragment().execute(currentTimeToShow.getMonth_next(), currentTimeToShow.getYear_next(), 2);
-    }
+    }*/
 
 
-    public void addFragment(int pos, MainShowFragment frag) {
-        ArrayOfEvents[pos] = frag;
-    }
+    //public void addFragment(int pos, MainFragment frag) {
+       // ArrayOfEvents[pos] = frag;
+    //}
 
-    private void removeFrag(String str) {
+   /* private void removeFrag(String str) {
         System.out.println("removeFrag");
         if (str.equals("first")) {
 
             // ArrayOfEvents[0]=null;
-            ArrayOfEvents[0] = ArrayOfEvents[1];
+     /*       ArrayOfEvents[0] = ArrayOfEvents[1];
             ArrayOfEvents[1] = ArrayOfEvents[2];
             ArrayOfEvents[2] = null;
+               */
+       // }
 
-        }
-
-        if (str.equals("last")) {
-            ArrayOfEvents[2] = ArrayOfEvents[1];
+    /*    if (str.equals("last")) {
+          /*  ArrayOfEvents[2] = ArrayOfEvents[1];
             ArrayOfEvents[1] = ArrayOfEvents[0];
-            ArrayOfEvents[0] = null;
-        }
+            ArrayOfEvents[0] = null; */
+     /*   }
     }
-
-
-    @Override
-    protected void onNewIntent(Intent newIntent) {
-        System.out.println("onNewIntent");
-      //  super.onNewIntent(newIntent);
-
-      //  if (newIntent.hasExtra(NfcAdapter.EXTRA_TAG))
-        //    Toast.makeText(this, "Nfc intent received", Toast.LENGTH_SHORT);
-    }
-
-    private void enableForgroundDispatchSystem() {
-        Intent newIntent = new Intent(this, MainActivity.class);
-        newIntent.addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0);
-        IntentFilter[] intentFilter = new IntentFilter[]{};
-     //   if (nfcAdapter != null)
-       //     nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilter, null);
-    }
-
-    private void disableForgroundDispatchSystem() {
-     //   if (nfcAdapter != null)
-       //     nfcAdapter.disableForegroundDispatch(this);
-    }
-
+*/
     @Override
     protected void onResume() {
         System.out.println("onResume");
         //enableForgroundDispatchSystem();
         super.onResume();
-        checkLocalCalendar();
+        //checkLocalCalendar();
     }
 
     @Override
@@ -323,15 +351,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkLocalCalendar() {
         System.out.println("checkLocalCalendar");
-        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, this);
-        if(value==null)
-            value="0";
-        long calendarID = Long.parseLong(value);
-        System.out.println("1 - calendarID= " + calendarID);
 
-        if (calendarID < 1)
-            calendarID = LocalCalendar.createCalendar(this);
-        System.out.println("2 - calendarID= " + calendarID);
+        if(!(LocalCalendar.getIdCalendar(getApplicationContext())>0)){
+            Context context = getApplicationContext();
+            CharSequence text = "There is a problem with the calendar!";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
+
 
     }
 
@@ -345,14 +374,14 @@ public class MainActivity extends AppCompatActivity {
         return tmp.getPreference(key, context);
     }
 
-    public class LoadFragment extends AsyncTask<Integer, Void, MainShowFragment> {
+   /* public class LoadFragment extends AsyncTask<Integer, Void, MainFragment> {
         int pos;
 
         @Override
-        protected MainShowFragment doInBackground(Integer... integers) {
+        protected MainFragment doInBackground(Integer... integers) {
             System.out.println("LoadFragment= "+ pos);
             pos = integers[2];
-            MainShowFragment frag = MainShowFragment.newInstance(integers[1],integers[0]);
+            MainFragment frag = MainFragment.newInstance(integers[1],integers[0]);
             Bundle bundle;
             bundle = new Bundle();
             bundle.putInt("year_CurrentView", integers[1]);
@@ -362,14 +391,14 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        protected void onPostExecute(MainShowFragment result) {
+        protected void onPostExecute(MainFragment result) {
             addFragment(pos, result);
             if(pos==1){
                 debug(result);
             }
         }
 
-    }
+    }*/
 
 
 }

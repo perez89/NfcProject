@@ -11,9 +11,7 @@ import android.support.v4.app.ActivityCompat;
 
 import java.util.TimeZone;
 
-import static Support.LocalEventService.context;
 import static android.R.attr.id;
-import static com.perez.schedulebynfc.MainActivity.getDefaults;
 
 /**
  * Created by User on 10/10/2016.
@@ -25,6 +23,7 @@ public class LocalCalendar {
     private static final String CALENDAR_DISPLAY_NAME = "Calendar NFC work";
 
     public static long createCalendar(Context context) {
+        System.out.println("createCalendar");
         ContentValues values = new ContentValues();
         values.put(
                 CalendarContract.Calendars.ACCOUNT_NAME,
@@ -70,9 +69,15 @@ public class LocalCalendar {
         long idCalendar = Long.valueOf(uri.getLastPathSegment());
         System.out.println("Calendar created ID= " + idCalendar);
 
-        setPrefsIdCalendar(idCalendar, context);
-        return idCalendar;
+        if (idCalendar > 0) {
+            setPrefsIdCalendar(idCalendar, context);
+            return idCalendar;
+        } else {
+            return 0;
+        }
+
     }
+
 
     public static long getCalendars(Context context) {
         String[] projection =
@@ -103,7 +108,7 @@ public class LocalCalendar {
                                 null,
                                 null,
                                 CalendarContract.Calendars._ID + " ASC");
-        while (calCursor.moveToNext()){
+        while (calCursor.moveToNext()) {
             long id = calCursor.getLong(0);
             String calendarDisplay = calCursor.getString(1);
             String location = calCursor.getString(2);
@@ -114,12 +119,14 @@ public class LocalCalendar {
             String owner = calCursor.getString(7);
 
             System.out.println("id= " + id + "  | calendarDisplay= " + calendarDisplay + "  | location= " + location + "  | type= " + accType +
-            "  | AccName= " + accName + "  | vis= " + vis + "  | calAccess= " + calAccess + "  | owner= " + owner);
+                    "  | AccName= " + accName + "  | vis= " + vis + "  | calAccess= " + calAccess + "  | owner= " + owner);
         }
         calCursor.close();
         return id;
     }
 
+
+    /*
     public static long verifyCalendar(Context context){
         System.out.println("1 - verify calendar - id -> ");
         long id = -1;
@@ -171,16 +178,36 @@ public class LocalCalendar {
         calCursor.close();
         return id;
     }
+*/
 
-    private static long getIdCalendar() {
-        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, context);
-        if(value==null)
-            value="0";
-        return (Long.parseLong(value));
+    public static void deleteCalendarUnderSameAccount(Context context) {
+        //Uri uri = context.getContentResolver().insert(builder.build(), values);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        context.getContentResolver().delete(CalendarContract.Calendars.CONTENT_URI, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME+"=?" , new String[] {CALENDAR_DISPLAY_NAME } );
+        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "" , context);
+    }
+
+    public static long getIdCalendar(Context c) {
+        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, c);
+        if(value==null || value.equals("")){
+            return LocalCalendar.createCalendar(c);
+        }else{
+            return Long.parseLong(value);
+        }
     }
 
     public static void getEvents(Context context) {
-        long idCalendar = getIdCalendar();
+        long idCalendar = getIdCalendar(context);
         if(idCalendar>0){
 
 
@@ -232,6 +259,7 @@ public class LocalCalendar {
         LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, ""+idCalendar, context);
     }
 
+    /*
     public static long getIdCalendar(Context context){
         String idCalendarValue;
         long idCalendar;
@@ -245,7 +273,7 @@ public class LocalCalendar {
 
         return -1;
     }
-
+*/
 
 
 }

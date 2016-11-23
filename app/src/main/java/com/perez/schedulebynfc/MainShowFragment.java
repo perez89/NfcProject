@@ -235,7 +235,8 @@ public class MainShowFragment extends Fragment {
         RelativeLayout rl_day = (RelativeLayout) rlDay.findViewById(R.id.rlDay);
 
 
-        final LocalEventService lEventService = new LocalEventService(context);
+        final LocalEventService lEventService = null;
+        //new LocalEventService(context);
         new Thread() {
             public void run() {
                 //System.out.println("local_week= " + week + "    local_day= " + day);

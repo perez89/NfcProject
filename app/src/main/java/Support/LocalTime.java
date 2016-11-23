@@ -15,6 +15,18 @@ public class LocalTime {
         return currentMillis;
     }
 
+    public static int getMilliSeconds(long millis) {
+        Calendar cl = Calendar.getInstance();
+        cl.setTimeInMillis(millis);  //here your time in miliseconds
+        return cl.get(Calendar.MILLISECOND);
+    }
+
+    public static int getSeconds(long millis) {
+        Calendar cl = Calendar.getInstance();
+        cl.setTimeInMillis(millis);  //here your time in miliseconds
+        return cl.get(Calendar.SECOND);
+    }
+
     public static int getMinute(long millis) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
@@ -42,7 +54,7 @@ public class LocalTime {
     public static int getWeekOfMonth(long millis) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
-        return cl.get(Calendar.WEEK_OF_YEAR);
+        return (cl.get(Calendar.WEEK_OF_YEAR)-1);
     }
 
     public static int getMonth(long millis) {
@@ -193,16 +205,11 @@ public class LocalTime {
         }
     }
 
-    public static class WeeksToShow {
-        private long startWeeksToShow;
-
-        public long getStartMonth() {
-            return startWeeksToShow;
-        }
-
-        public WeeksToShow(int year, int month) throws ParseException {
 
 
+
+        public static long getInitialTimeOfLayout(int year, int month) throws ParseException {
+            long startWeeksToShow;
             SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
             String startDateInString = "01-" + month + "-" + year + " 00:00:00";
 
@@ -222,8 +229,11 @@ public class LocalTime {
                 weekOfMonth--;
             startWeeksToShow = startWeeksToShow - (86400000*(weekOfMonth-1));
 
+            return startWeeksToShow;
         }
-    }
+
+
+
 
 
 

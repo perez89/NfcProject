@@ -3,6 +3,7 @@ package com.perez.schedulebynfc;
 
 import android.content.Context;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import Support.LocalEventService;
@@ -30,8 +31,9 @@ public class RegisterNfc {
 
 
     /* Other methods protected by singleton-ness */
-    public void newNfcDetected(Context context, long calendarID, long currentMilleseconds) {
-        startLocalEvent(context);
+    public void newNfcDetected(WeakReference<Context> mWeakRefContext, long calendarID, long currentMilleseconds) {
+
+        startLocalEvent(mWeakRefContext);
         //System.out.println("currentMilleseconds= "  + currentMilleseconds);
 
 
@@ -63,8 +65,9 @@ public class RegisterNfc {
         }
     }
 
-    private void startLocalEvent(Context context) {
-        lEventService = new LocalEventService(context);
+    private void startLocalEvent(WeakReference<Context> mWeakRefContext) {
+
+        lEventService = new LocalEventService(mWeakRefContext);
     }
 
     private void checkYesterdayLastEvent() {
@@ -73,8 +76,8 @@ public class RegisterNfc {
 
 
 
-    private void createEvent(int i, long calendarID, long currentMilleseconds) {
-        lEventService.createNewEvent(i+1, calendarID, currentMilleseconds);
+    private void createEvent(int i, long calendarID, long currentMilliseconds) {
+        lEventService.createNewEvent(i+1, calendarID, currentMilliseconds);
     }
 
     private void closeEvent(long eventID) {
