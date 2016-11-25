@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by User on 18/10/2016.
@@ -63,6 +64,10 @@ public class LocalTime {
         return cl.get(Calendar.MONTH);
     }
 
+
+
+
+
     public static int getYear(long millis) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
@@ -73,6 +78,14 @@ public class LocalTime {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
         return cl.get(Calendar.DAY_OF_WEEK);
+    }
+
+    public static int getNumberDaysMonth(int year, int month){
+        Calendar mycal = new GregorianCalendar(year, month, 1);
+
+        // Get the number of days in that month
+        int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH); // 28
+        return daysInMonth;
     }
 
     public static long getMillesecondsFromDate() {
@@ -110,42 +123,42 @@ public class LocalTime {
         }
 
         public void setYear(String year) {
-            if(year == null || year.equals(""))
+            if(year == null || year.equals("") || year.equals(""))
                 this.year = "1970";
             else
                 this.year=year;
         }
 
         public void setMonth(String month) {
-            if(month == null || month.equals(""))
+            if(month == null || month.equals("") || month.equals(""))
                 this.month = "01";
             else
                 this.month=month;
         }
 
         public void setDay(String day) {
-            if(day == null || day.equals(""))
+            if(day == null || day.equals("") || day.equals(""))
                 this.day = "01";
             else
                 this.day=day;
         }
 
         public void setHour(String hour) {
-            if(hour == null || hour.equals(""))
+            if(hour == null || hour.equals("") || hour.equals(""))
                 this.hour = "00";
             else
                 this.hour=hour;
         }
 
         public void setMinute(String minute) {
-            if(minute == null || minute.equals("00"))
+            if(minute == null || minute.equals("00") || minute.equals(""))
                 this.minute = "00";
             else
                 this.minute=minute;
         }
 
         public void setSeconds(String seconds) {
-            if(seconds == null || seconds.equals(""))
+            if(seconds == null || seconds.equals("") || seconds.equals(""))
                 this.seconds = "00";
             else
                 this.seconds=seconds;
@@ -153,11 +166,11 @@ public class LocalTime {
 
         public DateString(String year, String month, String day, String hour, String minute, String seconds) {
             setYear(year);
-            setYear(month);
-            setYear(day);
-            setYear(hour);
-            setYear(minute);
-            setYear(seconds);
+            setMonth(month);
+            setDay(day);
+            setHour(hour);
+            setMinute(minute);
+            setSeconds(seconds);
         }
 
         public DateString(int year, int month, int day, int hour, int minute, int seconds) {

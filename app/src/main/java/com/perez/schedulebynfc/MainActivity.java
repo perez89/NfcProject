@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             //Fragment frag_new = ArrayOfEvents[1];
-            BottomFragment new_frag = BottomFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            BottomFragment new_frag = BottomFragment.newInstance();
             String tag_new = "TAG_BOTTOM";
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container_bottom, new_frag, tag_new).commit();
         }

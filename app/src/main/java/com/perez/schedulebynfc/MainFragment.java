@@ -145,12 +145,21 @@ public class MainFragment extends Fragment  {
         }
     }
 
-    @Override
+/*    @Override
     public void onDestroy() {
         super.onDestroy();
         if(handlerThread != null){
             handlerThread.quit();
             handlerThread.interrupt();
+        }
+    }*/
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(myHandlerThread != null){
+            myHandlerThread.quit();
+            myHandlerThread.interrupt();
         }
     }
 
@@ -615,7 +624,7 @@ public class MainFragment extends Fragment  {
         }
     };
 
-    public class MyHandlerThread extends HandlerThread {
+    private class MyHandlerThread extends HandlerThread {
 
         private Handler handler;
 
