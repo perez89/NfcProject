@@ -245,7 +245,29 @@ public class LocalTime {
             return startWeeksToShow;
         }
 
+    public static String getFormatTime(long time){
+        if (time > 0) {
+            String durationString = "";
+            long numOfDays = 0;
+            if (time >= 86400000) {
+                numOfDays = time / 86400000;
+                numOfDays = numOfDays * 24;
+            }
 
+            int minutes = (int) ((time / (1000 * 60)) % 60);
+            int hours = (int) ((time / (1000 * 60 * 60)) % 24);
+            hours = (int) numOfDays + hours;
+            if (hours > 0 || minutes > 0) {
+                if (minutes < 10)
+                    durationString = hours + ".0" + minutes;
+                else
+                    durationString = hours + "." + minutes;
+
+            }
+            return durationString;
+        }
+        return "-";
+    }
 
 
 
