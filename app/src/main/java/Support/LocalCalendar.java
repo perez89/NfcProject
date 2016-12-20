@@ -193,70 +193,109 @@ public class LocalCalendar {
             return;
         }
 
-        context.getContentResolver().delete(CalendarContract.Calendars.CONTENT_URI, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME+"=?" , new String[] {CALENDAR_DISPLAY_NAME } );
-        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "" , context);
+        context.getContentResolver().delete(CalendarContract.Calendars.CONTENT_URI, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + "=?", new String[]{CALENDAR_DISPLAY_NAME});
+        // context.getContentResolver().delete(CalendarContract.Calendars.CONTENT_URI, CalendarContract.Calendars._ID+"=?" , new String[] {"9"} );
+
+        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "8", context);
+    }
+
+
+    public static long getIdCalendarFromCalendars(Context context) {
+        long id = 0;
+        String[] projection =
+                new String[]{
+                        CalendarContract.Calendars._ID,
+                        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
+                };
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+        }
+        String selection = CalendarContract.Calendars.NAME + " = ? ";
+        String[] selectionArgs = new String[]{NAME_CALENDAR};
+
+        Cursor calCursor =
+                context.getContentResolver().
+                        query(CalendarContract.Calendars.CONTENT_URI,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                CalendarContract.Calendars._ID + " ASC");
+        while (calCursor.moveToNext()) {
+            id = calCursor.getLong(0);
+            String calendarDisplay = calCursor.getString(1);
+            break;
+        }
+        calCursor.close();
+        return id;
     }
 
     public static long getIdCalendar(Context c) {
         String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, c);
-        if(value==null || value.equals("")){
+        if (value == null || value.equals("")) {
             return LocalCalendar.createCalendar(c);
-        }else{
+        } else {
             return Long.parseLong(value);
         }
     }
 
     public static void getEvents(Context context) {
         long idCalendar = getIdCalendar(context);
-        if(idCalendar>0){
+        if (idCalendar > 0) {
 
 
-        String[] projection =
-                new String[]{
-                        CalendarContract.Events._ID,
-                        CalendarContract.Events.ACCOUNT_NAME,
-                        CalendarContract.Events.DTSTART,
-                        CalendarContract.Events.DTEND,
-                        CalendarContract.Events.OWNER_ACCOUNT,
-                        CalendarContract.Events.VISIBLE,
-                        CalendarContract.Events.ACCOUNT_TYPE,
-                        CalendarContract.Events.CALENDAR_ACCESS_LEVEL,
-                        CalendarContract.Events.CALENDAR_DISPLAY_NAME,
-                        CalendarContract.Events.CALENDAR_ID
-                };
-        String selection = CalendarContract.Events.CALENDAR_ID + " = ?";
-        String[] selectionArgs = new String[]{Long.toString(idCalendar)};
+            String[] projection =
+                    new String[]{
+                            CalendarContract.Events._ID,
+                            CalendarContract.Events.ACCOUNT_NAME,
+                            CalendarContract.Events.DTSTART,
+                            CalendarContract.Events.DTEND,
+                            CalendarContract.Events.OWNER_ACCOUNT,
+                            CalendarContract.Events.VISIBLE,
+                            CalendarContract.Events.ACCOUNT_TYPE,
+                            CalendarContract.Events.CALENDAR_ACCESS_LEVEL,
+                            CalendarContract.Events.CALENDAR_DISPLAY_NAME,
+                            CalendarContract.Events.CALENDAR_ID
+                    };
+            String selection = CalendarContract.Events.CALENDAR_ID + " = ?";
+            String[] selectionArgs = new String[]{Long.toString(idCalendar)};
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-        }
-        Cursor calCursor =
-                context.getContentResolver().
-                        query(CalendarContract.Events.CONTENT_URI,
-                                projection,
-                                selection,
-                                selectionArgs,
-                                CalendarContract.Events._ID + " DESC");
-        while (calCursor.moveToNext()){
-            long id = calCursor.getLong(0);
-            String accName = calCursor.getString(1);
-            long start = calCursor.getLong(2);
-            long end = calCursor.getLong(3);
-            String owner = calCursor.getString(4);
-            int vis = calCursor.getInt(5);
-            String accType = calCursor.getString(6);
-            int level = calCursor.getInt(7);
-            String display = calCursor.getString(8);
-            idCalendar = calCursor.getLong(9);
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            }
+            Cursor calCursor =
+                    context.getContentResolver().
+                            query(CalendarContract.Events.CONTENT_URI,
+                                    projection,
+                                    selection,
+                                    selectionArgs,
+                                    CalendarContract.Events._ID + " DESC");
+            while (calCursor.moveToNext()) {
+                long id = calCursor.getLong(0);
+                String accName = calCursor.getString(1);
+                long start = calCursor.getLong(2);
+                long end = calCursor.getLong(3);
+                String owner = calCursor.getString(4);
+                int vis = calCursor.getInt(5);
+                String accType = calCursor.getString(6);
+                int level = calCursor.getInt(7);
+                String display = calCursor.getString(8);
+                idCalendar = calCursor.getLong(9);
 
-            System.out.println("id= " + id + "  | accName= " + accName + "  | start= " + start + "  | end= " + end +
-                    "  | owner= " + owner + "  | vis= " + vis + "  | accType= " + accType + "  | level= " + level + "  | display= " + display + " | idCalendar= " + idCalendar);
-        }
-        calCursor.close();
+                System.out.println("id= " + id + "  | accName= " + accName + "  | start= " + start + "  | end= " + end +
+                        "  | owner= " + owner + "  | vis= " + vis + "  | accType= " + accType + "  | level= " + level + "  | display= " + display + " | idCalendar= " + idCalendar);
+            }
+            calCursor.close();
         }
     }
 
-    private static void setPrefsIdCalendar(long idCalendar, Context context){
-        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, ""+idCalendar, context);
+    private static void setPrefsIdCalendar(long idCalendar, Context context) {
+        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "" + idCalendar, context);
     }
 
     /*

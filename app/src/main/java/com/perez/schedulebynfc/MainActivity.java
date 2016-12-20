@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initialization(Bundle savedInstanceState) {
         System.out.println("initialization");
-        LocalCalendar.getCalendars(this);
+        //LocalCalendar.getCalendars(this);
         checkLocalCalendar();
         //deleteCalendarUnderSameAccount(this);
        // LocalCalendar.getCalendars(this);
@@ -400,6 +400,11 @@ public class MainActivity extends AppCompatActivity {
 
     }*/
 
-
+    @Override
+    protected void onStop() {
+        System.out.println("onStop");
+        finish();
+        super.onStop();
+    }
 }
 

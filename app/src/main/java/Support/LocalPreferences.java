@@ -31,15 +31,20 @@ public class LocalPreferences {
 
     public String getPreference(String key, Context context) {
         String value;
-        if(context == null){
-            System.out.println("context==null");
-        }
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         value = preferences.getString(key, null);
 
         if(value != null)
             return value;
-        else
+        else {
+            long id = LocalCalendar.getIdCalendarFromCalendars(context);
+            if(id>0){
+                setPreference(LocalPreferences.ID_CALENDAR, "" + id, context);
+                return ""+id;
+            }
+
             return null;
+        }
     }
 }

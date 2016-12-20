@@ -261,6 +261,50 @@ public class LocalEventService {
             //Log.i(DEBUG_TAG, "Rows deleted: " + rows);
         }
     }
+    public List<EventClass> getEventsForDay(long startDay) {
+        if(context != null && context.get() != null) {
+            long idCalendar = LocalCalendar.getIdCalendar(context.get());
+            List<EventClass> listOfEvents = new ArrayList<EventClass>();
+            if (idCalendar > 0) {
+
+                String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+                String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "<= ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
+                String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(startDay), Long.toString(idCalendar)};
+
+                if (ActivityCompat.checkSelfPermission(context.get(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    //return ;
+                }
+
+                Cursor cursor = context.get().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
+
+                if (cursor == null || cursor.getCount() == 0) {
+
+                } else {
+
+                }
+                while (cursor.moveToNext()) {
+                    long id = cursor.getLong(0);
+                    long dtStart = cursor.getLong(1);
+                    long dtEnd = cursor.getLong(2);
+                    EventClass event;
+
+                    event = new EventClass(id, dtStart, dtEnd);
+                    listOfEvents.add(event);
+                }
+
+                cursor.close();
+            }
+            return listOfEvents;
+        }
+        return null;
+    }
 
     public List<EventClass> getEventsForDay(long startDay, long endDay) {
         if(context != null && context.get() != null) {

@@ -259,9 +259,9 @@ public class LocalTime {
             hours = (int) numOfDays + hours;
             if (hours > 0 || minutes > 0) {
                 if (minutes < 10)
-                    durationString = hours + ".0" + minutes;
+                    durationString = hours + ":0" + minutes;
                 else
-                    durationString = hours + "." + minutes;
+                    durationString = hours + ":" + minutes;
 
             }
             return durationString;

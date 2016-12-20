@@ -8,9 +8,9 @@
         android:id="@+id/cvExtraInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         app:cardCornerRadius="4dp">
 
         <LinearLayout
@@ -30,8 +30,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingBottom="4dp"
-                android:paddingRight="4dp"
                 android:paddingLeft="4dp"
+                android:paddingRight="4dp"
                 android:paddingTop="2dp"
                 android:weightSum="3">
 
@@ -61,14 +61,34 @@
                                 android:gravity="center"
                                 android:text="Day" />
 
-                            <TextView
-                                android:id="@+id/tvTimeCurrentDay"
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:maxLength="5"
-                                android:text="-"
-                                android:textAppearance="?android:attr/textAppearanceLarge" />
+                                android:orientation="horizontal"
+                               >
+                                <TextView
+                                    android:id="@+id/tvTimeCurrentDay"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:layout_weight="2"
+                                    android:gravity="right"
+                                    android:maxLength="5"
+                                    android:text="45:34"
+                                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                                <TextView
+                                    android:id="@+id/tvTimeCurrentDaySeconds"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+
+                                    android:layout_gravity="center_vertical"
+                                    android:maxLength="5"
+                                    android:text=":00"
+                                    android:textAppearance="?android:attr/textAppearanceSmall"
+                                   />
+                            </LinearLayout>
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
