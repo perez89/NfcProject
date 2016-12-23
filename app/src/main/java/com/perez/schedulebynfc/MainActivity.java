@@ -29,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
     CurrentTimeShow currentTimeToShow;
     TextSwitcher tsSwitcher;
    // TextView tvCurrentDate;
+    private int _day;
+    private int _week;
+    private int _weekOfmonth;
+    private int _month;
+    private int _year;
 
 
     @Override
@@ -339,7 +344,11 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("onResume");
         //enableForgroundDispatchSystem();
         super.onResume();
+        getCurrentData();
         //checkLocalCalendar();
+    }
+
+    private void getCurrentData() {
     }
 
     @Override
@@ -399,7 +408,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }*/
+   public int get_day() {
+       return _day;
+   }
 
+    public int get_week() {
+        return _week;
+    }
+
+    public int get_weekOfmonth() {
+        return _weekOfmonth;
+    }
+
+    public int get_month() {
+        return _month;
+    }
+
+    public int get_year() {
+        return _year;
+    }
     @Override
     protected void onStop() {
         System.out.println("onStop");

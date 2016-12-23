@@ -52,6 +52,7 @@ public class BottomFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         System.out.println(" MainFragment - OnCreate");
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
         rootView = inflater.inflate(R.layout.fragment_bottom, container, false);
         context = getActivity();
         viewsInitialization();
@@ -236,7 +237,8 @@ public class BottomFragment extends Fragment {
                     //if(listOfEvents.get())
                   //  System.out.println("dayweekyear2= " +month + " " +localWeek+ " " +localDay);
                     long totalDayTime = getTotalDayTime(listOfEvents);
-
+                    String xpto = getFormatTime(totalDayTime);
+                    System.out.println("xpto day= " + localDay + " | time= " + xpto);
 
                     if(day == localDay){
 
@@ -260,6 +262,8 @@ public class BottomFragment extends Fragment {
                     currentMonthTime = currentMonthTime +totalDayTime;
 
                     time = time + millisecondsDay;
+
+
                 }
                }
             //currentMonthTime=10000000;
