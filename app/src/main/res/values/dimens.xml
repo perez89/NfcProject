@@ -4,5 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="padding_square">4dp</dimen>
     <dimen name="size_small_day">7dp</dimen>
+    <dimen name="widget_padding">8dp</dimen>
+    <dimen name="widget_text_margin">2dp</dimen>
 
 </resources>

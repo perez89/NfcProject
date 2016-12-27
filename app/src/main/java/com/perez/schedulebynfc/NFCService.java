@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import static com.perez.schedulebynfc.MainActivity.getDefaults;
  */
 public class NFCService extends Service {
     private static String LAST_TIME_NFC_DETECTED = "lastTimeNfcDetected";
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -31,8 +33,8 @@ public class NFCService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-
+        // Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+System.out.println("NFC-1");
 
         NfcWorker _nfcWorker = new NfcWorker(getApplicationContext());
         _nfcWorker.start();
@@ -46,57 +48,62 @@ public class NFCService extends Service {
         private static Lock _lock = new ReentrantLock();
 
         public NfcWorker(Context applicationContext) {
-            mWeakRefContext= new WeakReference<Context>(applicationContext);
+            mWeakRefContext = new WeakReference<Context>(applicationContext);
 
         }
 
         @Override
         public void run() {
-   //         System.out.println("Thread running");
-            if(NfcWorker._lock.tryLock()){
-               // System.out.println("Inside lock");
-                try{
+            System.out.println("NFC-2");
+            //         System.out.println("Thread running");
+            if (NfcWorker._lock.tryLock()) {
+                System.out.println("NFC-3");
+                // System.out.println("Inside lock");
+                try {
                     long currentMilleseconds = LocalTime.getCurrentMilliseconds();
 
                     //We only the certain Hour:Minute, we need to remove the seconds and milliseconds
                     currentMilleseconds = removeSecondsAndMilliseconds(currentMilleseconds);
-                    if(verifyRangeBetweenNfcDetection(currentMilleseconds)) {
-                        //System.out.println("registerNFC");
+                    if (verifyRangeBetweenNfcDetection(currentMilleseconds)) {
+                        System.out.println("registerNFC");
                         registerNFC(currentMilleseconds);
 
                         //notificationRegistered(true, currentMilleseconds);
 
-                    }else{
+                    } else {
+                        customToast(mWeakRefContext, "Wait! 1 minute between events.");
+
+
                         //notificationNotRegistered();
                     }
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
 
-                }finally {
-                 //   System.out.println("finally unlock");
+                } finally {
+                       System.out.println("finally unlock");
                     NfcWorker._lock.unlock();
                 }
             }
             finishThread();
         }
 
-        private void finishThread(){
-            if(isAlive())
+        private void finishThread() {
+            if (isAlive())
                 interrupt();
         }
 
         private long removeSecondsAndMilliseconds(long currentMilliseconds) {
             long milliSeconds = getMilliSeconds(currentMilliseconds);
-            milliSeconds = milliSeconds + ((getSeconds(currentMilliseconds))*1000);
-            return currentMilliseconds-milliSeconds;
+            milliSeconds = milliSeconds + ((getSeconds(currentMilliseconds)) * 1000);
+            return currentMilliseconds - milliSeconds;
         }
 
         private void notificationRegistered(boolean inOrOut, long currentMilliseconds) {
             String content = "";
-            if(inOrOut){
+            if (inOrOut) {
                 content = "Entrada";
-            }else{
+            } else {
                 content = "Saida";
             }
             content = content + " : " + currentMilliseconds;
@@ -104,7 +111,7 @@ public class NFCService extends Service {
                     new NotificationCompat.Builder(mWeakRefContext.get())
                             .setSmallIcon(R.drawable.icon_nfc)
                             .setContentTitle("NFC Schedule")
-                            .setContentText(""+content);
+                            .setContentText("" + content);
 
             // Sets an ID for the notification
             int mNotificationId = 001;
@@ -119,14 +126,15 @@ public class NFCService extends Service {
 
         private boolean verifyRangeBetweenNfcDetection(long currentMilleseconds) {
             String value = getDefaults(LAST_TIME_NFC_DETECTED, mWeakRefContext.get());
-            long lastTimeNfcDetected=0;
+            long lastTimeNfcDetected = 0;
 
-            if(value != null  && !value.equals("")){
+            if (value != null && !value.equals("")) {
                 lastTimeNfcDetected = Long.parseLong(value);
             }
 
-            if(currentMilleseconds-lastTimeNfcDetected > 5000){
-                MainActivity.setDefaults(LAST_TIME_NFC_DETECTED, ""+currentMilleseconds, mWeakRefContext.get());
+            System.out.println("dif= " +(currentMilleseconds - lastTimeNfcDetected));
+            if (currentMilleseconds - lastTimeNfcDetected > 5000) {
+                MainActivity.setDefaults(LAST_TIME_NFC_DETECTED, "" + currentMilleseconds, mWeakRefContext.get());
                 return true;
             }
 
@@ -134,11 +142,24 @@ public class NFCService extends Service {
         }
 
         private void registerNFC(long currentMilleseconds) {
-        //    System.out.println("NFCService - registerNFC");
+            //    System.out.println("NFCService - registerNFC");
             long idCalendar = LocalCalendar.getIdCalendar(mWeakRefContext.get());
             System.out.println("registerNFC id= " + idCalendar);
             RegisterNfc.getInstance().newNfcDetected(mWeakRefContext, idCalendar, currentMilleseconds);
         }
+
+        private void customToast(final WeakReference<Context> mWeakRefContext, final String message){
+            Handler h = new Handler(mWeakRefContext.get().getMainLooper());
+
+            h.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mWeakRefContext.get(), message, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+
     }
 
 }

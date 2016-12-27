@@ -1,7 +1,12 @@
 package com.perez.schedulebynfc;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -48,6 +53,8 @@ public class RegisterNfc {
             System.out.println(LocalTime.getHour(currentMilleseconds) + " : " +LocalTime.getMinute(currentMilleseconds)+" - "+LocalTime.getDay(currentMilleseconds) + "/ " + LocalTime.getMonth(currentMilleseconds) + " / " + LocalTime.getYear(currentMilleseconds) );
             createEvent(0, calendarID, currentMilleseconds);
 
+            customToast(mWeakRefContext, "Entrada - NFC");
+
         } else {
             //lista de eventos para este dia nao está vazia
             //analisar ultimo evento
@@ -57,12 +64,35 @@ public class RegisterNfc {
                 //criar novo evento para este dia
                 System.out.println("LAST event close - create event");
                 createEvent(listEventsDay.size(), calendarID, currentMilleseconds);
+                customToast(mWeakRefContext, "Entrada - NFC");
             } else { //no
                 //ultimo evento está aberto, necessário fecha-lo
                 System.out.println("LAST event open - close event");
                 closeEvent(eventID);
+                customToast(mWeakRefContext, "Saida - NFC");
             }
         }
+        updateWidget(mWeakRefContext.get());
+    }
+
+    private void customToast(final WeakReference<Context> mWeakRefContext, final String message){
+        Handler h = new Handler(mWeakRefContext.get().getMainLooper());
+
+        h.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mWeakRefContext.get(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void updateWidget(Context c) {
+        Intent intent = new Intent(c,MyWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        System.out.println("call updatexpto");
+        int ids[] = AppWidgetManager.getInstance(c.getApplicationContext()).getAppWidgetIds(new ComponentName(c.getApplicationContext(), MyWidgetProvider.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        c.sendBroadcast(intent);
     }
 
     private void startLocalEvent(WeakReference<Context> mWeakRefContext) {
