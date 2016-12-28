@@ -149,12 +149,14 @@ System.out.println("NFC-1");
         }
 
         private void customToast(final WeakReference<Context> mWeakRefContext, final String message){
+
             Handler h = new Handler(mWeakRefContext.get().getMainLooper());
 
             h.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mWeakRefContext.get(), message, Toast.LENGTH_SHORT).show();
+                    if(mWeakRefContext != null && mWeakRefContext.get()!=null)
+                        Toast.makeText(mWeakRefContext.get(), message, Toast.LENGTH_SHORT).show();
                 }
             });
 

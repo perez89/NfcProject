@@ -1,10 +1,7 @@
 package com.perez.schedulebynfc;
 
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -72,7 +69,8 @@ public class RegisterNfc {
                 customToast(mWeakRefContext, "Saida - NFC");
             }
         }
-        updateWidget(mWeakRefContext.get());
+        updateWidget(mWeakRefContext);
+
     }
 
     private void customToast(final WeakReference<Context> mWeakRefContext, final String message){
@@ -86,13 +84,18 @@ public class RegisterNfc {
         });
 
     }
-    private void updateWidget(Context c) {
-        Intent intent = new Intent(c,MyWidgetProvider.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        System.out.println("call updatexpto");
-        int ids[] = AppWidgetManager.getInstance(c.getApplicationContext()).getAppWidgetIds(new ComponentName(c.getApplicationContext(), MyWidgetProvider.class));
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
-        c.sendBroadcast(intent);
+    private void updateWidget(WeakReference<Context> mWeakRefContext) {
+        new MyWidgetProvider.WidgetUpdate().Update(mWeakRefContext);
+     /*   if(mWeakRefContext != null && mWeakRefContext.get() != null){
+            Context c = mWeakRefContext.get();
+            Intent intent = new Intent(c,MyWidgetProvider.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            System.out.println("call updatexpto");
+            int ids[] = AppWidgetManager.getInstance(c.getApplicationContext()).getAppWidgetIds(new ComponentName(c.getApplicationContext(), MyWidgetProvider.class));
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+            c.sendBroadcast(intent);
+        }*/
+
     }
 
     private void startLocalEvent(WeakReference<Context> mWeakRefContext) {

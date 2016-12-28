@@ -24,26 +24,33 @@ import Support.EventClass;
 import Support.LocalEventService;
 import Support.LocalTime;
 
+import static Support.LocalTime.getCurrentMilliseconds;
+import static Support.LocalTime.getYear;
+
 
 /**
  * Created by User on 07/10/2016.
  */
-public class MainFragment extends Fragment  {
+public class MainFragment extends Fragment {
 
     private Button btCreateCalendar, btSimulateNFC;
     private View rootView;
-   // Worker _workerThread;
+    // Worker _workerThread;
     private Context context;
     List<TextView> listDaysOfTheWeek;
     List<TextView> listWeekHeader;
     List<TextView> listWeekTotalTime;
-    TextView[][] tvDayTime = new TextView[7][5];
+
+    TextView tvMinTime, tvMaxTime, tvAverageTime, tvMonthTime;
+    TextView[][] tvDayTime = new TextView[7][6];
     //static TextView[][] tvDay = new TextView[7][5];
-    static TextView[][] tvDay = new TextView[7][5];
+    static TextView[][] tvDay = new TextView[7][6];
     Runnable progressThread;
     //MyHandler myHandler;
     HandlerThread handlerThread;
 
+    int year;
+    int month;
 
 
     private MyHandler handler = new MyHandler();
@@ -69,19 +76,35 @@ public class MainFragment extends Fragment  {
 
         System.out.println(" MainFragment - OnCreate");
         rootView = inflater.inflate(R.layout.fragment_show_main_save, container, false);
-        context= getActivity();
+        context = getActivity();
         Bundle b = getArguments();
-        int year = b.getInt("year_CurrentView");
-        int month = b.getInt("month_CurrentView");
+        year = b.getInt("year_CurrentView");
+        month = b.getInt("month_CurrentView");
+        currentDay();
         month++;
         initialization();
-        setHandlerAndThread(year, month);
+        setHandlerAndThread();
 
         return rootView;
 
     }
 
-    private void setHandlerAndThread(int year, int month) {
+    private void currentDay() {
+        long milli = getCurrentMilliseconds();
+        int secs = LocalTime.getSeconds(milli);
+        int week = LocalTime.getWeekOfMonth(milli);
+        int year = getYear(milli);
+
+        int month = LocalTime.getMonth(milli);
+        int day = LocalTime.getDay(milli);
+
+        System.out.println(year + " xpto " + month);
+
+        int numOfDays = LocalTime.getNumberDaysMonth(year, month);
+        LocalTime.DateString dataString = new LocalTime.DateString(year + "", (month + 1) + "", "", "", "", "");
+    }
+
+    private void setHandlerAndThread() {
         myHandlerThread = new MyHandlerThread("myHandlerThread");
         myHandlerThread.start();
         myHandlerThread.prepareHandler();
@@ -92,35 +115,35 @@ public class MainFragment extends Fragment  {
         }
     }
 
-    class MyHandler extends Handler{
+    class MyHandler extends Handler {
 
         // simply show a toast message
         @Override
         public void handleMessage(Message msg) {
             WeakReference<Context> mWeakRefContext = (WeakReference<Context>) msg.obj;
             super.handleMessage(msg);
-            switch(msg.what){
+            switch (msg.what) {
                 case 0:
                     System.out.println("0000 ");
-                    int day =  msg.getData().getInt("dayPosition");
-                    String dayOfWeekValue =  msg.getData().getString("dayValue");
-                    if(mWeakRefContext != null && mWeakRefContext.get() != null)
+                    int day = msg.getData().getInt("dayPosition");
+                    String dayOfWeekValue = msg.getData().getString("dayValue");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null)
                         setTvDaysOfTheWeek(day, dayOfWeekValue);
                     break;
                 case 1:
                     System.out.println("1111 ");
-                    int week =  msg.getData().getInt("weekPosition");
-                    String weekValue =  msg.getData().getString("weekValue");
-                    if(mWeakRefContext != null && mWeakRefContext.get() != null)
+                    int week = msg.getData().getInt("weekPosition");
+                    String weekValue = msg.getData().getString("weekValue");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null)
                         setTvWeekHeader(week, weekValue);
                     break;
                 case 2:
                     System.out.println("2222 ");
-                    int dayPos =  msg.getData().getInt("dayPosition");
-                    int weekPos =  msg.getData().getInt("weekPosition");
-                    String timeValue =  msg.getData().getString("timeValue");
-                    String dayValue =  msg.getData().getString("dayValue");
-                    if(mWeakRefContext != null && mWeakRefContext.get() != null){
+                    int dayPos = msg.getData().getInt("dayPosition");
+                    int weekPos = msg.getData().getInt("weekPosition");
+                    String timeValue = msg.getData().getString("timeValue");
+                    String dayValue = msg.getData().getString("dayValue");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         setTvDayTime(dayPos, weekPos, timeValue);
                         setTvDay(dayPos, weekPos, dayValue);
                     }
@@ -128,18 +151,38 @@ public class MainFragment extends Fragment  {
                     break;
                 case 3:
                     System.out.println("3333 ");
-                    int weekPosition =  msg.getData().getInt("weekPosition");
-                    String totalTimeValue =  msg.getData().getString("totalTimeValue");
+                    int weekPosition = msg.getData().getInt("weekPosition");
+                    String totalTimeValue = msg.getData().getString("totalTimeValue");
                     //TODO - verificar se é == "-"
-                    if(mWeakRefContext != null && mWeakRefContext.get() != null){
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
 
-                            setTvWeekTotalTime(weekPosition, totalTimeValue);
+                        setTvWeekTotalTime(weekPosition, totalTimeValue);
                     }
 
                     break;
                 case 4:
-                    //  if(mWeakRefContext != null && mWeakRefContext.get() != null)
-
+                    String min = msg.getData().getString("minTime");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                       setMinTime(min);
+                    }
+                    break;
+                case 5:
+                    String max = msg.getData().getString("maxTime");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        setMaxTime(max);
+                    }
+                    break;
+                case 6:
+                    String average = msg.getData().getString("averageTime");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        setAverageTime(average);
+                    }
+                    break;
+                case 7:
+                    String month = msg.getData().getString("monthTime");
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        setMonthTime(month);
+                    }
                     break;
             }
         }
@@ -157,7 +200,7 @@ public class MainFragment extends Fragment  {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(myHandlerThread != null){
+        if (myHandlerThread != null) {
             myHandlerThread.quit();
             myHandlerThread.interrupt();
         }
@@ -174,29 +217,56 @@ public class MainFragment extends Fragment  {
         initializationDays();
         initializationDaysTime();
         initializationTotalWeekTime();
+        initializationAditionalInfo();
+    }
+
+    private void initializationAditionalInfo() {
+        tvMinTime = (TextView) rootView.findViewById(R.id.tvMinTime);
+        tvMaxTime = (TextView) rootView.findViewById(R.id.tvMaxTime);
+        tvAverageTime = (TextView) rootView.findViewById(R.id.tvAverageTime);
+        tvMonthTime = (TextView) rootView.findViewById(R.id.tvMonthTime);
+    }
+
+    private void setMinTime(String text){
+        tvMinTime.setText(""+text);
+    }
+
+    private void setMaxTime(String text){
+        tvMaxTime.setText(""+text);
+    }
+
+    private void setAverageTime(String text){
+        tvAverageTime.setText(""+text);
+    }
+
+    private void setMonthTime(String text){
+        tvMonthTime.setText(""+text);
     }
 
     private void initializationTotalWeekTime() {
         listWeekTotalTime = new ArrayList<TextView>();
 
-        TextView tvDay = (TextView)rootView.findViewById(R.id.tvW1Total);
+        TextView tvDay = (TextView) rootView.findViewById(R.id.tvW1Total);
         listWeekTotalTime.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvW2Total);
+        tvDay = (TextView) rootView.findViewById(R.id.tvW2Total);
         listWeekTotalTime.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvW3Total);
+        tvDay = (TextView) rootView.findViewById(R.id.tvW3Total);
         listWeekTotalTime.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvW4Total);
+        tvDay = (TextView) rootView.findViewById(R.id.tvW4Total);
         listWeekTotalTime.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvW5Total);
+        tvDay = (TextView) rootView.findViewById(R.id.tvW5Total);
+        listWeekTotalTime.add(tvDay);
+
+        tvDay = (TextView) rootView.findViewById(R.id.tvW6Total);
         listWeekTotalTime.add(tvDay);
     }
 
-    void setTvWeekTotalTime(int week, String value){
-        listWeekTotalTime.get(week).setText(""+value);
+    void setTvWeekTotalTime(int week, String value) {
+        listWeekTotalTime.get(week).setText("" + value);
     }
 
     private void initializationDaysTime() {
@@ -245,9 +315,19 @@ public class MainFragment extends Fragment  {
         tvDayTime[5][4] = (TextView) rootView.findViewById(R.id.tvFloatW5D6);
         tvDayTime[6][4] = (TextView) rootView.findViewById(R.id.tvFloatW5D7);
 
+        //week six
+        tvDayTime[0][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D1);
+        tvDayTime[1][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D2);
+        tvDayTime[2][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D3);
+        tvDayTime[3][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D4);
+        tvDayTime[4][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D5);
+        tvDayTime[5][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D6);
+        tvDayTime[6][5] = (TextView) rootView.findViewById(R.id.tvFloatW6D7);
+
     }
-    void setTvDayTime(int day, int week, String value){
-        tvDayTime[day][week].setText(""+value);
+
+    void setTvDayTime(int day, int week, String value) {
+        tvDayTime[day][week].setText("" + value);
     }
 
     private void initializationDays() {
@@ -296,70 +376,82 @@ public class MainFragment extends Fragment  {
         tvDay[5][4] = (TextView) rootView.findViewById(R.id.tvFloatDayW5D6);
         tvDay[6][4] = (TextView) rootView.findViewById(R.id.tvFloatDayW5D7);
 
+        //week five
+        tvDay[0][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D1);
+        tvDay[1][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D2);
+        tvDay[2][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D3);
+        tvDay[3][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D4);
+        tvDay[4][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D5);
+        tvDay[5][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D6);
+        tvDay[6][5] = (TextView) rootView.findViewById(R.id.tvFloatDayW6D7);
+
     }
 
-    static void setTvDay(int day, int week, String value){
-        tvDay[day][week].setText(""+value);
+    static void setTvDay(int day, int week, String value) {
+        tvDay[day][week].setText("" + value);
     }
 
     private void initializationWeekHeader() {
         listWeekHeader = new ArrayList<TextView>();
-        TextView tvDay = (TextView)rootView.findViewById(R.id.tvWeek1);
+        TextView tvDay = (TextView) rootView.findViewById(R.id.tvWeek1);
         listWeekHeader.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvWeek2);
+        tvDay = (TextView) rootView.findViewById(R.id.tvWeek2);
         listWeekHeader.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvWeek3);
+        tvDay = (TextView) rootView.findViewById(R.id.tvWeek3);
         listWeekHeader.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvWeek4);
+        tvDay = (TextView) rootView.findViewById(R.id.tvWeek4);
         listWeekHeader.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvWeek5);
+        tvDay = (TextView) rootView.findViewById(R.id.tvWeek5);
         listWeekHeader.add(tvDay);
 
-        tvDay=null;
+        tvDay = (TextView) rootView.findViewById(R.id.tvWeek6);
+        listWeekHeader.add(tvDay);
+
+        tvDay = null;
     }
 
-    void setTvWeekHeader(int week, String value){
-        listWeekHeader.get(week).setText(""+value);
+    void setTvWeekHeader(int week, String value) {
+        listWeekHeader.get(week).setText("" + value);
     }
 
     private void initializationDaysOfTheWeek() {
         listDaysOfTheWeek = new ArrayList<TextView>();
-        TextView tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek0);
+        TextView tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek0);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek1);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek1);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek2);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek2);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek3);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek3);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek4);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek4);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek5);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek5);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek6);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek6);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvDayOfWeek7);
+        tvDay = (TextView) rootView.findViewById(R.id.tvDayOfWeek7);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay = (TextView)rootView.findViewById(R.id.tvTotalPartial);
+        tvDay = (TextView) rootView.findViewById(R.id.tvTotalPartial);
         listDaysOfTheWeek.add(tvDay);
 
-        tvDay=null;
+        tvDay = null;
     }
 
-    void setTvDaysOfTheWeek(int dayOfWeek, String value){
-        listDaysOfTheWeek.get(dayOfWeek).setText(""+value);
+    void setTvDaysOfTheWeek(int dayOfWeek, String value) {
+        listDaysOfTheWeek.get(dayOfWeek).setText("" + value);
     }
 
     @Override
@@ -372,30 +464,96 @@ public class MainFragment extends Fragment  {
         private WeakReference<Context> mWeakRefContext;
         long timeStartOfWeek;
         Handler handler;
+        long min_time = -1;
+        long max_time = 0;
+        long average_time = 0;
+        int cont = 0;
 
         public CustomRunnable(Context context, Handler h, int year, int month) throws ParseException {
             handler = h;
-            System.out.println(year + " xpto "+ month);
+            System.out.println(year + " xpto " + month);
             this.mWeakRefContext = new WeakReference<Context>(context);
-            timeStartOfWeek =  LocalTime.getInitialTimeOfLayout(year, month);
+            timeStartOfWeek = LocalTime.getInitialTimeOfLayout(year, month);
         }
-        @ Override
+
+        @Override
         public void run() {
             //Main task execution logic here
             loadColumns();
+            loadAdditionalInfo();
         }
 
+        private void loadAdditionalInfo() {
+            loadMinTime();
+            loadMaxTime();
+            loadMonthTime();
+            loadAverageTime();
+
+        }
+
+        private void loadMinTime() {
+            Message message = handler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putString("minTime", LocalTime.getFormatTime(min_time)); // for example
+            message.setData(b);
+            message.obj = mWeakRefContext;
+            message.what = 4;
+            handler.sendMessage(message);
+        }
+
+        private void loadMaxTime() {
+            Message message = handler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putString("maxTime", LocalTime.getFormatTime(max_time)); // for example
+            message.setData(b);
+            message.obj = mWeakRefContext;
+            message.what = 5;
+            handler.sendMessage(message);
+        }
+
+        private void loadAverageTime() {
+            Message message = handler.obtainMessage();
+            Bundle b = new Bundle();
+            if(cont>0)
+                average_time=average_time/cont;
+            b.putString("averageTime", LocalTime.getFormatTime(average_time)); // for example
+            message.setData(b);
+            message.obj = mWeakRefContext;
+            message.what = 6;
+            handler.sendMessage(message);
+        }
+
+        private void loadMonthTime() {
+            Message message = handler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putString("monthTime", LocalTime.getFormatTime(average_time)); // for example
+            message.setData(b);
+            message.obj = mWeakRefContext;
+            message.what = 7;
+            handler.sendMessage(message);
+        }
+
+        private void setAdditionalInfo(long _time) {
+            cont++;
+            if(_time < min_time || min_time==-1)
+                min_time=_time;
+            if(timeStartOfWeek > max_time)
+                max_time=_time;
+
+            average_time = average_time + _time;
+        }
         public void loadColumns() {
             System.out.println("loadColumns");
 
             //Log.i("while null", "Not init yet"); //It keeps on looping here
             long week_milli = 604800000;
             createLeftColumn();
-            for (int week = 0; week < 5; week++) {
-                    final long initial_week_time = timeStartOfWeek + (week * week_milli);
-                    createWeekColumns(week, initial_week_time);
+            for (int week = 0; week < 6; week++) {
+                final long initial_week_time = timeStartOfWeek + (week * week_milli);
+                createWeekColumns(week, initial_week_time);
             }
         }
+
         private void createLeftColumn() {
             System.out.println("createLeftColumn");
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
@@ -415,9 +573,9 @@ public class MainFragment extends Fragment  {
                 Bundle b = new Bundle();
 
                 b.putInt("dayPosition", i); // for example
-                if (i == 0){
+                if (i == 0) {
                     b.putString("dayValue", " "); // for example
-                }else if(i == 8){
+                } else if (i == 8) {
                     b.putString("dayValue", "Total"); // for example
                 } else {
                     if (i == 7) {
@@ -429,28 +587,29 @@ public class MainFragment extends Fragment  {
                     }
                 }
                 message.setData(b);
-                message.obj= mWeakRefContext;
+                message.obj = mWeakRefContext;
                 message.what = 0;
                 handler.sendMessage(message);
                 // message.sendToTarget();
             }
         }
 
-        private void  createWeekColumns(int week, long timeStartOfWeek) {
+        private void createWeekColumns(int week, long timeStartOfWeek) {
             System.out.println("createWeekColumns");
             long iniWeek;
             long total = 0;
 
             createHeaderColumns(week, timeStartOfWeek);
             long dayTime = 86400000;
-            long totalWeekDuration=0;
+            long totalWeekDuration = 0;
             System.out.println("createWeekColumns");
+
             for (int day = 0; day < 7; day++) {
 
-               // createHeaderColumns(week, timeStartOfWeek, layout); //-> so para verificar que esta correto
+                // createHeaderColumns(week, timeStartOfWeek, layout); //-> so para verificar que esta correto
                 iniWeek = timeStartOfWeek + (dayTime * day);
 
-               totalWeekDuration = totalWeekDuration + createDays(week, day, iniWeek);
+                totalWeekDuration = totalWeekDuration + createDays(week, day, iniWeek);
 
             }
             createTotalWeekHour(week, totalWeekDuration);
@@ -468,27 +627,38 @@ public class MainFragment extends Fragment  {
 
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
+            int year_local = LocalTime.getYear(timeStartOfWeek);
+            int month_local = LocalTime.getMonth(timeStartOfWeek);
+            int day_local = LocalTime.getDay(timeStartOfWeek);
+            month_local++;
+            System.out.println("compare?= " + year_local +"="+year_local + " " + month_local+"="+month + " timeStartOfWeek=" + dayObject.getTotalDuration());
+            long milli = getCurrentMilliseconds();
+            int day = LocalTime.getDay(milli);
+
+            if(year_local == year && month_local == month && day_local<day && dayObject.getTotalDuration()>0){
+                setAdditionalInfo(dayObject.getTotalDuration());
+            }
 
             b.putInt("dayPosition", local_day); // for example
             b.putInt("weekPosition", week); // for example
-            b.putString("dayValue","" + LocalTime.getDay(timeStartOfWeek)); // for example
+            b.putString("dayValue", "" + day_local); // for example
             b.putString("timeValue", dayObject.toString()); // for example
             message.setData(b);
 
-            message.obj= mWeakRefContext;
-            message.what=2;
+            message.obj = mWeakRefContext;
+            message.what = 2;
             handler.sendMessage(message);
 
 
             return dayObject.getTotalDuration();
-            }
+        }
 
-            private void  createHeaderColumns(int pos, long timeStartOfWeek) {
+        private void createHeaderColumns(int pos, long timeStartOfWeek) {
+            //System.out.println("createHeaderColumns= " + timeStartOfWeek);
 
-
-                // System.out.println(timeStartOfWeek + " >>>> " + pos + " >>>> " + timeStartOfWeek);
-            int week = LocalTime.getWeekOfMonth(timeStartOfWeek);
-                //week= week-1;
+            // System.out.println(timeStartOfWeek + " >>>> " + pos + " >>>> " + timeStartOfWeek);
+            int week = LocalTime.getWeekOfYear(timeStartOfWeek);
+            //week= week-1;
 
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
@@ -497,13 +667,13 @@ public class MainFragment extends Fragment  {
             b.putInt("weekPosition", pos); // for example
 
             if (week < 10)
-                b.putString("weekValue",("W0" + week));
+                b.putString("weekValue", ("W0" + week));
             else
-                b.putString("weekValue",("W" + week));
+                b.putString("weekValue", ("W" + week));
             message.setData(b);
-                message.obj= mWeakRefContext;
-                message.what = 1;
-                handler.sendMessage(message);
+            message.obj = mWeakRefContext;
+            message.what = 1;
+            handler.sendMessage(message);
           /*  ll_Week.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -519,7 +689,7 @@ public class MainFragment extends Fragment  {
                 }
             });
 */
-          }
+        }
 
 
         public class DayClassTMP {
@@ -547,11 +717,11 @@ public class MainFragment extends Fragment  {
                 int minutes = (int) ((totalDuration / (1000 * 60)) % 60);
                 int hours = (int) ((totalDuration / (1000 * 60 * 60)) % 24);
 
-                long numOfHours= 0;
+                long numOfHours = 0;
                 if (totalDuration >= 86400000) {
                     numOfHours = totalDuration / 86400000;
                     numOfHours = numOfHours * 24;
-                    hours = hours + (int)numOfHours;
+                    hours = hours + (int) numOfHours;
                 }
 
                 //if(totalDuration>86400000)
@@ -577,7 +747,7 @@ public class MainFragment extends Fragment  {
             }
         }
 
-        private  void createTotalWeekHour(int week, long duration) {
+        private void createTotalWeekHour(int week, long duration) {
             System.out.println("createTotalWeekHour.duration()= " + duration);
             //long totalDuration = listOfWeeks.get(col - 1).getTotalHours();
             String durationString = "-";
@@ -605,13 +775,13 @@ public class MainFragment extends Fragment  {
                 b.putString("totalTimeValue", durationString); // for example
                 message.setData(b);
 
-            }else{
+            } else {
                 b.putString("totalTimeValue", durationString); // for example
                 message.setData(b);
             }
             b.putInt("weekPosition", week); // for example
-            message.obj= mWeakRefContext;
-            message.what=3;
+            message.obj = mWeakRefContext;
+            message.what = 3;
             handler.sendMessage(message);
 
 
@@ -622,7 +792,11 @@ public class MainFragment extends Fragment  {
             //          setTvTotalHoursWeek(col, durationString, layout);
 
         }
-    };
+    }
+
+
+
+    ;
 
     private class MyHandlerThread extends HandlerThread {
 
@@ -632,14 +806,31 @@ public class MainFragment extends Fragment  {
             super(name);
         }
 
-        public void postTask(Runnable task){
+        public void postTask(Runnable task) {
             handler.post(task);
         }
 
-        public void prepareHandler(){
+        public void prepareHandler() {
             handler = new Handler(getLooper());
         }
     }
 
+    private class CurrentDay {
+        private int x;
+        private int y;
+
+        public CurrentDay(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+    }
 
 }

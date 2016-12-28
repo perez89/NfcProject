@@ -48,6 +48,8 @@ public class LocalTime {
 
     public static int getWeekOfYear(long millis) {
         Calendar cl = Calendar.getInstance();
+        //cl.setFirstDayOfWeek(Calendar.MONDAY);
+        cl.setMinimalDaysInFirstWeek(4);
         cl.setTimeInMillis(millis);  //here your time in miliseconds
         return cl.get(Calendar.WEEK_OF_YEAR);
     }

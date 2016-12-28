@@ -92,9 +92,6 @@ Intent intent = new Intent(context, MyWidgetProvider.class);
         int numOfDays = LocalTime.getNumberDaysMonth(year, month);
         LocalTime.DateString dataString = new LocalTime.DateString(year+"",(month+1)+"","","","","");
 
-       // System.out.println("dayweekyear= " +month + " " +week+ " " +day + " "  +numOfDays);
-        //int minTime = 999;
-        //int maxTime = 0;
         long timeStartOfMonth = 0;
 
         try {
@@ -161,5 +158,20 @@ Intent intent = new Intent(context, MyWidgetProvider.class);
             total= total+listOfEvents.get(i).getData().getDuration();
         }
         return total;
+    }
+
+    public static class WidgetUpdate{
+        public void Update(WeakReference<Context> mWeakRefContext) {
+            if(mWeakRefContext != null && mWeakRefContext.get() != null){
+                Context c = mWeakRefContext.get();
+                Intent intent = new Intent(c,MyWidgetProvider.class);
+                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                System.out.println("call updatexpto");
+                int ids[] = AppWidgetManager.getInstance(c.getApplicationContext()).getAppWidgetIds(new ComponentName(c.getApplicationContext(), MyWidgetProvider.class));
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+                c.sendBroadcast(intent);
+            }
+
+        }
     }
 }
