@@ -1,5 +1,6 @@
 package com.perez.schedulebynfc;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -116,6 +117,7 @@ public class BottomFragment extends Fragment {
         }
 
         public void run() {
+
             String str;
             if (sec > 59) {
                 str = ":00";
@@ -139,8 +141,10 @@ public class BottomFragment extends Fragment {
 
             if (sec > 59) {
                 updateWidget(mWeakRefContext);
+
                 sec = 0;
                 _dayTime = _dayTime + 60000;
+                updateMainFragment(_dayTime);
                 _weekTime = _weekTime + 60000;
                 _monthTime = _monthTime + 60000;
                 message = handler.obtainMessage();
@@ -161,6 +165,12 @@ public class BottomFragment extends Fragment {
             }
             sec++;
         }
+
+        private void updateMainFragment(long time) {
+            if(mCallback!=null)
+                mCallback.sendResfreshTime(time);
+        }
+
         //http://www.androiddesignpatterns.com/2013/01/inner-class-handler-memory-leak.html
         //https://www.youtube.com/watch?v=LGDdxw55Gis
         //http://stackoverflow.com/questions/36191755/why-use-weakreference-on-android-listeners
@@ -321,6 +331,7 @@ public class BottomFragment extends Fragment {
         }
 
 
+
         private long getTotalDayTime(List<EventClass> listOfEvents) {
             long total = 0;
             for (int i = 0; i < listOfEvents.size(); i++) {
@@ -435,6 +446,37 @@ public class BottomFragment extends Fragment {
         public void prepareHandler() {
             handler = new Handler(getLooper());
         }
+    }
+
+
+    static RefreshTime mCallback;
+
+    public interface RefreshTime{
+        void sendResfreshTime(long text);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (RefreshTime) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement TextClicked");
+        }
+    }
+
+   // public void someMethod(){
+     //   mCallback.sendText("YOUR TEXT");
+   // }
+
+    @Override
+    public void onDetach() {
+        mCallback = null; // => avoid leaking, thanks @Deepscorn
+        super.onDetach();
     }
 
 

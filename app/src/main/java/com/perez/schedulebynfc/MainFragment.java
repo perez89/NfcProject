@@ -2,11 +2,14 @@ package com.perez.schedulebynfc;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import Support.LocalEventService;
 import Support.LocalTime;
 
 import static Support.LocalTime.getCurrentMilliseconds;
+import static Support.LocalTime.getFormatTime;
 import static Support.LocalTime.getYear;
 
 
@@ -40,7 +44,7 @@ public class MainFragment extends Fragment {
     List<TextView> listDaysOfTheWeek;
     List<TextView> listWeekHeader;
     List<TextView> listWeekTotalTime;
-
+    long month_time = 0;
     TextView tvMinTime, tvMaxTime, tvAverageTime, tvMonthTime;
     TextView[][] tvDayTime = new TextView[7][6];
     //static TextView[][] tvDay = new TextView[7][5];
@@ -48,9 +52,12 @@ public class MainFragment extends Fragment {
     Runnable progressThread;
     //MyHandler myHandler;
     HandlerThread handlerThread;
-
+    long CurrentDayTime=0;
+    long CurrentWeekTime=0;
     int year;
     int month;
+    int row =0 ;
+    int col = 0;
 
 
     private MyHandler handler = new MyHandler();
@@ -143,8 +150,10 @@ public class MainFragment extends Fragment {
                     int weekPos = msg.getData().getInt("weekPosition");
                     String timeValue = msg.getData().getString("timeValue");
                     String dayValue = msg.getData().getString("dayValue");
+                    Boolean currentDayB = msg.getData().getBoolean("currentDayB");
+
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        setTvDayTime(dayPos, weekPos, timeValue);
+                        setTvDayTime(dayPos, weekPos, timeValue, currentDayB);
                         setTvDay(dayPos, weekPos, dayValue);
                     }
 
@@ -155,7 +164,7 @@ public class MainFragment extends Fragment {
                     String totalTimeValue = msg.getData().getString("totalTimeValue");
                     //TODO - verificar se é == "-"
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-
+                        System.out.println(">>>>"+ totalTimeValue +"<<<<<");
                         setTvWeekTotalTime(weekPosition, totalTimeValue);
                     }
 
@@ -326,8 +335,16 @@ public class MainFragment extends Fragment {
 
     }
 
-    void setTvDayTime(int day, int week, String value) {
-        tvDayTime[day][week].setText("" + value);
+    void setTvDayTime(int day, int week, String value, Boolean currentDayB) {
+            tvDayTime[day][week].setText("" + value);
+        if(currentDayB)
+        {
+            CardView card = (CardView) tvDayTime[day][week].getParent().getParent();
+            if(card!=null){
+                card.setCardBackgroundColor((Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context, R.color.color_current_day)))));
+            }
+
+        }
     }
 
     private void initializationDays() {
@@ -388,7 +405,8 @@ public class MainFragment extends Fragment {
     }
 
     static void setTvDay(int day, int week, String value) {
-        tvDay[day][week].setText("" + value);
+        if(!value.equals(""))
+            tvDay[day][week].setText("" + value);
     }
 
     private void initializationWeekHeader() {
@@ -466,6 +484,7 @@ public class MainFragment extends Fragment {
         Handler handler;
         long min_time = -1;
         long max_time = 0;
+
         long average_time = 0;
         int cont = 0;
 
@@ -484,10 +503,11 @@ public class MainFragment extends Fragment {
         }
 
         private void loadAdditionalInfo() {
+            month_time = month_time + average_time;
             loadMinTime();
             loadMaxTime();
-            loadMonthTime();
             loadAverageTime();
+            loadMonthTime();
 
         }
 
@@ -526,7 +546,7 @@ public class MainFragment extends Fragment {
         private void loadMonthTime() {
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
-            b.putString("monthTime", LocalTime.getFormatTime(average_time)); // for example
+            b.putString("monthTime", LocalTime.getFormatTime(month_time+CurrentDayTime)); // for example
             message.setData(b);
             message.obj = mWeakRefContext;
             message.what = 7;
@@ -537,7 +557,7 @@ public class MainFragment extends Fragment {
             cont++;
             if(_time < min_time || min_time==-1)
                 min_time=_time;
-            if(timeStartOfWeek > max_time)
+            if(_time > max_time)
                 max_time=_time;
 
             average_time = average_time + _time;
@@ -615,9 +635,9 @@ public class MainFragment extends Fragment {
             createTotalWeekHour(week, totalWeekDuration);
         }
 
-        private long createDays(int local_week, final int local_day, final long timeStartOfWeek) {
-
-            final int week = local_week;
+        private long createDays(final int local_week, final int local_day, final long timeStartOfWeek) {
+            boolean currentDayB=false;
+          //  final int currentWeek = local_week;
 
             final LocalEventService lEventService = new LocalEventService(mWeakRefContext);
 
@@ -630,19 +650,48 @@ public class MainFragment extends Fragment {
             int year_local = LocalTime.getYear(timeStartOfWeek);
             int month_local = LocalTime.getMonth(timeStartOfWeek);
             int day_local = LocalTime.getDay(timeStartOfWeek);
+            int week_timeStartOfWeek = LocalTime.getWeekOfMonth(timeStartOfWeek);
             month_local++;
             System.out.println("compare?= " + year_local +"="+year_local + " " + month_local+"="+month + " timeStartOfWeek=" + dayObject.getTotalDuration());
             long milli = getCurrentMilliseconds();
-            int day = LocalTime.getDay(milli);
+            int currentWeek = LocalTime.getWeekOfMonth(milli);
+            int currentDay = LocalTime.getDay(milli);
+            int currentYear = LocalTime.getYear(milli);
+            int currentMonth = LocalTime.getMonth(milli);
+            currentMonth++;
+            long time = dayObject.getTotalDuration();
+            //System.out.println("zerep1week= " + currentWeek + " local_week= "+local_week);
+            if(year_local == year && month_local == month && currentWeek==week_timeStartOfWeek &&  day_local<currentDay){
+               // System.out.println("xpto123");
+                CurrentWeekTime = CurrentWeekTime + time;
+            }
+            if(year_local == year && month_local == month && day_local<currentDay && time>0){
+                setAdditionalInfo(time);
 
-            if(year_local == year && month_local == month && day_local<day && dayObject.getTotalDuration()>0){
-                setAdditionalInfo(dayObject.getTotalDuration());
+            }else if(year_local == year && month_local == month && day_local==currentDay){
+                if(currentYear == year && currentMonth == month)
+                    currentDayB=true;
+                System.out.println("currentDayB");
+                //totalCurrentDayTime = dayObject.getTotalDuration();
+
+                if (listOfEvents.size() > 0 && !(listOfEvents.get(listOfEvents.size() - 1).isClose())) {
+
+                    time = time + LocalTime.getCurrentMilliseconds() - listOfEvents.get(listOfEvents.size() - 1).getData().getStartTime();
+                    CurrentDayTime=time;
+                    col = local_week;
+                    row = local_day;
+
+                }
+                System.out.println("totalDayTime= " + CurrentDayTime);
             }
 
             b.putInt("dayPosition", local_day); // for example
-            b.putInt("weekPosition", week); // for example
+            b.putInt("weekPosition", local_week); // for example
             b.putString("dayValue", "" + day_local); // for example
-            b.putString("timeValue", dayObject.toString()); // for example
+            b.putString("timeValue", getFormatTime(time)); // for example
+
+            b.putBoolean("currentDayB", currentDayB); // for example
+
             message.setData(b);
 
             message.obj = mWeakRefContext;
@@ -650,7 +699,7 @@ public class MainFragment extends Fragment {
             handler.sendMessage(message);
 
 
-            return dayObject.getTotalDuration();
+            return time;
         }
 
         private void createHeaderColumns(int pos, long timeStartOfWeek) {
@@ -831,6 +880,40 @@ public class MainFragment extends Fragment {
         public int getY() {
             return y;
         }
+    }
+
+
+    public void refreshTime(long time){
+        Message message = handler.obtainMessage();
+        Bundle b = new Bundle();
+        b.putString("monthTime", getFormatTime(month_time+time)); // for example
+        message.setData(b);
+        message.obj = new WeakReference<Context>(getContext());
+        message.what = 7;
+        handler.sendMessage(message);
+
+        message = handler.obtainMessage();
+        b = new Bundle();
+        System.out.println("row= " + row + " col= " + col);
+        b.putInt("dayPosition", row); // for example
+        b.putInt("weekPosition", col); // for example
+        b.putString("dayValue", ""); // for example
+        b.putString("timeValue", getFormatTime(time)); // for example
+        message.setData(b);
+
+        message.obj =  new WeakReference<Context>(getContext());
+        message.what = 2;
+        handler.sendMessage(message);
+
+        message = handler.obtainMessage();
+        b = new Bundle();
+        b.putInt("weekPosition", col); // for example
+        b.putString("totalTimeValue", getFormatTime(CurrentWeekTime+time)); // for example
+       // System.out.println("wwww= " + getFormatTime(CurrentWeekTime+time));
+        message.setData(b);
+        message.obj =new WeakReference<Context>(getContext());
+        message.what = 3;
+        handler.sendMessage(message);
     }
 
 }

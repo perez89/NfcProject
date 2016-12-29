@@ -19,16 +19,19 @@ import java.text.DateFormatSymbols;
 import Support.CurrentTimeShow;
 import Support.LocalCalendar;
 import Support.LocalPreferences;
+import Support.LocalTime;
 
-public class MainActivity extends AppCompatActivity {
+import static Support.LocalTime.getCurrentMilliseconds;
 
-  //  MainFragment[] ArrayOfEvents;
+public class MainActivity extends AppCompatActivity implements BottomFragment.RefreshTime {
+
+    //  MainFragment[] ArrayOfEvents;
     final String MOVE_NEXT = "next";
     final String MOVE_PREVIOUS = "previous";
     //NfcAdapter nfcAdapter;
     CurrentTimeShow currentTimeToShow;
     TextSwitcher tsSwitcher;
-   // TextView tvCurrentDate;
+    // TextView tvCurrentDate;
     private int _day;
     private int _week;
     private int _weekOfmonth;
@@ -44,15 +47,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         setContentView(R.layout.activity_main);
-       // ArrayOfEvents = new MainFragment[3];
+        // ArrayOfEvents = new MainFragment[3];
         initialization(savedInstanceState);
         //test(savedInstanceState);
     }
 
 
-
     void refreshFragment(String move) {
-        System.out.println("refreshFragment");
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         //Fragment frag_new = ArrayOfEvents[1];
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             Fragment frag = fragmentManager.findFragmentByTag(tag);
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right).remove(frag);
 
-           // MainShowFragment frag_new = ArrayOfEvents[1];
+            // MainShowFragment frag_new = ArrayOfEvents[1];
 
             fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container, new_frag, tag_new).commit();
             changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'l');
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'd');
         }
     }
+
     private String getTag(int month, int year) {
         return ("frag_tag_" + month + "_" + year);
     }
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         //LocalCalendar.getCalendars(this);
         checkLocalCalendar();
         //deleteCalendarUnderSameAccount(this);
-       // LocalCalendar.getCalendars(this);
+        // LocalCalendar.getCalendars(this);
         currentTimeToShow = CurrentTimeShow.getInstance();
 
         loadFragment();
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         textViews();
         verifyNfc();
     }
+
 
     private void laodBottomFrag() {
         if (findViewById(R.id.fragment_container_bottom) != null) {
@@ -119,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
             android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             // Add the fragment to the 'fragment_container' FrameLayout
-          MainFragment new_frag = MainFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
+            MainFragment new_frag = MainFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
             String tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
-            if(new_frag!=null)
+            if (new_frag != null)
                 fragmentTransaction.replace(R.id.fragment_container, new_frag, tag).commit();
         }
         if (findViewById(R.id.fragment_container_bottom) != null) {
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             // Add the fragment to the 'fragment_container' FrameLayout
             MainFragment new_frag = MainFragment.newInstance(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
             String tag = getTag(currentTimeToShow.getMonth_CurrentView(), currentTimeToShow.getYear_CurrentView());
-            if(new_frag!=null)
+            if (new_frag != null)
                 fragmentTransaction.replace(R.id.fragment_container, new_frag, tag).commit();
         }
     }
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     private void textViews() {
         System.out.println("textViews");
         tsSwitcher = (TextSwitcher) findViewById(R.id.tsSwitcher);
-       // tvCurrentDate = (TextView) findViewById(R.id.tvCurrentDate);
+        // tvCurrentDate = (TextView) findViewById(R.id.tvCurrentDate);
         changeTextViewMonth("" + (new DateFormatSymbols().getMonths()[currentTimeToShow.getMonth_CurrentView()]), "" + currentTimeToShow.getYear_CurrentView(), 'n');
 
     }
@@ -214,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         tsSwitcher.setText(month + "  " + year);
-       // tvCurrentDate.setText(month + "  " + year);
+        // tvCurrentDate.setText(month + "  " + year);
     }
 
     private void buttons() {
@@ -259,14 +262,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         btNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentTimeToShow.nextMonth();
                 System.out.println("move next>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
-               // removeFrag("first");
+                // removeFrag("first");
                 refreshFragment(MOVE_NEXT);
                 //new LoadFragment().execute(currentTimeToShow.getMonth_next(), currentTimeToShow.getYear_next(), 2);
 
@@ -302,11 +304,11 @@ public class MainActivity extends AppCompatActivity {
     private void verifyNfc() {
         //nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-       // if (nfcAdapter != null && nfcAdapter.isEnabled()) {
+        // if (nfcAdapter != null && nfcAdapter.isEnabled()) {
 
         //} else {
 
-            //  finish();
+        //  finish();
         //}
     }
 
@@ -318,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //public void addFragment(int pos, MainFragment frag) {
-       // ArrayOfEvents[pos] = frag;
+    // ArrayOfEvents[pos] = frag;
     //}
 
    /* private void removeFrag(String str) {
@@ -330,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayOfEvents[1] = ArrayOfEvents[2];
             ArrayOfEvents[2] = null;
                */
-       // }
+    // }
 
     /*    if (str.equals("last")) {
           /*  ArrayOfEvents[2] = ArrayOfEvents[1];
@@ -361,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkLocalCalendar() {
         System.out.println("checkLocalCalendar");
 
-        if(!(LocalCalendar.getIdCalendar(getApplicationContext())>0)){
+        if (!(LocalCalendar.getIdCalendar(getApplicationContext()) > 0)) {
             Context context = getApplicationContext();
             CharSequence text = "There is a problem with the calendar!";
             int duration = Toast.LENGTH_SHORT;
@@ -383,34 +385,34 @@ public class MainActivity extends AppCompatActivity {
         return tmp.getPreference(key, context);
     }
 
-   /* public class LoadFragment extends AsyncTask<Integer, Void, MainFragment> {
-        int pos;
+    /* public class LoadFragment extends AsyncTask<Integer, Void, MainFragment> {
+         int pos;
 
-        @Override
-        protected MainFragment doInBackground(Integer... integers) {
-            System.out.println("LoadFragment= "+ pos);
-            pos = integers[2];
-            MainFragment frag = MainFragment.newInstance(integers[1],integers[0]);
-            Bundle bundle;
-            bundle = new Bundle();
-            bundle.putInt("year_CurrentView", integers[1]);
-            bundle.putInt("month_CurrentView", integers[0]);
-            frag.setArguments(bundle);
-            return frag;
+         @Override
+         protected MainFragment doInBackground(Integer... integers) {
+             System.out.println("LoadFragment= "+ pos);
+             pos = integers[2];
+             MainFragment frag = MainFragment.newInstance(integers[1],integers[0]);
+             Bundle bundle;
+             bundle = new Bundle();
+             bundle.putInt("year_CurrentView", integers[1]);
+             bundle.putInt("month_CurrentView", integers[0]);
+             frag.setArguments(bundle);
+             return frag;
 
-        }
+         }
 
-        protected void onPostExecute(MainFragment result) {
-            addFragment(pos, result);
-            if(pos==1){
-                debug(result);
-            }
-        }
+         protected void onPostExecute(MainFragment result) {
+             addFragment(pos, result);
+             if(pos==1){
+                 debug(result);
+             }
+         }
 
-    }*/
-   public int get_day() {
-       return _day;
-   }
+     }*/
+    public int get_day() {
+        return _day;
+    }
 
     public int get_week() {
         return _week;
@@ -427,11 +429,34 @@ public class MainActivity extends AppCompatActivity {
     public int get_year() {
         return _year;
     }
+
     @Override
     protected void onStop() {
         System.out.println("onStop");
         finish();
         super.onStop();
+    }
+
+    @Override
+    public void sendResfreshTime(long time) {
+
+        int currentShowMonth = currentTimeToShow.getMonth_CurrentView();
+        int currentShowYear = currentTimeToShow.getYear_CurrentView();
+        long milli = getCurrentMilliseconds();
+        int year = LocalTime.getYear(milli);
+        int month = LocalTime.getMonth(milli);
+
+
+        if (currentShowMonth == month && currentShowYear == year) {
+            String tag = getTag(currentShowMonth, currentShowYear);
+            if (tag != null) {
+                MainFragment frag = (MainFragment)getSupportFragmentManager().findFragmentByTag(tag);
+                if (frag != null)
+                    frag.refreshTime(time);
+            }
+        }
+
+
     }
 }
 

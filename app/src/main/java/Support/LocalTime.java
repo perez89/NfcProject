@@ -57,7 +57,7 @@ public class LocalTime {
     public static int getWeekOfMonth(long millis) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
-        return (cl.get(Calendar.WEEK_OF_YEAR)-1);
+        return (cl.get(Calendar.WEEK_OF_MONTH));
     }
 
     public static int getMonth(long millis) {

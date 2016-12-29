@@ -4,8 +4,8 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.perez.schedulebynfc.MainActivity">
 
     <LinearLayout
@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center">
+
                 <ImageButton
                     android:id="@+id/ibPreviousMonth"
                     android:layout_width="wrap_content"
@@ -39,12 +40,11 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center">
+
                 <TextSwitcher
                     android:id="@+id/tsSwitcher"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                </TextSwitcher>
+                    android:layout_height="wrap_content"></TextSwitcher>
             </LinearLayout>
 
             <LinearLayout
@@ -52,13 +52,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center">
+
                 <ImageButton
                     android:id="@+id/ibNextMonth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:drawable/ic_media_play"
-                    android:clickable="true"
-                    />
+                    android:clickable="true" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -67,15 +67,14 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/llTopMenu"
         android:layout_above="@+id/fragment_container_bottom"
+        android:layout_below="@+id/llTopMenu"
         android:layout_marginTop="14dp" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-     />
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

@@ -33,6 +33,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
     private long currentWeekTime;
     private long currentMonthTime;
     private boolean working;
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
@@ -44,28 +45,44 @@ public class MyWidgetProvider extends AppWidgetProvider {
                 MyWidgetProvider.class);
         int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
-            // create some random data
-            //TODO get real time
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                    R.layout.widget_layout);
-            // Set the text
-            loadTime(context);
-            remoteViews.setTextViewText(R.id.tvUpdateDay, getFormatTime(currentDayTime));
-            remoteViews.setTextViewText(R.id.tvUpdateWeek, getFormatTime(currentWeekTime));
-            remoteViews.setTextViewText(R.id.tvUpdateMonth, getFormatTime(currentMonthTime));
-            if(working)
-                remoteViews.setViewVisibility(R.id.ivWorking, View.VISIBLE);
-            else
-                remoteViews.setViewVisibility(R.id.ivWorking, View.INVISIBLE);
-            // Register an onClickListener
-Intent intent = new Intent(context, MyWidgetProvider.class);
+        // create some random data
+        //TODO get real time
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                R.layout.widget_layout);
+        // Set the text
+        loadTime(context);
 
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        //text day
+        String whileTimeLessThan1 = getFormatTime(currentDayTime);
+        if (whileTimeLessThan1.equals("-") && working)
+            whileTimeLessThan1 = "1";
+        remoteViews.setTextViewText(R.id.tvUpdateDay, whileTimeLessThan1);
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.llWidgetOnClick, pendingIntent);
+        //text week
+        whileTimeLessThan1 = getFormatTime(currentWeekTime);
+        if (whileTimeLessThan1.equals("-") && working)
+            whileTimeLessThan1 = "1";
+        remoteViews.setTextViewText(R.id.tvUpdateWeek, whileTimeLessThan1);
+
+        //text month
+        whileTimeLessThan1 = getFormatTime(currentMonthTime);
+        if (whileTimeLessThan1.equals("-") && working)
+            whileTimeLessThan1 = "1";
+
+        remoteViews.setTextViewText(R.id.tvUpdateMonth, whileTimeLessThan1);
+        if (working)
+            remoteViews.setViewVisibility(R.id.ivWorking, View.VISIBLE);
+        else
+            remoteViews.setViewVisibility(R.id.ivWorking, View.INVISIBLE);
+        // Register an onClickListener
+        Intent intent = new Intent(context, MyWidgetProvider.class);
+
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.llWidgetOnClick, pendingIntent);
         for (int widgetId : allWidgetIds) {
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
@@ -78,19 +95,18 @@ Intent intent = new Intent(context, MyWidgetProvider.class);
         working = false;
     }
 
-    void loadTime(Context context){
+    void loadTime(Context context) {
         LocalEventService lEventService = new LocalEventService(new WeakReference<Context>(context));
         long milli = getCurrentMilliseconds();
-        int  secs = LocalTime.getSeconds(milli);
+        int secs = LocalTime.getSeconds(milli);
         int week = LocalTime.getWeekOfMonth(milli);
         int year = LocalTime.getYear(milli);
         int month = LocalTime.getMonth(milli);
         int day = LocalTime.getDay(milli);
 
 
-
         int numOfDays = LocalTime.getNumberDaysMonth(year, month);
-        LocalTime.DateString dataString = new LocalTime.DateString(year+"",(month+1)+"","","","","");
+        LocalTime.DateString dataString = new LocalTime.DateString(year + "", (month + 1) + "", "", "", "", "");
 
         long timeStartOfMonth = 0;
 
@@ -101,7 +117,7 @@ Intent intent = new Intent(context, MyWidgetProvider.class);
         }
         long millisecondsDay = 86400000;
 
-        if(timeStartOfMonth>0) {
+        if (timeStartOfMonth > 0) {
 
             long time = timeStartOfMonth;
             List<EventClass> listOfEvents = null;
@@ -145,30 +161,30 @@ Intent intent = new Intent(context, MyWidgetProvider.class);
 
 
             }
-            System.out.println(">>>> "+currentDayTime+" " + currentWeekTime+ " " +currentMonthTime);
+            System.out.println(">>>> " + currentDayTime + " " + currentWeekTime + " " + currentMonthTime);
             listOfEvents.clear();
             listOfEvents = null;
         }
-        lEventService=null;
+        lEventService = null;
     }
 
     private long getTotalDayTime(List<EventClass> listOfEvents) {
         long total = 0;
-        for(int i=0 ; i<listOfEvents.size() ; i++){
-            total= total+listOfEvents.get(i).getData().getDuration();
+        for (int i = 0; i < listOfEvents.size(); i++) {
+            total = total + listOfEvents.get(i).getData().getDuration();
         }
         return total;
     }
 
-    public static class WidgetUpdate{
+    public static class WidgetUpdate {
         public void Update(WeakReference<Context> mWeakRefContext) {
-            if(mWeakRefContext != null && mWeakRefContext.get() != null){
+            if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                 Context c = mWeakRefContext.get();
-                Intent intent = new Intent(c,MyWidgetProvider.class);
+                Intent intent = new Intent(c, MyWidgetProvider.class);
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
                 System.out.println("call updatexpto");
                 int ids[] = AppWidgetManager.getInstance(c.getApplicationContext()).getAppWidgetIds(new ComponentName(c.getApplicationContext(), MyWidgetProvider.class));
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
                 c.sendBroadcast(intent);
             }
 
