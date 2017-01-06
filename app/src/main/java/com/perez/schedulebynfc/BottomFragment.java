@@ -130,7 +130,7 @@ public class BottomFragment extends Fragment {
                 Bundle b = new Bundle();
                 //updateMainFragment(_dayTime);
                 updateWidget(mWeakRefContext);
-                updateMainFragment(_dayTime);
+
                 sec = 0;
                 _dayTime = _dayTime + 60000;
 
@@ -141,6 +141,7 @@ public class BottomFragment extends Fragment {
                 String dayTimeHuman = LocalTime.getFormatTime(_dayTime);
                 String weekTimeHuman = LocalTime.getFormatTime(_weekTime);
                 String monthTimeHuman = LocalTime.getFormatTime(_monthTime);
+                b.putLong("dayTime", _dayTime); //Long
                 b.putString("dayTimeHuman", dayTimeHuman); //Long
                 b.putString("weekTimeHuman", weekTimeHuman); //Long
                 b.putString("monthTimeHuman", monthTimeHuman); //Long
@@ -155,10 +156,7 @@ public class BottomFragment extends Fragment {
             sec++;
         }
 
-        private void updateMainFragment(long time) {
-            if(mCallback!=null)
-                mCallback.sendResfreshTime(time);
-        }
+
 
         //http://www.androiddesignpatterns.com/2013/01/inner-class-handler-memory-leak.html
         //https://www.youtube.com/watch?v=LGDdxw55Gis
@@ -180,7 +178,14 @@ public class BottomFragment extends Fragment {
     }
 
 
+    private void updateMainFragment(long time) {
+        System.out.println("refresh bottom0= " + time);
+        if(mCallback!=null){
+            System.out.println("refresh bottom1= " + time);
+            mCallback.sendRefreshTime(time);
+        }
 
+    }
 
     @Override
     public void onResume() {
@@ -374,12 +379,11 @@ public class BottomFragment extends Fragment {
 
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         if(working){
-                            System.out.println("working");
+                            System.out.println("working "+ dayValue);
                             changeImageViewVisibility(true);
 
                             startTimer(dayTime, weekTime, monthTime, secs);
                             if((dayValue.equals("-")) || (dayValue.equals("0"))){
-
                                 setTvDay("0:00");
                             }else{
                                 setTvDay(dayValue);
@@ -405,10 +409,12 @@ public class BottomFragment extends Fragment {
                     break;
                 case 2:
                     String dayValueStr = msg.getData().getString("dayTimeHuman");
+                    long dayTime = msg.getData().getLong("dayTime");
                     String weekValueStr = msg.getData().getString("weekTimeHuman");
                     String monthValueStr = msg.getData().getString("monthTimeHuman");
 
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        updateMainFragment(dayTime);
                         if (!dayValueStr.equals("-"))
                             setTvDay(dayValueStr);
 
@@ -475,10 +481,11 @@ public class BottomFragment extends Fragment {
     }
 
 
-    static RefreshTime mCallback;
+    RefreshTime mCallback;
 
     public interface RefreshTime{
-        void sendResfreshTime(long text);
+
+        void sendRefreshTime(long text);
     }
 
     @Override
@@ -491,7 +498,7 @@ public class BottomFragment extends Fragment {
             mCallback = (RefreshTime) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement TextClicked");
+                    + " must implement RefreshTime");
         }
     }
 

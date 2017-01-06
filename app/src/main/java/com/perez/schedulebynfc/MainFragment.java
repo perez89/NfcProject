@@ -343,6 +343,8 @@ public class MainFragment extends Fragment {
     }
 
     void setTvDayTime(int day, int week, String value, Boolean currentDayB, final String dayValue, final long time) {
+        if(value.equals("0"))
+            value="0:00";
         tvDayTime[day][week].setText("" + value);
         if (currentDayB) {
             CardView card = (CardView) tvDayTime[day][week].getParent().getParent();
@@ -930,7 +932,7 @@ public class MainFragment extends Fragment {
 
 
     public void refreshTime(long time) {
-        System.out.println("refreshTime= " +time);
+        System.out.println("refresh Main= " +time);
         Message message = handler.obtainMessage();
         Bundle b = new Bundle();
         b.putString("monthTime", getFormatTime(month_time + time)); // for example

@@ -455,8 +455,8 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     }
 
     @Override
-    public void sendResfreshTime(long time) {
-
+    public void sendRefreshTime(long time) {
+        System.out.println("refresh activity-1= " + time);
         int currentShowMonth = currentTimeToShow.getMonth_CurrentView();
         int currentShowYear = currentTimeToShow.getYear_CurrentView();
         long milli = getCurrentMilliseconds();
@@ -465,10 +465,13 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
 
 
         if (currentShowMonth == month && currentShowYear == year) {
+            System.out.println("refresh activity-2= " + time);
             String tag = getTag(currentShowMonth, currentShowYear);
             if (tag != null) {
+                System.out.println("refresh activity-3= " + time);
                 MainFragment frag = (MainFragment) getSupportFragmentManager().findFragmentByTag(tag);
                 if (frag != null)
+                    System.out.println("refresh activity-4= " + time);
                     frag.refreshTime(time);
             }
         }
