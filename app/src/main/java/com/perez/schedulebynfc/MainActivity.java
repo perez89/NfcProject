@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import java.lang.ref.WeakReference;
 import java.text.DateFormatSymbols;
 
 import Support.CurrentTimeShow;
@@ -103,14 +104,25 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     }
 
 
-    private void laodBottomFrag() {
+    public void laodBottomFrag() {
         if (findViewById(R.id.fragment_container_bottom) != null) {
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             //Fragment frag_new = ArrayOfEvents[1];
-            BottomFragment new_frag = BottomFragment.newInstance();
+
             String tag_new = "TAG_BOTTOM";
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right).add(R.id.fragment_container_bottom, new_frag, tag_new).commit();
+            Fragment fragment = fragmentManager.findFragmentByTag(tag_new);
+            BottomFragment new_frag = BottomFragment.newInstance();
+            if (fragment == null) {
+
+               fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom).add(R.id.fragment_container_bottom, new_frag, tag_new).commit();
+
+
+            }else{
+
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom).replace(R.id.fragment_container_bottom, new_frag, tag_new).commit();
+
+            }
         }
     }
 
@@ -180,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         /*
         System.out.println("changeTextViewMonth");
 
-        System.out.println("current = " + month + " year=" + year);
+        System.out.println("current = " + month_frag_show + " year=" + year);
 
         switch(_dir){
             case 'd':
@@ -217,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
             }
         });
         tsSwitcher.setText(month + "  " + year);
-        // tvCurrentDate.setText(month + "  " + year);
+        // tvCurrentDate.setText(month_frag_show + "  " + year);
     }
 
     private void buttons() {
@@ -347,7 +359,12 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         //enableForgroundDispatchSystem();
         super.onResume();
         getCurrentData();
+        updateWidget();
         //checkLocalCalendar();
+    }
+
+    public void updateWidget() {
+        new MyWidgetProvider.WidgetUpdate().Update(new WeakReference<Context>(this));
     }
 
     private void getCurrentData() {
@@ -450,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         if (currentShowMonth == month && currentShowYear == year) {
             String tag = getTag(currentShowMonth, currentShowYear);
             if (tag != null) {
-                MainFragment frag = (MainFragment)getSupportFragmentManager().findFragmentByTag(tag);
+                MainFragment frag = (MainFragment) getSupportFragmentManager().findFragmentByTag(tag);
                 if (frag != null)
                     frag.refreshTime(time);
             }

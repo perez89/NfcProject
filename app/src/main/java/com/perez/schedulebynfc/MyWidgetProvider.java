@@ -53,23 +53,20 @@ public class MyWidgetProvider extends AppWidgetProvider {
         loadTime(context);
 
         //text day
-        String whileTimeLessThan1 = getFormatTime(currentDayTime);
-        if (whileTimeLessThan1.equals("-") && working)
-            whileTimeLessThan1 = "1";
-        remoteViews.setTextViewText(R.id.tvUpdateDay, whileTimeLessThan1);
+        String durationText = getDisplayTimeForWidget(currentDayTime);
 
+        remoteViews.setTextViewText(R.id.tvUpdateDay, ""+durationText);
+        System.out.println("durationText= " +durationText);
         //text week
-        whileTimeLessThan1 = getFormatTime(currentWeekTime);
-        if (whileTimeLessThan1.equals("-") && working)
-            whileTimeLessThan1 = "1";
-        remoteViews.setTextViewText(R.id.tvUpdateWeek, whileTimeLessThan1);
+        durationText = getDisplayTimeForWidget(currentWeekTime);
+        System.out.println("durationText= " +durationText);
+        remoteViews.setTextViewText(R.id.tvUpdateWeek, ""+durationText);
 
-        //text month
-        whileTimeLessThan1 = getFormatTime(currentMonthTime);
-        if (whileTimeLessThan1.equals("-") && working)
-            whileTimeLessThan1 = "1";
+        //text month_frag_show
+        durationText = getDisplayTimeForWidget(currentMonthTime);
+        System.out.println("durationText= " +durationText);
+        remoteViews.setTextViewText(R.id.tvUpdateMonth, ""+durationText);
 
-        remoteViews.setTextViewText(R.id.tvUpdateMonth, whileTimeLessThan1);
         if (working)
             remoteViews.setViewVisibility(R.id.ivWorking, View.VISIBLE);
         else
@@ -86,6 +83,17 @@ public class MyWidgetProvider extends AppWidgetProvider {
         for (int widgetId : allWidgetIds) {
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
+    }
+
+    private String getDisplayTimeForWidget(long time){
+        String text = getFormatTime(time);
+        if (text.equals("-")){
+            if(working)
+                text = "0:01";
+            else
+                text = "0:00";
+        }
+        return text;
     }
 
     private void initializeVariables() {
@@ -129,7 +137,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
                 long timeEnd = time + millisecondsDay;
                 listOfEvents = lEventService.getEventsForDay(time, timeEnd);
                 //if(listOfEvents.get())
-                //  System.out.println("dayweekyear2= " +month + " " +localWeek+ " " +localDay);
+                //  System.out.println("dayweekyear2= " +month_frag_show + " " +localWeek+ " " +localDay);
                 long totalDayTime = getTotalDayTime(listOfEvents);
                 String xpto = getFormatTime(totalDayTime);
                 // System.out.println("xpto day= " + localDay + " | time= " + xpto);

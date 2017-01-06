@@ -1,5 +1,6 @@
 package Support;
 
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,6 +61,14 @@ public class LocalTime {
         return (cl.get(Calendar.WEEK_OF_MONTH));
     }
 
+    public static String getMonthStringFormat(int month) {
+        if(month>=0 && month<12){
+            DateFormatSymbols dfs = new DateFormatSymbols();
+            String[] months = dfs.getMonths();
+            return months[month];
+        }
+        return "";
+    }
     public static int getMonth(long millis) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
@@ -258,7 +267,10 @@ public class LocalTime {
 
             int minutes = (int) ((time / (1000 * 60)) % 60);
             int hours = (int) ((time / (1000 * 60 * 60)) % 24);
+            System.out.println("hours= "+ hours);
+            System.out.println("minutes= "+ minutes);
             hours = (int) numOfDays + hours;
+            System.out.println("hours2= "+ hours);
             if (hours > 0 || minutes > 0) {
                 if (minutes < 10)
                     durationString = hours + ":0" + minutes;
@@ -266,7 +278,10 @@ public class LocalTime {
                     durationString = hours + ":" + minutes;
 
             }
-            return durationString;
+            if(durationString.equals("") || durationString.equals(" "))
+                return "0";
+            else
+                return durationString;
         }
         return "-";
     }

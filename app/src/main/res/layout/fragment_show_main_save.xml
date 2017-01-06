@@ -2397,7 +2397,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:maxLength="5"
-                                android:text="6:28"
+                                android:text="-"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
@@ -2436,7 +2436,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:maxLength="5"
-                                android:text="9:38"
+                                android:text="-"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
@@ -2475,7 +2475,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:maxLength="5"
-                                android:text="8:14"
+                                android:text="-"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
@@ -2514,7 +2514,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:maxLength="6"
-                                android:text="122:34"
+                                android:text="-"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>

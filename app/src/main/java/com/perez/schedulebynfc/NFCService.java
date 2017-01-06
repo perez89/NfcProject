@@ -34,7 +34,6 @@ public class NFCService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-System.out.println("NFC-1");
 
         NfcWorker _nfcWorker = new NfcWorker(getApplicationContext());
         _nfcWorker.start();
@@ -81,7 +80,7 @@ System.out.println("NFC-1");
                     System.out.println(e.getMessage());
 
                 } finally {
-                       System.out.println("finally unlock");
+                    System.out.println("finally unlock");
                     NfcWorker._lock.unlock();
                 }
             }
@@ -132,7 +131,7 @@ System.out.println("NFC-1");
                 lastTimeNfcDetected = Long.parseLong(value);
             }
 
-            System.out.println("dif= " +(currentMilleseconds - lastTimeNfcDetected));
+            System.out.println("dif= " + (currentMilleseconds - lastTimeNfcDetected));
             if (currentMilleseconds - lastTimeNfcDetected > 5000) {
                 MainActivity.setDefaults(LAST_TIME_NFC_DETECTED, "" + currentMilleseconds, mWeakRefContext.get());
                 return true;
@@ -148,14 +147,14 @@ System.out.println("NFC-1");
             RegisterNfc.getInstance().newNfcDetected(mWeakRefContext, idCalendar, currentMilleseconds);
         }
 
-        private void customToast(final WeakReference<Context> mWeakRefContext, final String message){
+        private void customToast(final WeakReference<Context> mWeakRefContext, final String message) {
 
             Handler h = new Handler(mWeakRefContext.get().getMainLooper());
 
             h.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(mWeakRefContext != null && mWeakRefContext.get()!=null)
+                    if (mWeakRefContext != null && mWeakRefContext.get() != null)
                         Toast.makeText(mWeakRefContext.get(), message, Toast.LENGTH_SHORT).show();
                 }
             });

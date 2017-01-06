@@ -53,18 +53,8 @@ public class LocalCalendar {
         values.put(
                 CalendarContract.Calendars.SYNC_EVENTS,
                 1);
-        Uri.Builder builder =
-                CalendarContract.Calendars.CONTENT_URI.buildUpon();
-        builder.appendQueryParameter(
-                CalendarContract.Calendars.ACCOUNT_NAME,
-                "com.perez");
-        builder.appendQueryParameter(
-                CalendarContract.Calendars.ACCOUNT_TYPE,
-                CalendarContract.ACCOUNT_TYPE_LOCAL);
-        builder.appendQueryParameter(
-                CalendarContract.CALLER_IS_SYNCADAPTER,
-                "true");
-        Uri uri = context.getContentResolver().insert(builder.build(), values);
+
+        Uri uri = context.getContentResolver().insert(buildUri(), values);
 
         long idCalendar = Long.valueOf(uri.getLastPathSegment());
         System.out.println("Calendar created ID= " + idCalendar);
@@ -78,6 +68,20 @@ public class LocalCalendar {
 
     }
 
+    public static Uri buildUri(){
+        Uri.Builder builder =
+                CalendarContract.Calendars.CONTENT_URI.buildUpon();
+        builder.appendQueryParameter(
+                CalendarContract.Calendars.ACCOUNT_NAME,
+                "com.perez");
+        builder.appendQueryParameter(
+                CalendarContract.Calendars.ACCOUNT_TYPE,
+                CalendarContract.ACCOUNT_TYPE_LOCAL);
+        builder.appendQueryParameter(
+                CalendarContract.CALLER_IS_SYNCADAPTER,
+                "true");
+        return builder.build();
+    }
 
     public static long getCalendars(Context context) {
         String[] projection =

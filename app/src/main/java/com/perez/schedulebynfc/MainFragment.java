@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -36,7 +37,8 @@ import static Support.LocalTime.getYear;
  * Created by User on 07/10/2016.
  */
 public class MainFragment extends Fragment {
-
+    DialogDayDetail dialog;
+    private static final String TAG_DIALOG_DAY_DETAIL = "tagDialogDayDetail";
     private Button btCreateCalendar, btSimulateNFC;
     private View rootView;
     // Worker _workerThread;
@@ -52,11 +54,11 @@ public class MainFragment extends Fragment {
     Runnable progressThread;
     //MyHandler myHandler;
     HandlerThread handlerThread;
-    long CurrentDayTime=0;
-    long CurrentWeekTime=0;
-    int year;
-    int month;
-    int row =0 ;
+    long CurrentDayTime = 0;
+    long CurrentWeekTime = 0;
+    int year_frag_show;
+    int month_frag_show;
+    int row = 0;
     int col = 0;
 
 
@@ -85,10 +87,10 @@ public class MainFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_show_main_save, container, false);
         context = getActivity();
         Bundle b = getArguments();
-        year = b.getInt("year_CurrentView");
-        month = b.getInt("month_CurrentView");
-        currentDay();
-        month++;
+        year_frag_show = b.getInt("year_CurrentView");
+        month_frag_show = b.getInt("month_CurrentView");
+        //currentDay();
+        month_frag_show++;
         initialization();
         setHandlerAndThread();
 
@@ -116,7 +118,7 @@ public class MainFragment extends Fragment {
         myHandlerThread.start();
         myHandlerThread.prepareHandler();
         try {
-            myHandlerThread.postTask(new CustomRunnable(context, handler, year, month));
+            myHandlerThread.postTask(new CustomRunnable(context, handler, year_frag_show, month_frag_show));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -150,10 +152,11 @@ public class MainFragment extends Fragment {
                     int weekPos = msg.getData().getInt("weekPosition");
                     String timeValue = msg.getData().getString("timeValue");
                     String dayValue = msg.getData().getString("dayValue");
+                    long dayTimeToFindValue = msg.getData().getLong("dayTimeToFindValue");
                     Boolean currentDayB = msg.getData().getBoolean("currentDayB");
 
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        setTvDayTime(dayPos, weekPos, timeValue, currentDayB);
+                        setTvDayTime(dayPos, weekPos, timeValue, currentDayB, dayValue, dayTimeToFindValue);
                         setTvDay(dayPos, weekPos, dayValue);
                     }
 
@@ -164,7 +167,7 @@ public class MainFragment extends Fragment {
                     String totalTimeValue = msg.getData().getString("totalTimeValue");
                     //TODO - verificar se é == "-"
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        System.out.println(">>>>"+ totalTimeValue +"<<<<<");
+                        //  System.out.println(">>>>" + totalTimeValue + "<<<<<");
                         setTvWeekTotalTime(weekPosition, totalTimeValue);
                     }
 
@@ -172,24 +175,28 @@ public class MainFragment extends Fragment {
                 case 4:
                     String min = msg.getData().getString("minTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                       setMinTime(min);
+                        System.out.println("lemos min=" + min);
+                        setMinTime(min);
                     }
                     break;
                 case 5:
                     String max = msg.getData().getString("maxTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        System.out.println("lemos max=" + max);
                         setMaxTime(max);
                     }
                     break;
                 case 6:
                     String average = msg.getData().getString("averageTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        System.out.println("lemos average=" + average);
                         setAverageTime(average);
                     }
                     break;
                 case 7:
                     String month = msg.getData().getString("monthTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
+                        System.out.println("lemos month_frag_show=" + month);
                         setMonthTime(month);
                     }
                     break;
@@ -236,20 +243,20 @@ public class MainFragment extends Fragment {
         tvMonthTime = (TextView) rootView.findViewById(R.id.tvMonthTime);
     }
 
-    private void setMinTime(String text){
-        tvMinTime.setText(""+text);
+    private void setMinTime(String text) {
+        tvMinTime.setText("" + text);
     }
 
-    private void setMaxTime(String text){
-        tvMaxTime.setText(""+text);
+    private void setMaxTime(String text) {
+        tvMaxTime.setText("" + text);
     }
 
-    private void setAverageTime(String text){
-        tvAverageTime.setText(""+text);
+    private void setAverageTime(String text) {
+        tvAverageTime.setText("" + text);
     }
 
-    private void setMonthTime(String text){
-        tvMonthTime.setText(""+text);
+    private void setMonthTime(String text) {
+        tvMonthTime.setText("" + text);
     }
 
     private void initializationTotalWeekTime() {
@@ -335,16 +342,33 @@ public class MainFragment extends Fragment {
 
     }
 
-    void setTvDayTime(int day, int week, String value, Boolean currentDayB) {
-            tvDayTime[day][week].setText("" + value);
-        if(currentDayB)
-        {
+    void setTvDayTime(int day, int week, String value, Boolean currentDayB, final String dayValue, final long time) {
+        tvDayTime[day][week].setText("" + value);
+        if (currentDayB) {
             CardView card = (CardView) tvDayTime[day][week].getParent().getParent();
-            if(card!=null){
-                card.setCardBackgroundColor((Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(context, R.color.color_current_day)))));
+            if (card != null) {
+                card.setCardBackgroundColor((Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(context, R.color.color_current_day)))));
             }
 
         }
+        if (time > 0) {
+            RelativeLayout rl = (RelativeLayout) tvDayTime[day][week].getParent();
+            if (rl != null) {
+                rl.setClickable(true);
+
+                rl.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        showDialogDayDetail(time);
+
+
+                    }
+                });
+            }
+        }
+
+
     }
 
     private void initializationDays() {
@@ -405,7 +429,7 @@ public class MainFragment extends Fragment {
     }
 
     static void setTvDay(int day, int week, String value) {
-        if(!value.equals(""))
+        if (!value.equals(""))
             tvDay[day][week].setText("" + value);
     }
 
@@ -503,7 +527,7 @@ public class MainFragment extends Fragment {
         }
 
         private void loadAdditionalInfo() {
-            month_time = month_time + average_time;
+
             loadMinTime();
             loadMaxTime();
             loadAverageTime();
@@ -534,8 +558,8 @@ public class MainFragment extends Fragment {
         private void loadAverageTime() {
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
-            if(cont>0)
-                average_time=average_time/cont;
+            if (cont > 0)
+                average_time = average_time / cont;
             b.putString("averageTime", LocalTime.getFormatTime(average_time)); // for example
             message.setData(b);
             message.obj = mWeakRefContext;
@@ -546,7 +570,7 @@ public class MainFragment extends Fragment {
         private void loadMonthTime() {
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
-            b.putString("monthTime", LocalTime.getFormatTime(month_time+CurrentDayTime)); // for example
+            b.putString("monthTime", LocalTime.getFormatTime(month_time + CurrentDayTime)); // for example
             message.setData(b);
             message.obj = mWeakRefContext;
             message.what = 7;
@@ -555,13 +579,15 @@ public class MainFragment extends Fragment {
 
         private void setAdditionalInfo(long _time) {
             cont++;
-            if(_time < min_time || min_time==-1)
-                min_time=_time;
-            if(_time > max_time)
-                max_time=_time;
+            System.out.println("cont= "+ cont);
+            if (_time < min_time || min_time == -1)
+                min_time = _time;
+            if (_time > max_time)
+                max_time = _time;
 
             average_time = average_time + _time;
         }
+
         public void loadColumns() {
             System.out.println("loadColumns");
 
@@ -636,60 +662,80 @@ public class MainFragment extends Fragment {
         }
 
         private long createDays(final int local_week, final int local_day, final long timeStartOfWeek) {
-            boolean currentDayB=false;
-          //  final int currentWeek = local_week;
+            boolean currentDayB = false;
+            //  final int currentWeekOfMonth = local_week;
 
             final LocalEventService lEventService = new LocalEventService(mWeakRefContext);
 
             List<EventClass> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
-            System.out.println("local_week =" + local_week + " | local_day= " + local_day + " | listOfEvents= " + listOfEvents.size());
+            //System.out.println("local_week =" + local_week + " | local_day= " + local_day + " | listOfEvents= " + listOfEvents.size());
             DayClassTMP dayObject = new DayClassTMP(listOfEvents);
 
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
-            int year_local = LocalTime.getYear(timeStartOfWeek);
-            int month_local = LocalTime.getMonth(timeStartOfWeek);
-            int day_local = LocalTime.getDay(timeStartOfWeek);
-            int week_timeStartOfWeek = LocalTime.getWeekOfMonth(timeStartOfWeek);
-            month_local++;
-            System.out.println("compare?= " + year_local +"="+year_local + " " + month_local+"="+month + " timeStartOfWeek=" + dayObject.getTotalDuration());
+            int year_event = LocalTime.getYear(timeStartOfWeek);
+            int month_event = LocalTime.getMonth(timeStartOfWeek);
+            int day_event = LocalTime.getDay(timeStartOfWeek);
+            int week_event = LocalTime.getWeekOfMonth(timeStartOfWeek);
+            month_event++;
+            // System.out.println("compare?= " + year_event + "=" + year_event + " " + month_event + "=" + month_frag_show + " timeStartOfWeek=" + timeStartOfWeek);
             long milli = getCurrentMilliseconds();
-            int currentWeek = LocalTime.getWeekOfMonth(milli);
+            int currentWeekOfMonth = LocalTime.getWeekOfMonth(milli);
             int currentDay = LocalTime.getDay(milli);
             int currentYear = LocalTime.getYear(milli);
             int currentMonth = LocalTime.getMonth(milli);
             currentMonth++;
             long time = dayObject.getTotalDuration();
-            //System.out.println("zerep1week= " + currentWeek + " local_week= "+local_week);
-            if(year_local == year && month_local == month && currentWeek==week_timeStartOfWeek &&  day_local<currentDay){
-               // System.out.println("xpto123");
-                CurrentWeekTime = CurrentWeekTime + time;
-            }
-            if(year_local == year && month_local == month && day_local<currentDay && time>0){
-                setAdditionalInfo(time);
+            //System.out.println("zerep1week= " + currentWeekOfMonth + " local_week= "+local_week);
 
-            }else if(year_local == year && month_local == month && day_local==currentDay){
-                if(currentYear == year && currentMonth == month)
-                    currentDayB=true;
-                System.out.println("currentDayB");
-                //totalCurrentDayTime = dayObject.getTotalDuration();
+            System.out.println(">>>" + year_event + " " + year_frag_show + " " + month_event + " " + month_frag_show);
 
-                if (listOfEvents.size() > 0 && !(listOfEvents.get(listOfEvents.size() - 1).isClose())) {
+            if (year_event == year_frag_show && month_event == month_frag_show) {
+                if (day_event == currentDay && year_event == currentYear && month_event == currentMonth) {
+                    currentDayB = true;
 
-                    time = time + LocalTime.getCurrentMilliseconds() - listOfEvents.get(listOfEvents.size() - 1).getData().getStartTime();
-                    CurrentDayTime=time;
-                    col = local_week;
-                    row = local_day;
+                    //totalCurrentDayTime = dayObject.getTotalDuration();
+
+                    if (listOfEvents.size() > 0 && !(listOfEvents.get(listOfEvents.size() - 1).isClose())) {
+                        time = time + (milli - listOfEvents.get(listOfEvents.size() - 1).getData().getStartTime());
+                        CurrentDayTime = time;
+                        col = local_week;
+                        row = local_day;
+
+                    }
+                } else {
+                    if(time>0){
+                        setAdditionalInfo(time);
+
+                        if (currentWeekOfMonth == week_event)
+                            CurrentWeekTime = CurrentWeekTime + time;
+
+                        month_time = month_time + time;
+                    }
 
                 }
-                System.out.println("totalDayTime= " + CurrentDayTime);
+
+            } else {
+
             }
+
+
+            //obter o tempo de todos os dias desse mes
+            // if (year_event == year_frag_show && month_event == month_frag_show && day_event < currentDay && time > 0) {
+            //   setAdditionalInfo(time);
+
+            //obter o tempo do corrente dia
+            //     } else if (year_event == year_frag_show && month_event == month_frag_show && day_event == currentDay) {
+            //          if (currentYear == year_frag_show && currentMonth == month_frag_show)
+
+            //          System.out.println("totalDayTime= " + CurrentDayTime);
+            //      }
 
             b.putInt("dayPosition", local_day); // for example
             b.putInt("weekPosition", local_week); // for example
-            b.putString("dayValue", "" + day_local); // for example
+            b.putString("dayValue", "" + day_event); // for example
             b.putString("timeValue", getFormatTime(time)); // for example
-
+            b.putLong("dayTimeToFindValue", timeStartOfWeek); // for example
             b.putBoolean("currentDayB", currentDayB); // for example
 
             message.setData(b);
@@ -698,7 +744,8 @@ public class MainFragment extends Fragment {
             message.what = 2;
             handler.sendMessage(message);
 
-
+            listOfEvents.clear();
+            dayObject = null;
             return time;
         }
 
@@ -844,7 +891,6 @@ public class MainFragment extends Fragment {
     }
 
 
-
     ;
 
     private class MyHandlerThread extends HandlerThread {
@@ -883,10 +929,11 @@ public class MainFragment extends Fragment {
     }
 
 
-    public void refreshTime(long time){
+    public void refreshTime(long time) {
+        System.out.println("refreshTime= " +time);
         Message message = handler.obtainMessage();
         Bundle b = new Bundle();
-        b.putString("monthTime", getFormatTime(month_time+time)); // for example
+        b.putString("monthTime", getFormatTime(month_time + time)); // for example
         message.setData(b);
         message.obj = new WeakReference<Context>(getContext());
         message.what = 7;
@@ -901,19 +948,56 @@ public class MainFragment extends Fragment {
         b.putString("timeValue", getFormatTime(time)); // for example
         message.setData(b);
 
-        message.obj =  new WeakReference<Context>(getContext());
+        message.obj = new WeakReference<Context>(getContext());
         message.what = 2;
         handler.sendMessage(message);
 
         message = handler.obtainMessage();
         b = new Bundle();
         b.putInt("weekPosition", col); // for example
-        b.putString("totalTimeValue", getFormatTime(CurrentWeekTime+time)); // for example
-       // System.out.println("wwww= " + getFormatTime(CurrentWeekTime+time));
+        b.putString("totalTimeValue", getFormatTime(CurrentWeekTime + time)); // for example
+        // System.out.println("wwww= " + getFormatTime(CurrentWeekTime+time));
         message.setData(b);
-        message.obj =new WeakReference<Context>(getContext());
+        message.obj = new WeakReference<Context>(getContext());
         message.what = 3;
         handler.sendMessage(message);
     }
 
+    private void showDialogDayDetail(long time) {
+        System.out.println("shwodialog");
+        dismissDialog();
+        dialog = new DialogDayDetail();
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putLong("timeDayDetails", time);
+        dialog.setArguments(args);
+
+        //show dialog
+        dialog.show(getActivity().getSupportFragmentManager(), TAG_DIALOG_DAY_DETAIL);
+    }
+
+    private void dismissDialog() {
+        if (showingDialog()) {
+            dialog.dismiss();
+            dialog = null;
+        }
+    }
+
+    private boolean showingDialog() {
+        if (dialog != null)
+            return true;
+        return false;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        dismissDialog();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dismissDialog();
+    }
 }

@@ -115,7 +115,7 @@ public class MainShowFragment extends Fragment {
         listOfWeeks.add(new Total());
         listOfWeeks.add(new Total());
         TextView tv = (TextView) rootView.findViewById(R.id.tvTest);
-        tv.setText("year= " + year + " " + " month= " + month);
+        tv.setText("year= " + year + " " + " month_frag_show= " + month);
         try {
             initialization();
         } catch (Exception e) {

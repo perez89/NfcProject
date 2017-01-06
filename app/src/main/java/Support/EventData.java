@@ -54,6 +54,10 @@ public class EventData {
     public long getStartTime(){
         return startTime;
     }
+
+    public long getEndTime(){
+        return endTime;
+    }
     private long setDuration() {
         if (endTime > startTime) {
             closed = true;

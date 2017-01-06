@@ -3,46 +3,47 @@
     android:id="@+id/layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:background="@drawable/widget_drawable"
     android:padding="@dimen/widget_padding">
 
     <LinearLayout
+        android:id="@+id/topRL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <TextView
+            style="@android:style/TextAppearance.Small"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="16dp"
+            android:text="Schedule"
+            android:textStyle="bold" />
 
-            >
+        <ImageView
 
+            android:id="@+id/ivWorking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:background="@android:drawable/ic_menu_recent_history"
+            android:visibility="visible" />
+    </LinearLayout>
 
-            <TextView
-                style="@android:style/TextAppearance.Small"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:text="Schedule"
-                android:textStyle="bold" />
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:id="@+id/ivWorking"
-                android:layout_centerVertical="true"
-                android:background="@android:drawable/ic_menu_recent_history" />
-        </RelativeLayout>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/topRL"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/topRL"
+        android:layout_marginTop="2dp"
+        android:orientation="vertical">
 
 
         <LinearLayout
             android:id="@+id/llWidgetOnClick"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:orientation="horizontal">
@@ -58,25 +59,28 @@
                 <TextView
                     android:id="@+id/tvWidgetDay"
                     style="@android:style/TextAppearance.Medium"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/widget_text_margin"
+                    android:maxLines="1"
                     android:text="Day "></TextView>
 
                 <TextView
                     android:id="@+id/tvWidgetWeek"
                     style="@android:style/TextAppearance.Medium"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/widget_text_margin"
+                    android:maxLines="1"
                     android:text="Week "></TextView>
 
                 <TextView
                     android:id="@+id/tvWidgetMonth"
                     style="@android:style/TextAppearance.Medium"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/widget_text_margin"
+                    android:maxLines="1"
                     android:text="Month "></TextView>
 
             </LinearLayout>
@@ -84,9 +88,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
 
-                android:gravity="left"
                 android:orientation="vertical">
 
                 <TextView
@@ -95,8 +97,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/widget_text_margin"
+                    android:gravity="right"
                     android:maxLength="5"
-                    android:text="1:23"></TextView>
+                    android:maxLines="1"
+                    android:text="0:00"></TextView>
 
                 <TextView
                     android:id="@+id/tvUpdateWeek"
@@ -104,8 +108,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/widget_text_margin"
+                    android:gravity="right"
                     android:maxLength="5"
-                    android:text="23:54"></TextView>
+                    android:maxLines="1"
+                    android:text="0:00"></TextView>
 
 
                 <TextView
@@ -114,8 +120,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/widget_text_margin"
+                    android:gravity="right"
                     android:maxLength="6"
-                    android:text="124:32"></TextView>
+                    android:maxLines="1"
+                    android:text="0:00"></TextView>
 
             </LinearLayout>
 
