@@ -15,17 +15,14 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import Support.EventClass;
 import Support.LocalCalendar;
-import Support.LocalEventService;
 import Support.LocalTime;
 import Support.MyCalendarObserver;
+import Support.TimeCalculation;
 
-import static Support.LocalTime.getCurrentMilliseconds;
 import static Support.LocalTime.getFormatTime;
 
 /**
@@ -39,19 +36,22 @@ public class BottomFragment extends Fragment {
     private View rootView;
     private MyHandler handler = new MyHandler();
     private MyHandlerThread myHandlerThread;
-    private final long DAY_MILLISECONDS = 86400000;
+
     Context context;
     private TextView tvDayTime, tvWeekTime, tvMonthTime;
     private long dayTime = 0;
     private long weekTime = 0;
     private long monthTime = 0;
     private MyCalendarObserver myObserver;
+
     public static BottomFragment newInstance() {
         BottomFragment myFragment = new BottomFragment();
 
         return myFragment;
     }
+
     ImageView ivWorking;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -120,42 +120,72 @@ public class BottomFragment extends Fragment {
             _dayTime = dayTimeX;
             _weekTime = weekTimeX;
             _monthTime = monthTimeX;
+
+            sendData();
+        }
+
+        private void sendData() {
+            updateWidget(mWeakRefContext);
+
+            message = handler.obtainMessage();
+            Bundle b = new Bundle();
+            String dayTimeHuman = LocalTime.getFormatTime(_dayTime);
+            String weekTimeHuman = LocalTime.getFormatTime(_weekTime);
+            String monthTimeHuman = LocalTime.getFormatTime(_monthTime);
+            b.putLong("dayTime", _dayTime); //Long
+            b.putString("dayTimeHuman", dayTimeHuman); //Long
+            b.putString("weekTimeHuman", weekTimeHuman); //Long
+            b.putString("monthTimeHuman", monthTimeHuman); //Long
+
+            message.setData(b);
+
+            //message.obj= mWeakRefContext;
+            message.obj = mWeakRefContext;
+            message.what = 2;
+            handler.sendMessage(message);
+        }
+
+        @Override
+        public boolean cancel() {
+
+            updateWidget(mWeakRefContext);
+
+            message = handler.obtainMessage();
+            Bundle b = new Bundle();
+            String dayTimeHuman = LocalTime.getFormatTime(_dayTime);
+            String weekTimeHuman = LocalTime.getFormatTime(_weekTime);
+            String monthTimeHuman = LocalTime.getFormatTime(_monthTime);
+            b.putLong("dayTime", _dayTime); //Long
+            b.putString("dayTimeHuman", dayTimeHuman); //Long
+            b.putString("weekTimeHuman", weekTimeHuman); //Long
+            b.putString("monthTimeHuman", monthTimeHuman); //Long
+
+            message.setData(b);
+
+            //message.obj= mWeakRefContext;
+            message.obj = mWeakRefContext;
+            message.what = 2;
+            handler.sendMessage(message);
+            return super.cancel();
         }
 
         public void run() {
             //System.out.println("tick tack");
             //if(sec%2==0)
-
             if (sec > 59) {
-                Bundle b = new Bundle();
-                //updateMainFragment(_dayTime);
-                updateWidget(mWeakRefContext);
-
                 sec = 0;
                 _dayTime = _dayTime + 60000;
 
                 _weekTime = _weekTime + 60000;
                 _monthTime = _monthTime + 60000;
-                message = handler.obtainMessage();
-                b = new Bundle();
-                String dayTimeHuman = LocalTime.getFormatTime(_dayTime);
-                String weekTimeHuman = LocalTime.getFormatTime(_weekTime);
-                String monthTimeHuman = LocalTime.getFormatTime(_monthTime);
-                b.putLong("dayTime", _dayTime); //Long
-                b.putString("dayTimeHuman", dayTimeHuman); //Long
-                b.putString("weekTimeHuman", weekTimeHuman); //Long
-                b.putString("monthTimeHuman", monthTimeHuman); //Long
 
-                message.setData(b);
+                System.out.println("tick " + sec);
 
-                //message.obj= mWeakRefContext;
-                message.obj = mWeakRefContext;
-                message.what = 2;
-                handler.sendMessage(message);
+                //updateMainFragment(_dayTime);
+                sendData();
             }
             sec++;
         }
-
 
 
         //http://www.androiddesignpatterns.com/2013/01/inner-class-handler-memory-leak.html
@@ -178,11 +208,12 @@ public class BottomFragment extends Fragment {
     }
 
 
-    private void updateMainFragment(long time) {
-        System.out.println("refresh bottom0= " + time);
-        if(mCallback!=null){
-            System.out.println("refresh bottom1= " + time);
-            mCallback.sendRefreshTime(time);
+    private void updateMainFragment(String dayTime, String weekTime, String monthTime) {
+        //  System.out.println("refresh bottom0= " + time);
+        if (mCallback != null) {
+            //    System.out.println("refresh bottom1= " + time);
+            mCallback.sendRefreshTime(dayTime, weekTime, monthTime);
+            //mCallback.sendRefreshTime(time);
         }
 
     }
@@ -207,89 +238,30 @@ public class BottomFragment extends Fragment {
     }
 
     private class CustomRunnable implements Runnable {
-        private WeakReference<Context> mWeakRefContext;
-        private LocalEventService lEventService;
-        long timeStartOfMonth;
         Handler handler;
+        WeakReference<Context> mWeakRefContext;
 
         public CustomRunnable(Context context, Handler h) throws ParseException {
-            System.out.println("CustomRunnable, ALTERACAO!!!!!!!!!!!!!!!!");
+
+            mWeakRefContext = new WeakReference<Context>(context);
             handler = h;
-            this.mWeakRefContext = new WeakReference<Context>(context);
-            lEventService = new LocalEventService(mWeakRefContext);
+
         }
 
         @Override
         public void run() {
             //Main task execution logic here
             //load
-            System.out.println("CustomRunnable-run, ALTERACAO!!!!!!!!!!!!!!!!");
-            long milli = getCurrentMilliseconds();
-            int secs_real = LocalTime.getSeconds(milli);
-            int week_real = LocalTime.getWeekOfMonth(milli);
-            int year_real = LocalTime.getYear(milli);
+            TimeCalculation _timeCalculation = new TimeCalculation(mWeakRefContext);
 
-            int month_real = LocalTime.getMonth(milli);
-            int day_real = LocalTime.getDay(milli);
-            int secs = LocalTime.getSeconds(milli);
-            System.out.println(year_real + " xpto " + month_real);
 
-            int numOfDays = LocalTime.getNumberDaysMonth(year_real, month_real);
-            LocalTime.DateString dataString = new LocalTime.DateString(year_real + "", (month_real + 1) + "", "", "", "", "");
-
-            System.out.println("dayweekyear= " + month_real + " " + week_real + " " + day_real + " " + numOfDays);
             //int minTime = 999;
             //int maxTime = 0;
-            long currentDayTime = 0;
-            long currentWeekTime = 0;
-            long currentMonthTime = 0;
-            boolean working = false;
-            try {
-                timeStartOfMonth = dataString.getMilliseconds();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-
-            if (timeStartOfMonth > 0) {
-                //System.out.println("run background-inside-timeStartOfMonth="+time);
-                for (int i = 0; i < numOfDays; i++) {
-                    //   System.out.println("run background-inside-2");
-                    int localWeek = LocalTime.getWeekOfMonth(timeStartOfMonth);
-                    int localDay = LocalTime.getDay(timeStartOfMonth);
-                    long timeEnd = timeStartOfMonth + DAY_MILLISECONDS;
-                    List<EventClass> listOfEvents = lEventService.getEventsForDay(timeStartOfMonth, timeEnd);
-                    //if(listOfEvents.get())
-                    //  System.out.println("dayweekyear2= " +month_frag_show + " " +localWeek+ " " +localDay);
-                    long totalDayTime = getTotalDayTime(listOfEvents);
-                    //String xpto = getFormatTime(totalDayTime);
-                    //System.out.println("xpto day= " + localDay + " | time= " + xpto);
-
-                    if (day_real == localDay) {
-                        if (listOfEvents.size() > 0 && !(listOfEvents.get(listOfEvents.size() - 1).isClose())) {
-                            totalDayTime = totalDayTime + LocalTime.getCurrentMilliseconds() - listOfEvents.get(listOfEvents.size() - 1).getData().getStartTime();
-                            working = true;
-                        }
-                        currentDayTime = totalDayTime;
-                    }
-
-
-                    if (week_real == localWeek)
-                        currentWeekTime = currentWeekTime + totalDayTime;
-
-                   /* if(totalDayTime<minTime)
-                        minTime=(int)(long)totalDayTime;
-
-                    if(totalDayTime>maxTime)
-                        maxTime=(int)(long)totalDayTime;*/
-
-                    currentMonthTime = currentMonthTime + totalDayTime;
-
-                    timeStartOfMonth = timeStartOfMonth + DAY_MILLISECONDS;
-
-
-                }
-            }
+            long currentDayTime = _timeCalculation.getDayTime();
+            long currentWeekTime = _timeCalculation.getWeekTime();
+            long currentMonthTime = _timeCalculation.getMonthTime();
+            boolean working = _timeCalculation.isWorking();
+            int secs = _timeCalculation.getSecs();
             //currentMonthTime=10000000;
 //TODO            adicionar um evento em aberto
 
@@ -326,14 +298,6 @@ public class BottomFragment extends Fragment {
         }
 
 
-
-        private long getTotalDayTime(List<EventClass> listOfEvents) {
-            long total = 0;
-            for (int i = 0; i < listOfEvents.size(); i++) {
-                total = total + listOfEvents.get(i).getData().getDuration();
-            }
-            return total;
-        }
     }
 
     //TODO colocar o timetask a incrementar a cada minuto
@@ -346,10 +310,10 @@ public class BottomFragment extends Fragment {
         changeImageViewVisibility(false);
     }
 
-    void changeImageViewVisibility(boolean working){
-        if(working){
+    void changeImageViewVisibility(boolean working) {
+        if (working) {
             ivWorking.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             ivWorking.setVisibility(View.INVISIBLE);
         }
     }
@@ -360,7 +324,7 @@ public class BottomFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             WeakReference<Context> mWeakRefContext = null;
-            if(msg.obj!=null)
+            if (msg.obj != null)
                 mWeakRefContext = (WeakReference<Context>) msg.obj;
 
             super.handleMessage(msg);
@@ -378,20 +342,20 @@ public class BottomFragment extends Fragment {
                     boolean working = msg.getData().getBoolean("working");
 
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        if(working){
-                            System.out.println("working "+ dayValue);
+                        if (working) {
+                            System.out.println("working " + dayValue);
                             changeImageViewVisibility(true);
 
                             startTimer(dayTime, weekTime, monthTime, secs);
-                            if((dayValue.equals("-")) || (dayValue.equals("0"))){
+                            if ((dayValue.equals("-")) || (dayValue.equals("0"))) {
                                 setTvDay("0:00");
-                            }else{
+                            } else {
                                 setTvDay(dayValue);
                             }
-                        }else{
+                        } else {
                             System.out.println("not working");
                             changeImageViewVisibility(false);
-                            if(dayValue.equals("-") || dayValue.equals("0"))
+                            if (dayValue.equals("-") || dayValue.equals("0"))
                                 setTvDay("-");
                             else
                                 setTvDay(dayValue);
@@ -409,12 +373,12 @@ public class BottomFragment extends Fragment {
                     break;
                 case 2:
                     String dayValueStr = msg.getData().getString("dayTimeHuman");
-                    long dayTime = msg.getData().getLong("dayTime");
+                   // long dayTime = msg.getData().getLong("dayTime");
                     String weekValueStr = msg.getData().getString("weekTimeHuman");
                     String monthValueStr = msg.getData().getString("monthTimeHuman");
 
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        updateMainFragment(dayTime);
+                        updateMainFragment(dayValueStr, weekValueStr, monthValueStr);
                         if (!dayValueStr.equals("-"))
                             setTvDay(dayValueStr);
 
@@ -425,7 +389,7 @@ public class BottomFragment extends Fragment {
                             setTvMonth(monthValueStr);
                     }
                     break;
-                case  3:
+                case 3:
                     changeCalendar();
                     break;
             }
@@ -435,9 +399,8 @@ public class BottomFragment extends Fragment {
     private void changeCalendar() {
         System.out.println("changeCalendar");
 
-        ((MainActivity)getActivity()).laodBottomFrag();
-        ((MainActivity)getActivity()).updateWidget();
-
+        ((MainActivity) getActivity()).laodBottomFrag();
+        ((MainActivity) getActivity()).updateWidget();
 
 
         //setHandlerAndThread();
@@ -483,9 +446,9 @@ public class BottomFragment extends Fragment {
 
     RefreshTime mCallback;
 
-    public interface RefreshTime{
+    public interface RefreshTime {
 
-        void sendRefreshTime(long text);
+        void sendRefreshTime(String dayTime, String weekTime, String monthTime);
     }
 
     @Override
@@ -502,16 +465,15 @@ public class BottomFragment extends Fragment {
         }
     }
 
-   // public void someMethod(){
-     //   mCallback.sendText("YOUR TEXT");
-   // }
+    // public void someMethod(){
+    //   mCallback.sendText("YOUR TEXT");
+    // }
 
     @Override
     public void onDetach() {
         mCallback = null; // => avoid leaking, thanks @Deepscorn
         super.onDetach();
     }
-
 
 
 }

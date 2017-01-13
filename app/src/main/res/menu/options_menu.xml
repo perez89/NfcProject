@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/share"
+        android:showAsAction="ifRoom"
+        android:title="@string/share" />
+
+    <item
+        android:id="@+id/aboutUs"
+        android:showAsAction="ifRoom"
+        android:title="@string/aboutus" />
+
+    <item
+        android:id="@+id/reportError"
+        android:showAsAction="ifRoom"
+        android:title="@string/reporterror" />
+
+    <item
+        android:id="@+id/help"
+        android:showAsAction="ifRoom"
+        android:title="@string/help" />
+    <item
+        android:id="@+id/generatepdf"
+        android:showAsAction="ifRoom"
+        android:title="@string/genpdf" />
+    <item
+        android:id="@+id/simulateNfc"
+        android:showAsAction="ifRoom"
+        android:title="@string/simulatenfc" />
+    <item
+        android:id="@+id/settings"
+        android:showAsAction="ifRoom"
+        android:title="@string/settings" />
+</menu>

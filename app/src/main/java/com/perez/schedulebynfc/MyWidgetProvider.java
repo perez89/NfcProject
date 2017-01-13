@@ -11,14 +11,9 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
-import java.util.List;
 
-import Support.EventClass;
-import Support.LocalEventService;
-import Support.LocalTime;
+import Support.TimeCalculation;
 
-import static Support.LocalTime.getCurrentMilliseconds;
 import static Support.LocalTime.getFormatTime;
 
 /**
@@ -33,6 +28,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
     private long currentWeekTime;
     private long currentMonthTime;
     private boolean working;
+
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -85,13 +81,27 @@ public class MyWidgetProvider extends AppWidgetProvider {
         }
     }
 
+    private void loadTime(Context context) {
+        TimeCalculation _timeCalculation = new TimeCalculation(new WeakReference<Context>(context));
+
+
+        //int minTime = 999;
+        //int maxTime = 0;
+        currentDayTime = _timeCalculation.getDayTime();
+        currentWeekTime = _timeCalculation.getWeekTime();
+        currentMonthTime = _timeCalculation.getMonthTime();
+        working = _timeCalculation.isWorking();
+
+
+    }
+
     private String getDisplayTimeForWidget(long time){
         String text = getFormatTime(time);
-        if (text.equals("-")){
+        if (text.equals("-") || text.equals("0") ){
             if(working)
-                text = "0:01";
-            else
                 text = "0:00";
+            else
+                text = "-";
         }
         return text;
     }
@@ -103,86 +113,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
         working = false;
     }
 
-    void loadTime(Context context) {
-        LocalEventService lEventService = new LocalEventService(new WeakReference<Context>(context));
-        long milli = getCurrentMilliseconds();
-        int secs = LocalTime.getSeconds(milli);
-        int week = LocalTime.getWeekOfMonth(milli);
-        int year = LocalTime.getYear(milli);
-        int month = LocalTime.getMonth(milli);
-        int day = LocalTime.getDay(milli);
 
-
-        int numOfDays = LocalTime.getNumberDaysMonth(year, month);
-        LocalTime.DateString dataString = new LocalTime.DateString(year + "", (month + 1) + "", "", "", "", "");
-
-        long timeStartOfMonth = 0;
-
-        try {
-            timeStartOfMonth = dataString.getMilliseconds();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        long millisecondsDay = 86400000;
-
-        if (timeStartOfMonth > 0) {
-
-            long time = timeStartOfMonth;
-            List<EventClass> listOfEvents = null;
-            //System.out.println("run background-inside-timeStartOfMonth="+time);
-            for (int i = 0; i < numOfDays; i++) {
-
-                int localWeek = LocalTime.getWeekOfMonth(time);
-                int localDay = LocalTime.getDay(time);
-                long timeEnd = time + millisecondsDay;
-                listOfEvents = lEventService.getEventsForDay(time, timeEnd);
-                //if(listOfEvents.get())
-                //  System.out.println("dayweekyear2= " +month_frag_show + " " +localWeek+ " " +localDay);
-                long totalDayTime = getTotalDayTime(listOfEvents);
-                String xpto = getFormatTime(totalDayTime);
-                // System.out.println("xpto day= " + localDay + " | time= " + xpto);
-
-                if (day == localDay) {
-
-                    if (listOfEvents.size() > 0 && !(listOfEvents.get(listOfEvents.size() - 1).isClose())) {
-                        totalDayTime = totalDayTime + LocalTime.getCurrentMilliseconds() - listOfEvents.get(listOfEvents.size() - 1).getData().getStartTime();
-                        working = true;
-                    } else {
-                        working = false;
-                    }
-                    currentDayTime = totalDayTime;
-                }
-
-
-                if (week == localWeek)
-                    currentWeekTime = currentWeekTime + totalDayTime;
-
-                   /* if(totalDayTime<minTime)
-                        minTime=(int)(long)totalDayTime;
-
-                    if(totalDayTime>maxTime)
-                        maxTime=(int)(long)totalDayTime;*/
-
-                currentMonthTime = currentMonthTime + totalDayTime;
-
-                time = time + millisecondsDay;
-
-
-            }
-            System.out.println(">>>> " + currentDayTime + " " + currentWeekTime + " " + currentMonthTime);
-            listOfEvents.clear();
-            listOfEvents = null;
-        }
-        lEventService = null;
-    }
-
-    private long getTotalDayTime(List<EventClass> listOfEvents) {
-        long total = 0;
-        for (int i = 0; i < listOfEvents.size(); i++) {
-            total = total + listOfEvents.get(i).getData().getDuration();
-        }
-        return total;
-    }
 
     public static class WidgetUpdate {
         public void Update(WeakReference<Context> mWeakRefContext) {

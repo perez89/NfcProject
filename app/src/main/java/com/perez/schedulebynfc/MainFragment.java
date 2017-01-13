@@ -30,7 +30,6 @@ import Support.LocalTime;
 
 import static Support.LocalTime.getCurrentMilliseconds;
 import static Support.LocalTime.getFormatTime;
-import static Support.LocalTime.getYear;
 
 
 /**
@@ -93,24 +92,29 @@ public class MainFragment extends Fragment {
         month_frag_show++;
         initialization();
         setHandlerAndThread();
-
+        firstTime();
         return rootView;
 
     }
 
-    private void currentDay() {
+    private void firstTime() {
+        String currentDayTime="";
+        String currentWeekTime="";
+        String currentMonthTime="";
+
         long milli = getCurrentMilliseconds();
-        int secs = LocalTime.getSeconds(milli);
-        int week = LocalTime.getWeekOfMonth(milli);
-        int year = getYear(milli);
+        int current_year = LocalTime.getYear(milli);
+        int current_month = LocalTime.getMonth(milli);
+        if (current_year == year_frag_show && current_month == month_frag_show) {
+            Bundle bundle = ((MainActivity) getContext()).getCurrentTimes();
+            if(!(bundle.isEmpty())){
+                currentDayTime = bundle.getString("dayTime", "");
+                currentWeekTime= bundle.getString("weekTime", "");
+                currentMonthTime = bundle.getString("monthTime", "");
+                refreshTime(currentDayTime, currentWeekTime, currentMonthTime);
+            }
+        }
 
-        int month = LocalTime.getMonth(milli);
-        int day = LocalTime.getDay(milli);
-
-        System.out.println(year + " xpto " + month);
-
-        int numOfDays = LocalTime.getNumberDaysMonth(year, month);
-        LocalTime.DateString dataString = new LocalTime.DateString(year + "", (month + 1) + "", "", "", "", "");
     }
 
     private void setHandlerAndThread() {
@@ -594,7 +598,7 @@ public class MainFragment extends Fragment {
             System.out.println("loadColumns");
 
             //Log.i("while null", "Not init yet"); //It keeps on looping here
-            long week_milli = 604800000;
+            final long week_milli = 604800000;
             createLeftColumn();
             for (int week = 0; week < 6; week++) {
                 final long initial_week_time = timeStartOfWeek + (week * week_milli);
@@ -656,7 +660,7 @@ public class MainFragment extends Fragment {
 
                 // createHeaderColumns(week, timeStartOfWeek, layout); //-> so para verificar que esta correto
                 iniWeek = timeStartOfWeek + (dayTime * day);
-
+                System.out.println("createDays= " + day);
                 totalWeekDuration = totalWeekDuration + createDays(week, day, iniWeek);
 
             }
@@ -664,9 +668,10 @@ public class MainFragment extends Fragment {
         }
 
         private long createDays(final int local_week, final int local_day, final long timeStartOfWeek) {
+
             boolean currentDayB = false;
             //  final int currentWeekOfMonth = local_week;
-
+            System.out.println("createDays");
             final LocalEventService lEventService = new LocalEventService(mWeakRefContext);
 
             List<EventClass> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
@@ -678,10 +683,11 @@ public class MainFragment extends Fragment {
             int year_event = LocalTime.getYear(timeStartOfWeek);
             int month_event = LocalTime.getMonth(timeStartOfWeek);
             int day_event = LocalTime.getDay(timeStartOfWeek);
-            int week_event = LocalTime.getWeekOfMonth(timeStartOfWeek);
+            int week_event = local_week;
             month_event++;
-            // System.out.println("compare?= " + year_event + "=" + year_event + " " + month_event + "=" + month_frag_show + " timeStartOfWeek=" + timeStartOfWeek);
-            long milli = getCurrentMilliseconds();
+             long milli = getCurrentMilliseconds();
+         //   System.out.println("week_event= " + week_event);
+
             int currentWeekOfMonth = LocalTime.getWeekOfMonth(milli);
             int currentDay = LocalTime.getDay(milli);
             int currentYear = LocalTime.getYear(milli);
@@ -865,9 +871,9 @@ public class MainFragment extends Fragment {
                 hours = (int) numOfDays + hours;
                 if (hours > 0 || minutes > 0) {
                     if (minutes < 10)
-                        durationString = hours + ".0" + minutes;
+                        durationString = hours + ":0" + minutes;
                     else
-                        durationString = hours + "." + minutes;
+                        durationString = hours + ":" + minutes;
 
                 }
                 b.putString("totalTimeValue", durationString); // for example
@@ -931,11 +937,11 @@ public class MainFragment extends Fragment {
     }
 
 
-    public void refreshTime(long time) {
-        System.out.println("refresh Main= " +time);
+    public void refreshTime(String dayTime, String weekTime, String monthTime) {
+
         Message message = handler.obtainMessage();
         Bundle b = new Bundle();
-        b.putString("monthTime", getFormatTime(month_time + time)); // for example
+        b.putString("monthTime",monthTime); // for example
         message.setData(b);
         message.obj = new WeakReference<Context>(getContext());
         message.what = 7;
@@ -947,7 +953,7 @@ public class MainFragment extends Fragment {
         b.putInt("dayPosition", row); // for example
         b.putInt("weekPosition", col); // for example
         b.putString("dayValue", ""); // for example
-        b.putString("timeValue", getFormatTime(time)); // for example
+        b.putString("timeValue", dayTime); // for example
         message.setData(b);
 
         message.obj = new WeakReference<Context>(getContext());
@@ -957,7 +963,7 @@ public class MainFragment extends Fragment {
         message = handler.obtainMessage();
         b = new Bundle();
         b.putInt("weekPosition", col); // for example
-        b.putString("totalTimeValue", getFormatTime(CurrentWeekTime + time)); // for example
+        b.putString("totalTimeValue", weekTime); // for example
         // System.out.println("wwww= " + getFormatTime(CurrentWeekTime+time));
         message.setData(b);
         message.obj = new WeakReference<Context>(getContext());

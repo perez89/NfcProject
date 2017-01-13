@@ -9,10 +9,10 @@ public class EventClass {
     private EventData lData;
 
 
-    public EventClass(long eventID, long startTime, long endTime){
+    public EventClass(long eventID, long startTime, long endTime, String timeZone, String title, String description){
       //  System.out.println("EventClass ! startTimeL= " + startTime +" endTimeL= " + startTime);
         this.eventID = eventID;
-        lData = new EventData(startTime, endTime);
+        lData = new EventData(startTime, endTime, timeZone, title, description);
     }
 
     public long getEventID() {

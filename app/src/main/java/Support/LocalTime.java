@@ -1,11 +1,13 @@
 package Support;
 
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Created by User on 18/10/2016.
@@ -37,12 +39,14 @@ public class LocalTime {
 
     public static int getHour(long millis) {
         Calendar cl = Calendar.getInstance();
+
         cl.setTimeInMillis(millis);  //here your time in miliseconds
-        return cl.get(Calendar.HOUR);
+        return cl.get(Calendar.HOUR_OF_DAY);
     }
 
     public static int getDay(long millis) {
         Calendar cl = Calendar.getInstance();
+
         cl.setTimeInMillis(millis);  //here your time in miliseconds
         return cl.get(Calendar.DAY_OF_MONTH);
     }
@@ -57,6 +61,7 @@ public class LocalTime {
 
     public static int getWeekOfMonth(long millis) {
         Calendar cl = Calendar.getInstance();
+       // cl.setFirstDayOfWeek(Calendar.MONDAY);
         cl.setTimeInMillis(millis);  //here your time in miliseconds
         return (cl.get(Calendar.WEEK_OF_MONTH));
     }
@@ -194,7 +199,7 @@ public class LocalTime {
         }
 
         public long getMilliseconds() throws ParseException {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
             String startDateInString = getDay()+"-"+getMonth()+"-"+getYear()+ " "+getHour()+":"+getMinute()+":"+getSeconds();
             Date first_month = sdf.parse(startDateInString);
             Calendar calendar = Calendar.getInstance();
@@ -286,7 +291,14 @@ public class LocalTime {
         return "-";
     }
 
-
-
+    public static String getDateFormatIso(long milliseconds){
+        if(milliseconds>0){
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+            df.setTimeZone(tz);
+            return (df.format(milliseconds));
+        }
+        return "";
+    }
 
 }

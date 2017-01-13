@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -59,10 +60,7 @@ public class NFCService extends Service {
                 System.out.println("NFC-3");
                 // System.out.println("Inside lock");
                 try {
-                    long currentMilleseconds = LocalTime.getCurrentMilliseconds();
-
-                    //We only the certain Hour:Minute, we need to remove the seconds and milliseconds
-                    currentMilleseconds = removeSecondsAndMilliseconds(currentMilleseconds);
+                    long currentMilleseconds = getTime();
                     if (verifyRangeBetweenNfcDetection(currentMilleseconds)) {
                         System.out.println("registerNFC");
                         registerNFC(currentMilleseconds);
@@ -85,6 +83,26 @@ public class NFCService extends Service {
                 }
             }
             finishThread();
+        }
+
+        private long getTime() {
+            long time= LocalTime.getCurrentMilliseconds();
+            int year = LocalTime.getYear(time);
+            int month = LocalTime.getMonth(time);
+            month++;
+            int day = LocalTime.getDay(time);
+            int hour = LocalTime.getHour(time);
+            int min = LocalTime.getMinute(time);
+            System.out.println("gettime" + year + " " + month + " " +  day+ " " +  hour + " " +  min);
+            LocalTime.DateString dataString = new LocalTime.DateString(year + "", month+"",  day+"", hour+"", min+"", "");
+
+            try {
+                time = dataString.getMilliseconds();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return time;
         }
 
         private void finishThread() {

@@ -54,7 +54,6 @@ public class DialogDayDetail extends DialogFragment {
         }
 
 
-
         Context context = getActivity();
         LayoutInflater linf = LayoutInflater.from(context);
         final View inflator = linf.inflate(R.layout.dialog_day, null);
@@ -159,15 +158,15 @@ public class DialogDayDetail extends DialogFragment {
             //  listOfEvents = tmpListOfEvents;
 
             if (tmpListOfEvents.size() > 0) {
-                System.out.println("size of events= " +tmpListOfEvents.size());
+                System.out.println("size of events= " + tmpListOfEvents.size());
                 for (EventClass event :
                         tmpListOfEvents) {
 
-                        Message message = handler.obtainMessage();
-                        message.obj = event.getData();
-                        message.what = 0;
+                    Message message = handler.obtainMessage();
+                    message.obj = event.getData();
+                    message.what = 0;
 
-                        handler.sendMessage(message);
+                    handler.sendMessage(message);
 
                 }
             }
@@ -204,7 +203,7 @@ public class DialogDayDetail extends DialogFragment {
                 case 0:
                     EventData event = (EventData) msg.obj;
                     addEventToList(event);
-                   // loadRecycleView(mWeakRefContext);
+                    // loadRecycleView(mWeakRefContext);
                     //addCardView(createCardView("in", "out", "total"));
                     break;
                 case 1:

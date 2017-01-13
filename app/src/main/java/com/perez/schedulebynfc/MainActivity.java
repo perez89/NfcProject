@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     private int _weekOfmonth;
     private int _month;
     private int _year;
+
+    private String currentDayTime = "";
+    private String currentWeekTime = "";
+    private String currentMonthTime = "";
 
 
     @Override
@@ -115,10 +122,10 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
             BottomFragment new_frag = BottomFragment.newInstance();
             if (fragment == null) {
 
-               fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom).add(R.id.fragment_container_bottom, new_frag, tag_new).commit();
+                fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom).add(R.id.fragment_container_bottom, new_frag, tag_new).commit();
 
 
-            }else{
+            } else {
 
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom).replace(R.id.fragment_container_bottom, new_frag, tag_new).commit();
 
@@ -454,29 +461,103 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         super.onStop();
     }
 
+    public Bundle getCurrentTimes(){
+        Bundle bundle = new Bundle();
+        bundle.putString("dayTime", currentDayTime);
+        bundle.putString("weekTime", currentWeekTime);
+        bundle.putString("monthTime", currentMonthTime);
+        return bundle;
+    }
+
     @Override
-    public void sendRefreshTime(long time) {
-        System.out.println("refresh activity-1= " + time);
+    public void sendRefreshTime(String dayTime, String weekTime, String monthTime) {
+        //System.out.println("refresh activity-1= " + time);
+
         int currentShowMonth = currentTimeToShow.getMonth_CurrentView();
         int currentShowYear = currentTimeToShow.getYear_CurrentView();
         long milli = getCurrentMilliseconds();
         int year = LocalTime.getYear(milli);
         int month = LocalTime.getMonth(milli);
 
-
+        currentDayTime = dayTime;
+        currentWeekTime = weekTime;
+        currentMonthTime = monthTime;
         if (currentShowMonth == month && currentShowYear == year) {
-            System.out.println("refresh activity-2= " + time);
+            // System.out.println("refresh activity-2= " + time);
             String tag = getTag(currentShowMonth, currentShowYear);
             if (tag != null) {
-                System.out.println("refresh activity-3= " + time);
+                //  System.out.println("refresh activity-3= " + time);
                 MainFragment frag = (MainFragment) getSupportFragmentManager().findFragmentByTag(tag);
                 if (frag != null)
-                    System.out.println("refresh activity-4= " + time);
-                    frag.refreshTime(time);
+
+                    frag.refreshTime(dayTime, weekTime, monthTime);
             }
         }
-
-
     }
+
+    @Override
+    public MenuInflater getMenuInflater() {
+        return super.getMenuInflater();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.share:
+                share();
+                return true;
+            case R.id.settings:
+                settings();
+                return true;
+            case R.id.help:
+                help();
+                return true;
+            case R.id.aboutUs:
+                aboutUs();
+                return true;
+            case R.id.reportError:
+                reportError();
+                return true;
+            case R.id.generatepdf:
+                generatePdf();
+                return true;
+            case R.id.simulateNfc:
+                simulateNfc();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void generatePdf() {
+    }
+
+    private void simulateNfc() {
+    }
+
+    private void reportError() {
+    }
+
+    private void aboutUs() {
+    }
+
+    private void share() {
+    }
+
+    private void help() {
+    }
+
+    private void settings() {
+    }
+
+
 }
 

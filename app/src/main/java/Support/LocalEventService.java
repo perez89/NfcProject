@@ -60,7 +60,7 @@ public class LocalEventService {
             long endDay = dayRange.getEndDay();
 
 
-            String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+            String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
             String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
             String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
 
@@ -92,8 +92,11 @@ public class LocalEventService {
                 eventID = cur.getLong(0);
                 startTime = cur.getLong(1);
                 endTime = cur.getLong(2);
+                String timeZone = cur.getString(3);
+                String title = cur.getString(4);
+                String description = cur.getString(5);
 
-                eventClass = new EventClass(eventID, startTime, endTime);
+                eventClass = new EventClass(eventID, startTime, endTime, timeZone, title, description);
 
             }
             cur.close();
@@ -112,6 +115,7 @@ public class LocalEventService {
             values.put(CalendarContract.Events.CALENDAR_ID, calendarID);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault() + "");
             values.put(CalendarContract.Events.EVENT_END_TIMEZONE, TimeZone.getDefault() + "");
+
 
             if (ActivityCompat.checkSelfPermission(context.get(), Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -267,7 +271,7 @@ public class LocalEventService {
             List<EventClass> listOfEvents = new ArrayList<EventClass>();
             if (idCalendar > 0) {
 
-                String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+                String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
                 String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "<= ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
                 String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(startDay), Long.toString(idCalendar)};
 
@@ -293,9 +297,12 @@ public class LocalEventService {
                     long id = cursor.getLong(0);
                     long dtStart = cursor.getLong(1);
                     long dtEnd = cursor.getLong(2);
+                    String timeZone = cursor.getString(3);
+                    String title = cursor.getString(4);
+                    String description = cursor.getString(5);
                     EventClass event;
 
-                    event = new EventClass(id, dtStart, dtEnd);
+                    event = new EventClass(id, dtStart, dtEnd, timeZone, title, description);
                     listOfEvents.add(event);
                 }
 
@@ -312,7 +319,7 @@ public class LocalEventService {
             List<EventClass> listOfEvents = new ArrayList<EventClass>();
             if (idCalendar > 0) {
 
-                String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
+                String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
                 String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
                 String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
 
@@ -338,9 +345,12 @@ public class LocalEventService {
                     long id = cursor.getLong(0);
                     long dtStart = cursor.getLong(1);
                     long dtEnd = cursor.getLong(2);
+                    String timeZone = cursor.getString(3);
+                    String title = cursor.getString(4);
+                    String description = cursor.getString(5);
                     EventClass event;
 
-                    event = new EventClass(id, dtStart, dtEnd);
+                    event = new EventClass(id, dtStart, dtEnd, timeZone, title, description);
                     listOfEvents.add(event);
                 }
 

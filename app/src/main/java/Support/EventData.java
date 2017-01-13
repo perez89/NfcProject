@@ -1,5 +1,8 @@
 package Support;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 
 /**
@@ -22,10 +25,18 @@ public class EventData {
 
     boolean closed;
 
-    public EventData(long startTimeL, long endTimeL) {
-     //   System.out.println("startTimeL= " + startTimeL +" endTimeL= " + endTimeL);
-        startTime = startTimeL;
-        endTime = endTimeL;
+    String timeZone;
+    String title;
+    String description;
+
+    public EventData(long startTimeL, long endTimeL, String timeZone, String title, String description) {
+        //   System.out.println("startTimeL= " + startTimeL +" endTimeL= " + endTimeL);
+        this.startTime = startTimeL;
+        this.endTime = endTimeL;
+
+        this.timeZone = timeZone;
+        this.title = title;
+        this.description= description;
         splitDate();
     }
 
@@ -51,13 +62,14 @@ public class EventData {
         return duration;
     }
 
-    public long getStartTime(){
+    public long getStartTime() {
         return startTime;
     }
 
-    public long getEndTime(){
+    public long getEndTime() {
         return endTime;
     }
+
     private long setDuration() {
         if (endTime > startTime) {
             closed = true;
@@ -91,5 +103,23 @@ public class EventData {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    public JSONObject toJson() throws JSONException {
+
+        JSONObject _eventObject = new JSONObject();
+        _eventObject.put("startTime", this.startTime);
+        _eventObject.put("endTime", this.endTime);
+        return _eventObject;
+    }
+
+    public JSONObject toJsonToggl() throws JSONException {
+
+        JSONObject _eventObject = new JSONObject();
+        _eventObject.put("description", "Title: " + title + " Description: " + description);
+        _eventObject.put("start", LocalTime.getDateFormatIso(this.startTime));
+        _eventObject.put("stop", LocalTime.getDateFormatIso(this.endTime));
+        _eventObject.put("created_with", "Schedule by NFC");
+        return _eventObject;
     }
 }
