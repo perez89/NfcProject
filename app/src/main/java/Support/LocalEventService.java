@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -25,88 +24,87 @@ import static java.lang.Long.parseLong;
  */
 
 public class LocalEventService {
-    static WeakReference<Context>  context;
+    static WeakReference<Context> context;
 
     public LocalEventService(WeakReference<Context> c) {
         this.context = c;
     }
 
     public long isLastEventClose() {
-        EventClass eventClass;
-        eventClass = getLastEvent();
-        //System.out.println("inicio= " + eventClass.getlDate().get.getStartTime() + " | fim= " + eventClass.getEndTime());
+        LocalEvent localEvent;
+        localEvent = getLastEvent();
+        //System.out.println("inicio= " + localEvent.getlDate().get.getStartTime() + " | fim= " + localEvent.getEndTime());
 
-        if (eventClass != null) {
-            if (!eventClass.isClose())
-                return eventClass.getEventID();
+        if (localEvent != null) {
+            if (!localEvent.isClose())
+                return localEvent.getEventID();
         }
         return -1;
     }
 
-    private EventClass getLastEvent() {
-        EventClass eventClass = null;
-        if(context != null && context.get() != null) {
-        long idCalendar = LocalCalendar.getIdCalendar(context.get());
+    private LocalEvent getLastEvent() {
+        LocalEvent localEvent = null;
+        if (context != null && context.get() != null) {
+            long idCalendar = LocalCalendar.getIdCalendar(context.get());
 
-        if(idCalendar>0) {
-            // List<Integer> listIdEvents = new ArrayList<Integer>();
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 0, 0, 0);
-            //long startDay = calendar.getTimeInMillis();
-            calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 23, 59, 59);
-            //long endDay = calendar.getTimeInMillis();
-            LocalTime.DayRange dayRange = new LocalTime.DayRange();
-            long startDay = dayRange.getStartDay();
-            long endDay = dayRange.getEndDay();
+            if (idCalendar > 0) {
+                // List<Integer> listIdEvents = new ArrayList<Integer>();
+       /*         Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 0, 0, 0);
+                //long startDay = calendar.getTimeInMillis();
+                calendar.set(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, 23, 59, 59);
+                //long endDay = calendar.getTimeInMillis();
+                LocalTime.DayRange dayRange = new LocalTime.DayRange();
+                long startDay = dayRange.getStartDay();
+                long endDay = dayRange.getEndDay();*/
+                long currentTime = LocalTime.getCurrentMilliseconds();
+
+                String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
+                String selection = CalendarContract.Events.DTSTART + " < ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
+                String[] selectionArgs = new String[]{Long.toString(currentTime), Long.toString(currentTime), Long.toString(idCalendar)};
+
+                if (ActivityCompat.checkSelfPermission(context.get(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    //return ;
+                }
+
+                Cursor cur = context.get().getContentResolver().query(CalendarContract.Events.CONTENT_URI,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        CalendarContract.Events.DTSTART + " DESC LIMIT 1");
+
+                if (cur != null) {
 
 
-            String[] projection = new String[]{BaseColumns._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
-            String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTSTART + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
-            String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
+                    //avancar para ultimo evento
+                    cur.moveToFirst();
 
-            if (ActivityCompat.checkSelfPermission(context.get(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                //return ;
+                    long eventID = cur.getLong(0);
+                    long startTime = cur.getLong(1);
+                    long endTime = cur.getLong(2);
+                    String timeZone = cur.getString(3);
+                    String title = cur.getString(4);
+                    String description = cur.getString(5);
+
+                    localEvent = new LocalEvent(eventID, startTime, endTime, timeZone, title, description);
+
+                }
+                cur.close();
             }
-
-            Cursor cur = context.get().getContentResolver().query(CalendarContract.Events.CONTENT_URI,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    CalendarContract.Events.DTSTART + " DESC LIMIT 1");
-
-            if (cur != null) {
-                long eventID = 0;
-                long startTime = 0;
-                long endTime = 0;
-
-                //avancar para ultimo evento
-                cur.moveToFirst();
-
-                eventID = cur.getLong(0);
-                startTime = cur.getLong(1);
-                endTime = cur.getLong(2);
-                String timeZone = cur.getString(3);
-                String title = cur.getString(4);
-                String description = cur.getString(5);
-
-                eventClass = new EventClass(eventID, startTime, endTime, timeZone, title, description);
-
-            }
-            cur.close();
-        }}
-        return eventClass;
+        }
+        return localEvent;
 
     }
 
     public void createNewEvent(int eventNumbDay, long calendarID, long currentMilleseconds) {
-        if(context != null && context.get() != null){
+        if (context != null && context.get() != null) {
             ContentValues values = new ContentValues();
             values.put(CalendarContract.Events.DTSTART, currentMilleseconds);
             values.put(CalendarContract.Events.DTEND, currentMilleseconds);
@@ -141,7 +139,7 @@ public class LocalEventService {
     }
 
     public void closeEvent(long eventID) {
-        if(context != null && context.get() != null) {
+        if (context != null && context.get() != null) {
             long idCalendar = LocalCalendar.getIdCalendar(context.get());
 
             if (idCalendar > 0) {
@@ -177,16 +175,16 @@ public class LocalEventService {
     }
 
     public List<Long> getEventsIDsSpecificDay() {
-        if(context != null && context.get() != null) {
+        if (context != null && context.get() != null) {
             long idCalendar = LocalCalendar.getIdCalendar(context.get());
             List<Long> listIdEvents = new ArrayList<Long>();
-            System.out.println("getEventsIDsSpecificDay id= " + idCalendar);
+           // System.out.println("getEventsIDsSpecificDay id= " + idCalendar);
             if (idCalendar > 0) {
                 LocalTime.DayRange dayRange = new LocalTime.DayRange();
                 long startDay = dayRange.getStartDay();
                 long endDay = dayRange.getEndDay();
                 //86400000 -> number of milleseconds of a day
-                System.out.println("startDay= " + startDay + " | endDay= " + endDay + " | MainActivity.getIdCalendar()= " + idCalendar);
+             //   System.out.println("startDay= " + startDay + " | endDay= " + endDay + " | MainActivity.getIdCalendar()= " + idCalendar);
                 String[] projection = new String[]{BaseColumns._ID};
                 String selection = CalendarContract.Events.DTSTART + " >= ? AND " + CalendarContract.Events.DTEND + "< ? AND " + CalendarContract.Events.CALENDAR_ID + " = ?";
                 String[] selectionArgs = new String[]{Long.toString(startDay), Long.toString(endDay), Long.toString(idCalendar)};
@@ -202,9 +200,9 @@ public class LocalEventService {
                     //return ;
                 }
                 Cursor cur = context.get().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null);
-                System.out.println("1 - ABCDEF");
+         //       System.out.println("1 - ABCDEF");
                 while (cur.moveToNext()) {
-                    System.out.println("2 - ABCDEF");
+           //         System.out.println("2 - ABCDEF");
                     listIdEvents.add(cur.getLong(0));
                 }
 
@@ -216,11 +214,9 @@ public class LocalEventService {
     }
 
 
-
-
     private long getEventStartTime(long idEvent) {
 
-        if(context != null && context.get() != null) {
+        if (context != null && context.get() != null) {
             long idCalendar = LocalCalendar.getIdCalendar(context.get());
             if (idCalendar > 0) {
                 String[] projection =
@@ -265,10 +261,11 @@ public class LocalEventService {
             //Log.i(DEBUG_TAG, "Rows deleted: " + rows);
         }
     }
-    public List<EventClass> getEventsForDay(long startDay) {
-        if(context != null && context.get() != null) {
+
+    public List<LocalEvent> getEventsForDay(long startDay) {
+        if (context != null && context.get() != null) {
             long idCalendar = LocalCalendar.getIdCalendar(context.get());
-            List<EventClass> listOfEvents = new ArrayList<EventClass>();
+            List<LocalEvent> listOfEvents = new ArrayList<LocalEvent>();
             if (idCalendar > 0) {
 
                 String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
@@ -300,9 +297,9 @@ public class LocalEventService {
                     String timeZone = cursor.getString(3);
                     String title = cursor.getString(4);
                     String description = cursor.getString(5);
-                    EventClass event;
+                    LocalEvent event;
 
-                    event = new EventClass(id, dtStart, dtEnd, timeZone, title, description);
+                    event = new LocalEvent(id, dtStart, dtEnd, timeZone, title, description);
                     listOfEvents.add(event);
                 }
 
@@ -313,10 +310,10 @@ public class LocalEventService {
         return null;
     }
 
-    public List<EventClass> getEventsForDay(long startDay, long endDay) {
-        if(context != null && context.get() != null) {
+    public List<LocalEvent> getEventsForDay(long startDay, long endDay) {
+        if (context != null && context.get() != null) {
             long idCalendar = LocalCalendar.getIdCalendar(context.get());
-            List<EventClass> listOfEvents = new ArrayList<EventClass>();
+            List<LocalEvent> listOfEvents = new ArrayList<LocalEvent>();
             if (idCalendar > 0) {
 
                 String[] projection = new String[]{CalendarContract.Events._ID, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.CALENDAR_TIME_ZONE, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION};
@@ -340,20 +337,20 @@ public class LocalEventService {
 
                 } else {
 
-                }
-                while (cursor.moveToNext()) {
-                    long id = cursor.getLong(0);
-                    long dtStart = cursor.getLong(1);
-                    long dtEnd = cursor.getLong(2);
-                    String timeZone = cursor.getString(3);
-                    String title = cursor.getString(4);
-                    String description = cursor.getString(5);
-                    EventClass event;
 
-                    event = new EventClass(id, dtStart, dtEnd, timeZone, title, description);
-                    listOfEvents.add(event);
-                }
+                    while (cursor.moveToNext()) {
+                        long id = cursor.getLong(0);
+                        long dtStart = cursor.getLong(1);
+                        long dtEnd = cursor.getLong(2);
+                        String timeZone = cursor.getString(3);
+                        String title = cursor.getString(4);
+                        String description = cursor.getString(5);
+                        LocalEvent event;
 
+                        event = new LocalEvent(id, dtStart, dtEnd, timeZone, title, description);
+                        listOfEvents.add(event);
+                    }
+                }
                 cursor.close();
             }
             return listOfEvents;
@@ -384,7 +381,7 @@ public class LocalEventService {
                                 selectionArgs,
                                 CalendarContract.Events._ID + " DESC");
         if(calCursor!=null){
-            EventClass event = new EventClass(calCursor.getLong(0),calCursor.getLong(1),calCursor.getLong(2));
+            LocalEvent event = new LocalEvent(calCursor.getLong(0),calCursor.getLong(1),calCursor.getLong(2));
             if(!(event.isClose())){
 
             }

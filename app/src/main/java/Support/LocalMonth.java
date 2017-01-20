@@ -7,14 +7,14 @@ import java.util.List;
  * Created by User on 19/10/2016.
  */
 
-public class MonthClass {
+public class LocalMonth {
     final static int MAX_WEEKS = 6;
     int month;
     int year;
-    List<WeekClass> listOfWeeks;
+    List<LocalWeek> listOfWeeks;
 
-    public MonthClass(int year, int month) {
-        listOfWeeks = new ArrayList<WeekClass>();
+    public LocalMonth(int year, int month) {
+        listOfWeeks = new ArrayList<LocalWeek>();
         this.year = year;
         this.month = month;
     }
@@ -27,18 +27,18 @@ public class MonthClass {
         return year;
     }
 
-    public List<WeekClass> getListOfWeeks() {
+    public List<LocalWeek> getListOfWeeks() {
         return listOfWeeks;
     }
 
-    public void addWeekToList(WeekClass week) {
+    public void addWeekToList(LocalWeek week) {
         listOfWeeks.add(week);
     }
 
     public long getDurationSpecificMonth(){
         long totalDuration = 0;
 
-        for(WeekClass weekObject: listOfWeeks
+        for(LocalWeek weekObject: listOfWeeks
                 ) {
             totalDuration = totalDuration + weekObject.getDurationSpecificMonth(getMonth());
         }
@@ -48,7 +48,7 @@ public class MonthClass {
     public long getDaysChecked(){
         int totalDays = 0;
 
-        for(WeekClass weekObject: listOfWeeks
+        for(LocalWeek weekObject: listOfWeeks
                 ) {
             totalDays = totalDays + weekObject.getDaysChecked(getMonth());
         }

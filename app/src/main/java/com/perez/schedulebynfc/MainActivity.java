@@ -2,9 +2,12 @@ package com.perez.schedulebynfc;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,13 +20,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import Support.CurrentTimeShow;
 import Support.LocalCalendar;
+import Support.LocalEvent;
+import Support.LocalEventService;
+import Support.LocalJson;
 import Support.LocalPreferences;
 import Support.LocalTime;
+import Support.MyHandlerThread;
 
 import static Support.LocalTime.getCurrentMilliseconds;
 
@@ -406,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
 
     public static String getDefaults(String key, Context context) {
         LocalPreferences tmp = LocalPreferences.getInstance();
-        return tmp.getPreference(key, context);
+        return tmp.getIdCalendarPreference(key, context);
     }
 
     /* public class LoadFragment extends AsyncTask<Integer, Void, MainFragment> {
@@ -461,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         super.onStop();
     }
 
-    public Bundle getCurrentTimes(){
+    public Bundle getCurrentTimes() {
         Bundle bundle = new Bundle();
         bundle.putString("dayTime", currentDayTime);
         bundle.putString("weekTime", currentWeekTime);
@@ -512,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.share:
-                share();
+                setHandlerAndThread();
                 return true;
             case R.id.settings:
                 settings();
@@ -549,13 +572,178 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     private void aboutUs() {
     }
 
-    private void share() {
+    private void share()  {
+    }
+
+    private class CustomRunnable implements Runnable {
+        private WeakReference<Context> mWeakRefContext;
+        Handler handler;
+
+
+        public CustomRunnable(Context context, Handler h) throws ParseException {
+            handler = h;
+            this.mWeakRefContext = new WeakReference<Context>(context);
+        }
+
+        @Override
+        public void run() {
+
+            System.out.println("share pressed");
+            LocalTime.DateString dataStringStart = new LocalTime.DateString(currentTimeToShow.getYear_CurrentView() + "", currentTimeToShow.getMonth_CurrentView() + "", "1", "", "", "");
+            Calendar cal = Calendar.getInstance();
+
+            LocalTime.DateString dataStringEnd = new LocalTime.DateString(currentTimeToShow.getYear_CurrentView() + "", currentTimeToShow.getMonth_CurrentView() + "", "30", "", "", "");
+            LocalEventService lEventService = new LocalEventService(mWeakRefContext);
+            List<LocalEvent> listOfEvents = lEventService.getEventsForDay(0, LocalTime.getCurrentMilliseconds());
+            LocalPreferences tmp = LocalPreferences.getInstance();
+
+            for(LocalEvent localEvent : listOfEvents){
+                String key =null;
+                if(localEvent.isClose() && key==null){
+                    System.out.println("dia= " + LocalTime.getDay(localEvent.getData().getStartTime()) + " mes= "+LocalTime.getMonth(localEvent.getData().getStartTime()) + " ano= "+ LocalTime.getYear(localEvent.getData().getStartTime()));
+
+                    LocalJson _json = new LocalJson(localEvent);
+
+                    JsonObjectRequest jsObjRequest = null;
+                    try {
+                        jsObjRequest = new JsonObjectRequest
+                                (Request.Method.POST, "https://www.toggl.com/api/v8/time_entries", _json.generateJson(), new Response.Listener<JSONObject>() {
+
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+
+                                        System.out.println("JSONObject response= " + response.toString());
+                                        // tmp.setPreference("", "true", getApplicationContext());
+                                    }
+                                }, new Response.ErrorListener() {
+
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        // TODO Auto-generated method stub
+                                        System.out.println("ERROR response= " + error.toString());
+
+                                    }
+                                }) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> headers = new HashMap<String, String>();
+                                //  params.put("Content-Type", "application/json");
+                                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                                // headers.put("api_token", "acbb58a1e09ba85343a6c7720119f955");
+                                String creds = String.format("%s:%s", "lplperez@hotmail.com", "wherchojo89");
+
+                                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+                                headers.put("Authorization", auth);
+                                return headers;
+                            }
+
+
+                        };
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if(mWeakRefContext.get()!=null){
+                        RequestQueue queue = Volley.newRequestQueue(mWeakRefContext.get());
+                        queue.add(jsObjRequest);
+                    }
+
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            Message message = handler.obtainMessage();
+         //   Bundle b = new Bundle();
+
+            //b.putInt("dayPosition", i); // for example
+
+          //  message.setData(b);
+            message.obj = mWeakRefContext;
+            message.what = 0;
+            handler.sendMessage(message);
+        }
+    }
+
+    private MyHandler handler = new MyHandler();
+    private MyHandlerThread myHandlerThread;
+
+    private void setHandlerAndThread() {
+        myHandlerThread = new MyHandlerThread("myHandlerThread");
+        myHandlerThread.start();
+        myHandlerThread.prepareHandler();
+        try {
+            myHandlerThread.postTask(new CustomRunnable(this, handler));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class MyHandler extends Handler {
+
+        // simply show a toast message
+        @Override
+        public void handleMessage(Message msg) {
+            WeakReference<Context> mWeakRefContext = null;
+            if (msg.obj != null)
+                mWeakRefContext = (WeakReference<Context>) msg.obj;
+
+            super.handleMessage(msg);
+            switch (msg.what) {
+                //handle result from handler
+                case 0:
+                    System.out.println("FIM DE ENVIO");
+                    break;
+            }
+        }
     }
 
     private void help() {
+
     }
 
     private void settings() {
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, "https://www.toggl.com/api/v8/me", null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("JSONObject response= " + response.toString());
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        System.out.println("ERROR response= " + error.toString());
+
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                //  params.put("Content-Type", "application/json");
+                headers.put("Content-Type", "application/json; charset=utf-8");
+             //   String creds = String.format("%s:%s", "acbb58a1e09ba85343a6c7720119f955", "api_token");
+                String creds = String.format("%s:%s", "lplperez@hotmail.com", "wherchojo89");
+                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+
+
+        };
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(jsObjRequest);
+        //MySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+        // MySingleton.getInstance(this).addToRequestQueue(request);
+
     }
 
 

@@ -7,8 +7,8 @@ import java.util.List;
  * Created by User on 19/10/2016.
  */
 
-public class DayClass {
-    private List<EventClass> listOfEvents;
+public class LocalDay {
+    private List<LocalEvent> listOfEvents;
 
     int day;
     int month;
@@ -16,10 +16,10 @@ public class DayClass {
     long totalDuration;
     String durationString;
 
-    public DayClass(int day, int month, int year){
+    public LocalDay(int day, int month, int year){
 
 
-        listOfEvents = new ArrayList<EventClass>();
+        listOfEvents = new ArrayList<LocalEvent>();
         this.day = day;
         this.month = month;
         this.year = year;
@@ -37,13 +37,13 @@ public class DayClass {
         return day;
     }
 
-    public void addAllEvents(List<EventClass> listOfEvents){
+    public void addAllEvents(List<LocalEvent> listOfEvents){
 
         this.listOfEvents = listOfEvents;
         setDuration();
     }
 
-    public List<EventClass> getListOfEvents() {
+    public List<LocalEvent> getListOfEvents() {
         return listOfEvents;
     }
 
@@ -54,7 +54,7 @@ public class DayClass {
     public void setDuration(){
         long totalDuration = 0;
 
-        for(EventClass event: listOfEvents
+        for(LocalEvent event: listOfEvents
                 ) {
             totalDuration = totalDuration + event.getData().getDuration();
 

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import java.util.TimerTask;
 import Support.LocalCalendar;
 import Support.LocalTime;
 import Support.MyCalendarObserver;
+import Support.MyHandlerThread;
 import Support.TimeCalculation;
 
 import static Support.LocalTime.getFormatTime;
@@ -56,8 +56,8 @@ public class BottomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        System.out.println(" MainFragment - OnCreate");
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
+        //System.out.println(" MainFragment - OnCreate");
+        //System.out.println("xxxxxxxxxxxxxxxxxxxxxx");
         rootView = inflater.inflate(R.layout.fragment_bottom, container, false);
 
         context = getActivity();
@@ -179,7 +179,7 @@ public class BottomFragment extends Fragment {
                 _weekTime = _weekTime + 60000;
                 _monthTime = _monthTime + 60000;
 
-                System.out.println("tick " + sec);
+            //    System.out.println("tick " + sec);
 
                 //updateMainFragment(_dayTime);
                 sendData();
@@ -267,9 +267,9 @@ public class BottomFragment extends Fragment {
 
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
-            System.out.println("currentDayTime-1=" + currentDayTime);
+           // System.out.println("currentDayTime-1=" + currentDayTime);
             String value = getFormatTime(currentDayTime);
-            System.out.println("currentDayTime-2=" + value);
+           // System.out.println("currentDayTime-2=" + value);
             b.putLong("currentDayTime", currentDayTime); //Long
             b.putString("currentDayValue", value); ///string
             b.putInt("currentSecs", secs); ///string
@@ -278,13 +278,13 @@ public class BottomFragment extends Fragment {
 
 
             value = getFormatTime(currentWeekTime);
-            System.out.println("currentWeekTime=" + value);
+         //   System.out.println("currentWeekTime=" + value);
             b.putLong("currentWeekTime", currentWeekTime);
             b.putString("currentWeekValue", value);
 
 
             value = getFormatTime(currentMonthTime);
-            System.out.println("currentMonthTime=" + value);
+           // System.out.println("currentMonthTime=" + value);
             b.putLong("currentMonthTime", currentMonthTime);
             b.putString("currentMonthValue", value);
 
@@ -331,7 +331,7 @@ public class BottomFragment extends Fragment {
             switch (msg.what) {
                 //handle result from handler
                 case 0:
-                    System.out.println("case 0");
+                 //   System.out.println("case 0");
                     String dayValue = msg.getData().getString("currentDayValue");
                     String weekValue = msg.getData().getString("currentWeekValue");
                     String monthValue = msg.getData().getString("currentMonthValue");
@@ -343,7 +343,7 @@ public class BottomFragment extends Fragment {
 
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
                         if (working) {
-                            System.out.println("working " + dayValue);
+                         //   System.out.println("working " + dayValue);
                             changeImageViewVisibility(true);
 
                             startTimer(dayTime, weekTime, monthTime, secs);
@@ -353,7 +353,7 @@ public class BottomFragment extends Fragment {
                                 setTvDay(dayValue);
                             }
                         } else {
-                            System.out.println("not working");
+                           // System.out.println("not working");
                             changeImageViewVisibility(false);
                             if (dayValue.equals("-") || dayValue.equals("0"))
                                 setTvDay("-");
@@ -397,7 +397,7 @@ public class BottomFragment extends Fragment {
     }
 
     private void changeCalendar() {
-        System.out.println("changeCalendar");
+       // System.out.println("changeCalendar");
 
         ((MainActivity) getActivity()).laodBottomFrag();
         ((MainActivity) getActivity()).updateWidget();
@@ -426,22 +426,7 @@ public class BottomFragment extends Fragment {
         }
     }
 
-    public class MyHandlerThread extends HandlerThread {
 
-        private Handler handler;
-
-        public MyHandlerThread(String name) {
-            super(name);
-        }
-
-        public void postTask(Runnable task) {
-            handler.post(task);
-        }
-
-        public void prepareHandler() {
-            handler = new Handler(getLooper());
-        }
-    }
 
 
     RefreshTime mCallback;

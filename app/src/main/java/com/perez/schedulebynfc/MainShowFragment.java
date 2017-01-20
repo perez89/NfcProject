@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Locale;
 
 import Support.CreateMonth;
-import Support.EventClass;
+import Support.LocalEvent;
 import Support.LocalEventService;
 import Support.LocalTime;
-import Support.MonthClass;
+import Support.LocalMonth;
 
 import static com.perez.schedulebynfc.R.id.tvSecondValue;
 
@@ -40,7 +40,7 @@ public class MainShowFragment extends Fragment {
     LinearLayout ll_WeekZero, ll_WeekOne, ll_WeekTwo, ll_WeekThree, ll_WeekFour, ll_WeekFive;
     int count_column_finish;
     List<RelativeLayout> rl_weeks = new ArrayList<RelativeLayout>();
-    MonthClass monthToShow;
+    LocalMonth monthToShow;
     Handler handler;
     int year;
     int month;
@@ -249,7 +249,7 @@ public class MainShowFragment extends Fragment {
                 tvDay[local_day][week] = (TextView) rlDay.findViewById(tvSecondValue);
                 //tvSecondValue.setText("" + LocalTime.getDay(timeStartOfWeek));
 
-                    List<EventClass> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
+                    List<LocalEvent> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
                     DayClassTMP dayObject = new DayClassTMP(listOfEvents);
 
                     Message message = handler.obtainMessage();
@@ -516,13 +516,13 @@ public class MainShowFragment extends Fragment {
     }
 
     public class DayClassTMP {
-        private List<EventClass> listOfEvents;
+        private List<LocalEvent> listOfEvents;
 
         long totalDuration;
         String durationString;
 
 
-        public DayClassTMP(List<EventClass> listOfEvents) {
+        public DayClassTMP(List<LocalEvent> listOfEvents) {
             this.listOfEvents = listOfEvents;
             setDuration();
         }
@@ -530,7 +530,7 @@ public class MainShowFragment extends Fragment {
         public void setDuration() {
             long totalDuration = 0;
 
-            for (EventClass event : listOfEvents
+            for (LocalEvent event : listOfEvents
                     ) {
                 System.out.println("totalDuration= " + totalDuration);
                 totalDuration = totalDuration + event.getData().getDuration();

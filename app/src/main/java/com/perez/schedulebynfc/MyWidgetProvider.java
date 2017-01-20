@@ -35,7 +35,6 @@ public class MyWidgetProvider extends AppWidgetProvider {
                          int[] appWidgetIds) {
         initializeVariables();
 
-        System.out.println("updatexpto called - widget");
         // Get all ids
         ComponentName thisWidget = new ComponentName(context,
                 MyWidgetProvider.class);
@@ -52,15 +51,15 @@ public class MyWidgetProvider extends AppWidgetProvider {
         String durationText = getDisplayTimeForWidget(currentDayTime);
 
         remoteViews.setTextViewText(R.id.tvUpdateDay, ""+durationText);
-        System.out.println("durationText= " +durationText);
+
         //text week
         durationText = getDisplayTimeForWidget(currentWeekTime);
-        System.out.println("durationText= " +durationText);
+
         remoteViews.setTextViewText(R.id.tvUpdateWeek, ""+durationText);
 
         //text month_frag_show
         durationText = getDisplayTimeForWidget(currentMonthTime);
-        System.out.println("durationText= " +durationText);
+
         remoteViews.setTextViewText(R.id.tvUpdateMonth, ""+durationText);
 
         if (working)
@@ -121,7 +120,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
                 Context c = mWeakRefContext.get();
                 Intent intent = new Intent(c, MyWidgetProvider.class);
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                System.out.println("call updatexpto");
+
                 int ids[] = AppWidgetManager.getInstance(c.getApplicationContext()).getAppWidgetIds(new ComponentName(c.getApplicationContext(), MyWidgetProvider.class));
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
                 c.sendBroadcast(intent);

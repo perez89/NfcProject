@@ -23,13 +23,13 @@ public class MyAdaterDayDetails extends RecyclerView.Adapter<MyAdaterDayDetails.
     // you provide access to all the views for a data item in a view holder
     public static class RecyclerItemViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView tvIn, tvOut, tvDuration;
+        public TextView tvIn, tvOut;
 
         public RecyclerItemViewHolder(View itemView) {
             super(itemView);
             tvIn = (TextView) itemView.findViewById(R.id.tvIn);
             tvOut = (TextView) itemView.findViewById(R.id.tvOut);
-            tvDuration = (TextView) itemView.findViewById(R.id.tvDuration);
+
         }
     }
 
@@ -76,10 +76,10 @@ public class MyAdaterDayDetails extends RecyclerView.Adapter<MyAdaterDayDetails.
             holder.tvOut.setText(item.getEndHour() + ":" + minuteDisplay);
 
             //set duration
-            holder.tvDuration.setText("" + LocalTime.getFormatTime(item.getDuration()));
+           // holder.tvDuration.setText("" + LocalTime.getFormatTime(item.getDuration()));
         } else {
             holder.tvOut.setText("...");
-            holder.tvDuration.setText("...");
+            //holder.tvDuration.setText("...");
         }
 
     }

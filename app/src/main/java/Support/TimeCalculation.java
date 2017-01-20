@@ -32,7 +32,7 @@ public  class TimeCalculation {
     boolean working = false;
 
     public TimeCalculation(WeakReference<Context> mWeakRefContext) {
-        System.out.println("TimeCalculation");
+
         this.mWeakRefContext = mWeakRefContext;
         lEventService = new LocalEventService(this.mWeakRefContext);
         long milli = getCurrentMilliseconds();
@@ -45,17 +45,13 @@ public  class TimeCalculation {
         secs = LocalTime.getSeconds(milli);
 
         setDayTime();
-        System.out.println("TimeCalculation -getDayTime()= " +getDayTime()  + " format= " +  LocalTime.getFormatTime(getDayTime()));
 
         setWeekTime();
-        System.out.println("TimeCalculation -getWeekTime()= " + getWeekTime() + " format= " +  LocalTime.getFormatTime(getWeekTime()));
 
         setMonthTime();
-        System.out.println("TimeCalculation -getMonthTime()= " + getMonthTime() + " format= " +  LocalTime.getFormatTime(getMonthTime()));
 
         checkOpenEvent();
-        System.out.println("TimeCalculation -getDayTime()= " +getDayTime()  + " format= " +  LocalTime.getFormatTime(getDayTime()));
-    }
+        }
 
 
     public long getDayTime(){
@@ -80,7 +76,7 @@ public  class TimeCalculation {
             e.printStackTrace();
         }
         long timeEnd = timeStartOfMonth + DAY_MILLISECONDS;
-        List<EventClass> listOfEvents;
+        List<LocalEvent> listOfEvents;
         //System.out.println("timeStartOfMonth= " + timeStartOfMonth + " timeEnd="+ timeEnd);
         listOfEvents = lEventService.getEventsForDay(timeStartOfMonth, timeEnd);
 
@@ -91,8 +87,8 @@ public  class TimeCalculation {
 
     private void setWeekTime() {
         long timeStart = 0, currentWeekTime=0;
-        System.out.print("week_real= " + week_real);
-        List<EventClass> listOfEvents;
+
+        List<LocalEvent> listOfEvents;
         int month = month_real+1;
         LocalTime.DateString dataString = new LocalTime.DateString(year_real + "", month+"", day_real+"",  "", "", "");
         try {
@@ -112,7 +108,7 @@ public  class TimeCalculation {
                 break;
             }
         }while(true);
-
+        timeStart = timeStart + DAY_MILLISECONDS;
         for(int d=0; d<cont ; d++){
             listOfEvents = lEventService.getEventsForDay(timeStart, timeStart+DAY_MILLISECONDS);
             currentWeekTime = currentWeekTime + getTotalDayTime2(listOfEvents);
@@ -131,7 +127,7 @@ public  class TimeCalculation {
         int month = month_real+1;
         LocalTime.DateString  dataString = new LocalTime.DateString(year_real + "", month + "", "", "", "", "");
         int numOfDays = LocalTime.getNumberDaysMonth(year_real, month_real);
-        List<EventClass> listOfEvents = new ArrayList<EventClass>();
+        List<LocalEvent> listOfEvents = new ArrayList<LocalEvent>();
 
         try {
             timeStartOfMonth = dataString.getMilliseconds();
@@ -156,18 +152,18 @@ public  class TimeCalculation {
         int month = month_real+1;
 
         LocalTime.DateString dataString = new LocalTime.DateString(year_real + "", month+"",  day_real+"", "", "", "");
-        System.out.println("checkOpenEvent= " + year_real + " " + month_real + " " + day_real+"");
+
         try {
             timeStart = dataString.getMilliseconds();
         } catch (ParseException e) {
             e.printStackTrace();
         }
         long timeEnd = timeStart + DAY_MILLISECONDS;
-        List<EventClass> listOfEvents;
+        List<LocalEvent> listOfEvents;
         listOfEvents = lEventService.getEventsForDay(timeStart, timeEnd);
-        System.out.println("open= timeStartOfMonth= " + timeStart + "  timeEnd="+ timeEnd);
+
         if (listOfEvents.size() > 0 && !(listOfEvents.get(listOfEvents.size() - 1).isClose())) {
-            System.out.println("open!!");
+
             timeOpenEvent = (LocalTime.getCurrentMilliseconds() - listOfEvents.get(listOfEvents.size() - 1).getData().getStartTime());
             working = true;
             dayTime = dayTime + timeOpenEvent;
@@ -176,7 +172,7 @@ public  class TimeCalculation {
         }
     }
 
-    private long getTotalDayTime(List<EventClass> listOfEvents) {
+    private long getTotalDayTime(List<LocalEvent> listOfEvents) {
         long total = 0;
         for (int i = 0; i < listOfEvents.size(); i++) {
            total = total + listOfEvents.get(i).getData().getDuration();
@@ -185,7 +181,7 @@ public  class TimeCalculation {
         return total;
     }
 
-    private long getTotalDayTime2(List<EventClass> listOfEvents) {
+    private long getTotalDayTime2(List<LocalEvent> listOfEvents) {
 
         long total = 0;
         for (int i = 0; i < listOfEvents.size(); i++) {

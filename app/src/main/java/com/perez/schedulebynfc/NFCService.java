@@ -10,15 +10,12 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import Support.LocalCalendar;
 import Support.LocalTime;
 
-import static Support.LocalTime.getMilliSeconds;
-import static Support.LocalTime.getSeconds;
 import static com.perez.schedulebynfc.MainActivity.getDefaults;
 
 /**
@@ -54,21 +51,19 @@ public class NFCService extends Service {
 
         @Override
         public void run() {
-            System.out.println("NFC-2");
-            //         System.out.println("Thread running");
             if (NfcWorker._lock.tryLock()) {
-                System.out.println("NFC-3");
                 // System.out.println("Inside lock");
                 try {
-                    long currentMilleseconds = getTime();
-                    if (verifyRangeBetweenNfcDetection(currentMilleseconds)) {
+                    long currentTimeWithoutSeconds =  LocalTime.getTimeWithoutSeconds();
+                    long currentTime =  LocalTime.getCurrentMilliseconds();
+                    if (verifyRangeBetweenNfcDetection(currentTime)) {
                         System.out.println("registerNFC");
-                        registerNFC(currentMilleseconds);
+                        registerNFC(currentTimeWithoutSeconds);
 
                         //notificationRegistered(true, currentMilleseconds);
 
                     } else {
-                        customToast(mWeakRefContext, "Wait! 1 minute between events.");
+                        customToast(mWeakRefContext, "Wait a few seconds please.");
 
 
                         //notificationNotRegistered();
@@ -85,35 +80,11 @@ public class NFCService extends Service {
             finishThread();
         }
 
-        private long getTime() {
-            long time= LocalTime.getCurrentMilliseconds();
-            int year = LocalTime.getYear(time);
-            int month = LocalTime.getMonth(time);
-            month++;
-            int day = LocalTime.getDay(time);
-            int hour = LocalTime.getHour(time);
-            int min = LocalTime.getMinute(time);
-            System.out.println("gettime" + year + " " + month + " " +  day+ " " +  hour + " " +  min);
-            LocalTime.DateString dataString = new LocalTime.DateString(year + "", month+"",  day+"", hour+"", min+"", "");
 
-            try {
-                time = dataString.getMilliseconds();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            return time;
-        }
 
         private void finishThread() {
             if (isAlive())
                 interrupt();
-        }
-
-        private long removeSecondsAndMilliseconds(long currentMilliseconds) {
-            long milliSeconds = getMilliSeconds(currentMilliseconds);
-            milliSeconds = milliSeconds + ((getSeconds(currentMilliseconds)) * 1000);
-            return currentMilliseconds - milliSeconds;
         }
 
         private void notificationRegistered(boolean inOrOut, long currentMilliseconds) {
@@ -141,7 +112,7 @@ public class NFCService extends Service {
             mNotifyMgr.notify(mNotificationId, mBuilder.build());
         }
 
-        private boolean verifyRangeBetweenNfcDetection(long currentMilleseconds) {
+        private boolean verifyRangeBetweenNfcDetection(long currentTime) {
             String value = getDefaults(LAST_TIME_NFC_DETECTED, mWeakRefContext.get());
             long lastTimeNfcDetected = 0;
 
@@ -149,9 +120,9 @@ public class NFCService extends Service {
                 lastTimeNfcDetected = Long.parseLong(value);
             }
 
-            System.out.println("dif= " + (currentMilleseconds - lastTimeNfcDetected));
-            if (currentMilleseconds - lastTimeNfcDetected > 5000) {
-                MainActivity.setDefaults(LAST_TIME_NFC_DETECTED, "" + currentMilleseconds, mWeakRefContext.get());
+            System.out.println("dif= " + (currentTime - lastTimeNfcDetected));
+            if (currentTime - lastTimeNfcDetected > 5000) {
+                MainActivity.setDefaults(LAST_TIME_NFC_DETECTED, "" + currentTime, mWeakRefContext.get());
                 return true;
             }
 

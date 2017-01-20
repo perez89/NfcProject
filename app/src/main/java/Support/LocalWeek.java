@@ -7,23 +7,23 @@ import java.util.List;
  * Created by User on 19/10/2016.
  */
 
-public class WeekClass {
+public class LocalWeek {
     final static int MAX_DAYS = 7;
-    private List<DayClass> listOfDays;
+    private List<LocalDay> listOfDays;
     int weekOfTheMonth;
     int weekOfTheYear;
 
-    public WeekClass(int weekOfTheMonth, int weekOfTheYear) {
-        listOfDays = new ArrayList<DayClass>();
+    public LocalWeek(int weekOfTheMonth, int weekOfTheYear) {
+        listOfDays = new ArrayList<LocalDay>();
         this.weekOfTheMonth = weekOfTheMonth;
         this.weekOfTheYear = weekOfTheYear;
     }
 
-    public List<DayClass> getListOfDays() {
+    public List<LocalDay> getListOfDays() {
         return listOfDays;
     }
 
-    public void addDayToList(DayClass day) {
+    public void addDayToList(LocalDay day) {
         listOfDays.add(day);
     }
 
@@ -38,7 +38,7 @@ public class WeekClass {
     public long getWeekTotalDuration(){
         long totalDuration = 0;
 
-        for(DayClass event: listOfDays
+        for(LocalDay event: listOfDays
                 ) {
             totalDuration = totalDuration + event.getDayTotalDuration();
         }
@@ -48,7 +48,7 @@ public class WeekClass {
     public long getDurationSpecificMonth(int month){
         long totalDuration = 0;
 
-        for(DayClass dayObject: listOfDays
+        for(LocalDay dayObject: listOfDays
                 ) {
             if(dayObject.getMonth() == month)
                 totalDuration = totalDuration + dayObject.getDayTotalDuration();
@@ -59,7 +59,7 @@ public class WeekClass {
     public int getDaysChecked(int month) {
         int daysChecked = 0;
 
-        for(DayClass dayObject: listOfDays
+        for(LocalDay dayObject: listOfDays
                 ) {
             if(dayObject.getMonth() == month)
                 daysChecked++;

@@ -1,8 +1,10 @@
 package Support;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -108,18 +110,35 @@ public class EventData {
     public JSONObject toJson() throws JSONException {
 
         JSONObject _eventObject = new JSONObject();
+
+        _eventObject.put("title", this.title);
+        _eventObject.put("Description", this.description);
         _eventObject.put("startTime", this.startTime);
         _eventObject.put("endTime", this.endTime);
+        _eventObject.put("timeZone", this.timeZone);
+        _eventObject.put("created", "Schedule by NFC");
         return _eventObject;
     }
 
     public JSONObject toJsonToggl() throws JSONException {
-
         JSONObject _eventObject = new JSONObject();
-        _eventObject.put("description", "Title: " + title + " Description: " + description);
+        _eventObject.put("pid", 29485539);
+        System.out.println(LocalTime.getDateFormatIso(this.startTime));
+        System.out.println(LocalTime.getDateFormatIso(this.endTime));
         _eventObject.put("start", LocalTime.getDateFormatIso(this.startTime));
-        _eventObject.put("stop", LocalTime.getDateFormatIso(this.endTime));
-        _eventObject.put("created_with", "Schedule by NFC");
+        _eventObject.put("description", ""+this.description);
+        String mStringArray[] = { "billed" };
+        JSONArray mJSONArray = new JSONArray(Arrays.asList(mStringArray));
+        _eventObject.put("tags",mJSONArray );
+        if(this.startTime>=this.endTime){
+            _eventObject.put("duration", -100);
+        }else{
+            int time = (int)((this.endTime-this.startTime)/1000);
+            _eventObject.put("duration", time);
+            System.out.println("time=" + time);
+        }
+
+        _eventObject.put("created_with", "nfc");
         return _eventObject;
     }
 }

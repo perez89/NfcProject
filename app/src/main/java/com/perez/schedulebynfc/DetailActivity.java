@@ -1,18 +1,14 @@
 package com.perez.schedulebynfc;
 
-
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,51 +26,50 @@ import Support.MyAdaterDayDetails;
 import static com.perez.schedulebynfc.R.id.rvListDays;
 
 /**
- * Created by User on 29/12/2016.
+ * Created by User on 17/01/2017.
  */
 
-public class DialogDayDetail extends DialogFragment {
+public class DetailActivity extends AppCompatActivity {
     TextView tvEmptyRv;
     TextView tvDayDate;
+    TextView tvDayDateDayOfTheWeek;
+    TextView tvDayDuration;
     List<EventData> listOfEvents;
     private RecyclerView mRecyclerView;
     private MyAdaterDayDetails mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private MyHandler handler = new MyHandler();
-    private MyHandlerThread myHandlerThread;
+    private DetailActivity.MyHandler handler = new DetailActivity.MyHandler();
+    private DetailActivity.MyHandlerThread myHandlerThread;
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        long time = 0;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle b = getIntent().getExtras();
 
-        if (getArguments() != null) {
-            time = getArguments().getLong("timeDayDetails");
+        if (b == null) {
+            System.out.println("DetailActivity==null");
+            return;
+        } else {
+            System.out.println("DetailActivity!=null");
+            setContentView(R.layout.activity_detail);
+            long time = b.getLong("timeDayDetails", 0);
+            String dayDuration = b.getString("dayDurationDetails", "");
 
+            // ArrayOfEvents = new MainFragment[3];
+            initialization(time);
+            setDayDuration(dayDuration);
+            //test(savedInstanceState);
         }
+    }
 
-
-        Context context = getActivity();
-        LayoutInflater linf = LayoutInflater.from(context);
-        final View inflator = linf.inflate(R.layout.dialog_day, null);
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-        alert.setTitle(R.string.dialogDayDetailTitle);
-        alert.setView(inflator);
-        mRecyclerView = (RecyclerView) inflator.findViewById(rvListDays);
-        tvEmptyRv = (TextView) inflator.findViewById(R.id.tvEmptyRv);
-        tvDayDate = (TextView) inflator.findViewById(R.id.tvDialogDate);
-
+    private void initialization(long time) {
+        mRecyclerView = (RecyclerView) findViewById(rvListDays);
+        tvEmptyRv = (TextView) findViewById(R.id.tvEmptyRv);
+        tvDayDate = (TextView) findViewById(R.id.tvDialogDate);
+        tvDayDateDayOfTheWeek = (TextView) findViewById(R.id.tvDialogDayOfTheWeek);
+        tvDayDuration = (TextView) findViewById(R.id.tvDuration);
         //setDate(ails);
-
-        alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // String s1=et1.getText().toString();
-                // String s2=et2.getText().toString();
-                dialog.cancel();
-                // //do operations using s1 and s2 here...
-            }
-        });
 
         if (time > 0) {
             recycleView();
@@ -83,24 +78,24 @@ public class DialogDayDetail extends DialogFragment {
             mRecyclerView.setVisibility(View.GONE);
             tvEmptyRv.setVisibility(View.VISIBLE);
         }
+    }
 
-
-        return alert.create();
-
+    private void setDateDayWeek(String text) {
+        tvDayDateDayOfTheWeek.setText(text);
     }
 
     private void setDate(String text) {
         tvDayDate.setText(text);
     }
 
-
     private void setHandlerAndThread(long time) {
-        myHandlerThread = new MyHandlerThread("myHandlerThread");
+        myHandlerThread = new DetailActivity.MyHandlerThread("myHandlerThread");
         myHandlerThread.start();
         myHandlerThread.prepareHandler();
+
         try {
-            myHandlerThread.postTask(new CustomRunnableGetDate(getActivity(), handler, time));
-            myHandlerThread.postTask(new CustomRunnableGetEvents(getActivity(), handler, time));
+            myHandlerThread.postTask(new DetailActivity.CustomRunnableGetDate(this, handler, time));
+            myHandlerThread.postTask(new DetailActivity.CustomRunnableGetEvents(this, handler, time));
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -121,6 +116,8 @@ public class DialogDayDetail extends DialogFragment {
 
         @Override
         public void run() {
+
+            String dayOfWeekText = LocalTime.getDayOfWeekFormatText(time);
             int day = LocalTime.getDay(time);
             int year = LocalTime.getYear(time);
             int tmpMonth = LocalTime.getMonth(time);
@@ -130,6 +127,7 @@ public class DialogDayDetail extends DialogFragment {
 
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
+            b.putString("textDisplayDayWeek", dayOfWeekText); // for example
             b.putString("textDisplay", textDisplay); // for example
             message.setData(b);
             message.obj = mWeakRefContext;
@@ -208,9 +206,11 @@ public class DialogDayDetail extends DialogFragment {
                     break;
                 case 1:
                     String textDisplay = msg.getData().getString("textDisplay");
-
+                    String textDisplayDayWeek = msg.getData().getString("textDisplayDayWeek");
                     setDate(textDisplay);
+                    setDateDayWeek(textDisplayDayWeek);
                     break;
+
             }
         }
     }
@@ -218,6 +218,10 @@ public class DialogDayDetail extends DialogFragment {
     private void addEventToList(EventData event) {
         listOfEvents.add(event);
         mAdapter.notifyData(listOfEvents);
+    }
+
+    private void setDayDuration(String text) {
+        tvDayDuration.setText("" + text);
     }
 
 
@@ -228,11 +232,24 @@ public class DialogDayDetail extends DialogFragment {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
         mAdapter = new MyAdaterDayDetails(listOfEvents);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        startMainActivity();
+        //  super.onBackPressed();
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+
+        startActivity(intent);
     }
 }

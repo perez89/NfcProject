@@ -56,6 +56,7 @@ public class RegisterNfc {
             //lista de eventos para este dia nao está vazia
             //analisar ultimo evento
             long eventID = isLastEventClose();
+
             if (eventID < 1) { //yes
                 //ultimo evento esta fechado e é necessário criar novo evento
                 //criar novo evento para este dia

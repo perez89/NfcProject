@@ -23,7 +23,7 @@ public class LocalCalendar {
     private static final String CALENDAR_DISPLAY_NAME = "Calendar NFC work";
 
     public static long createCalendar(Context context) {
-        System.out.println("createCalendar");
+       // System.out.println("createCalendar");
         ContentValues values = new ContentValues();
         values.put(
                 CalendarContract.Calendars.ACCOUNT_NAME,
@@ -57,7 +57,7 @@ public class LocalCalendar {
         Uri uri = context.getContentResolver().insert(buildUri(), values);
 
         long idCalendar = Long.valueOf(uri.getLastPathSegment());
-        System.out.println("Calendar created ID= " + idCalendar);
+     //   System.out.println("Calendar created ID= " + idCalendar);
 
         if (idCalendar > 0) {
             setPrefsIdCalendar(idCalendar, context);
@@ -122,8 +122,8 @@ public class LocalCalendar {
             String calAccess = calCursor.getString(6);
             String owner = calCursor.getString(7);
 
-            System.out.println("id= " + id + "  | calendarDisplay= " + calendarDisplay + "  | location= " + location + "  | type= " + accType +
-                    "  | AccName= " + accName + "  | vis= " + vis + "  | calAccess= " + calAccess + "  | owner= " + owner);
+         //   System.out.println("id= " + id + "  | calendarDisplay= " + calendarDisplay + "  | location= " + location + "  | type= " + accType +
+           //         "  | AccName= " + accName + "  | vis= " + vis + "  | calAccess= " + calAccess + "  | owner= " + owner);
         }
         calCursor.close();
         return id;
@@ -241,7 +241,7 @@ public class LocalCalendar {
     }
 
     public static long getIdCalendar(Context c) {
-        String value = LocalPreferences.getInstance().getPreference(LocalPreferences.ID_CALENDAR, c);
+        String value = LocalPreferences.getInstance().getIdCalendarPreference(LocalPreferences.ID_CALENDAR, c);
         if (value == null || value.equals("")) {
             return LocalCalendar.createCalendar(c);
         } else {

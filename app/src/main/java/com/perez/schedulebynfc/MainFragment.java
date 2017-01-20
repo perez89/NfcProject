@@ -2,6 +2,7 @@ package com.perez.schedulebynfc;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import Support.EventClass;
+import Support.LocalEvent;
 import Support.LocalEventService;
 import Support.LocalTime;
+import Support.MyHandlerThread;
 
 import static Support.LocalTime.getCurrentMilliseconds;
 import static Support.LocalTime.getFormatTime;
@@ -82,7 +84,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        System.out.println(" MainFragment - OnCreate");
+         System.out.println(" MainFragment - OnCreate");
         rootView = inflater.inflate(R.layout.fragment_show_main_save, container, false);
         context = getActivity();
         Bundle b = getArguments();
@@ -98,18 +100,18 @@ public class MainFragment extends Fragment {
     }
 
     private void firstTime() {
-        String currentDayTime="";
-        String currentWeekTime="";
-        String currentMonthTime="";
+        String currentDayTime = "";
+        String currentWeekTime = "";
+        String currentMonthTime = "";
 
         long milli = getCurrentMilliseconds();
         int current_year = LocalTime.getYear(milli);
         int current_month = LocalTime.getMonth(milli);
         if (current_year == year_frag_show && current_month == month_frag_show) {
             Bundle bundle = ((MainActivity) getContext()).getCurrentTimes();
-            if(!(bundle.isEmpty())){
+            if (!(bundle.isEmpty())) {
                 currentDayTime = bundle.getString("dayTime", "");
-                currentWeekTime= bundle.getString("weekTime", "");
+                currentWeekTime = bundle.getString("weekTime", "");
                 currentMonthTime = bundle.getString("monthTime", "");
                 refreshTime(currentDayTime, currentWeekTime, currentMonthTime);
             }
@@ -137,21 +139,20 @@ public class MainFragment extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
-                    System.out.println("0000 ");
+
                     int day = msg.getData().getInt("dayPosition");
                     String dayOfWeekValue = msg.getData().getString("dayValue");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null)
                         setTvDaysOfTheWeek(day, dayOfWeekValue);
                     break;
                 case 1:
-                    System.out.println("1111 ");
+
                     int week = msg.getData().getInt("weekPosition");
                     String weekValue = msg.getData().getString("weekValue");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null)
                         setTvWeekHeader(week, weekValue);
                     break;
                 case 2:
-                    System.out.println("2222 ");
                     int dayPos = msg.getData().getInt("dayPosition");
                     int weekPos = msg.getData().getInt("weekPosition");
                     String timeValue = msg.getData().getString("timeValue");
@@ -166,12 +167,11 @@ public class MainFragment extends Fragment {
 
                     break;
                 case 3:
-                    System.out.println("3333 ");
                     int weekPosition = msg.getData().getInt("weekPosition");
                     String totalTimeValue = msg.getData().getString("totalTimeValue");
                     //TODO - verificar se é == "-"
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        //  System.out.println(">>>>" + totalTimeValue + "<<<<<");
+                        //   (">>>>" + totalTimeValue + "<<<<<");
                         setTvWeekTotalTime(weekPosition, totalTimeValue);
                     }
 
@@ -179,28 +179,24 @@ public class MainFragment extends Fragment {
                 case 4:
                     String min = msg.getData().getString("minTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        System.out.println("lemos min=" + min);
                         setMinTime(min);
                     }
                     break;
                 case 5:
                     String max = msg.getData().getString("maxTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        System.out.println("lemos max=" + max);
                         setMaxTime(max);
                     }
                     break;
                 case 6:
                     String average = msg.getData().getString("averageTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        System.out.println("lemos average=" + average);
                         setAverageTime(average);
                     }
                     break;
                 case 7:
                     String month = msg.getData().getString("monthTime");
                     if (mWeakRefContext != null && mWeakRefContext.get() != null) {
-                        System.out.println("lemos month_frag_show=" + month);
                         setMonthTime(month);
                     }
                     break;
@@ -347,8 +343,9 @@ public class MainFragment extends Fragment {
     }
 
     void setTvDayTime(int day, int week, String value, Boolean currentDayB, final String dayValue, final long time) {
-        if(value.equals("0"))
-            value="0:00";
+        if (value.equals("0"))
+            value = "0:00";
+        final String value2 = value;
         tvDayTime[day][week].setText("" + value);
         if (currentDayB) {
             CardView card = (CardView) tvDayTime[day][week].getParent().getParent();
@@ -366,8 +363,8 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        showDialogDayDetail(time);
-
+                        // showDialogDayDetail(time);
+                        startActivityDetail(time, value2);
 
                     }
                 });
@@ -520,7 +517,6 @@ public class MainFragment extends Fragment {
 
         public CustomRunnable(Context context, Handler h, int year, int month) throws ParseException {
             handler = h;
-            System.out.println(year + " xpto " + month);
             this.mWeakRefContext = new WeakReference<Context>(context);
             timeStartOfWeek = LocalTime.getInitialTimeOfLayout(year, month);
         }
@@ -585,7 +581,6 @@ public class MainFragment extends Fragment {
 
         private void setAdditionalInfo(long _time) {
             cont++;
-            System.out.println("cont= "+ cont);
             if (_time < min_time || min_time == -1)
                 min_time = _time;
             if (_time > max_time)
@@ -595,7 +590,6 @@ public class MainFragment extends Fragment {
         }
 
         public void loadColumns() {
-            System.out.println("loadColumns");
 
             //Log.i("while null", "Not init yet"); //It keeps on looping here
             final long week_milli = 604800000;
@@ -607,19 +601,18 @@ public class MainFragment extends Fragment {
         }
 
         private void createLeftColumn() {
-            System.out.println("createLeftColumn");
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             // for the current Locale :
             //   DateFormatSymbols symbols = new DateFormatSymbols();
             //   DateFormatSymbols symbols = new DateFormatSymbols();
             String[] dayNames = symbols.getShortWeekdays();
 
-            for (String s : dayNames) {
-                //     System.out.print(s + " ");
-            }
-            //System.out.println("perez");
+            //for (String s : dayNames) {
+            //System.out.print(s + " ");
+            //}
+            // ("perez");
             for (int i = 0; i < 9; i++) {
-                //System.out.println("perez-+1");
+                // ("perez-+1");
 
                 Message message = handler.obtainMessage();
                 Bundle b = new Bundle();
@@ -647,20 +640,19 @@ public class MainFragment extends Fragment {
         }
 
         private void createWeekColumns(int week, long timeStartOfWeek) {
-            System.out.println("createWeekColumns");
             long iniWeek;
             long total = 0;
 
             createHeaderColumns(week, timeStartOfWeek);
             long dayTime = 86400000;
             long totalWeekDuration = 0;
-            System.out.println("createWeekColumns");
+
 
             for (int day = 0; day < 7; day++) {
 
                 // createHeaderColumns(week, timeStartOfWeek, layout); //-> so para verificar que esta correto
                 iniWeek = timeStartOfWeek + (dayTime * day);
-                System.out.println("createDays= " + day);
+
                 totalWeekDuration = totalWeekDuration + createDays(week, day, iniWeek);
 
             }
@@ -671,11 +663,10 @@ public class MainFragment extends Fragment {
 
             boolean currentDayB = false;
             //  final int currentWeekOfMonth = local_week;
-            System.out.println("createDays");
             final LocalEventService lEventService = new LocalEventService(mWeakRefContext);
 
-            List<EventClass> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
-            //System.out.println("local_week =" + local_week + " | local_day= " + local_day + " | listOfEvents= " + listOfEvents.size());
+            List<LocalEvent> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
+            // ("local_week =" + local_week + " | local_day= " + local_day + " | listOfEvents= " + listOfEvents.size());
             DayClassTMP dayObject = new DayClassTMP(listOfEvents);
 
             Message message = handler.obtainMessage();
@@ -685,8 +676,8 @@ public class MainFragment extends Fragment {
             int day_event = LocalTime.getDay(timeStartOfWeek);
             int week_event = local_week;
             month_event++;
-             long milli = getCurrentMilliseconds();
-         //   System.out.println("week_event= " + week_event);
+            long milli = getCurrentMilliseconds();
+            //    ("week_event= " + week_event);
 
             int currentWeekOfMonth = LocalTime.getWeekOfMonth(milli);
             int currentDay = LocalTime.getDay(milli);
@@ -694,9 +685,7 @@ public class MainFragment extends Fragment {
             int currentMonth = LocalTime.getMonth(milli);
             currentMonth++;
             long time = dayObject.getTotalDuration();
-            //System.out.println("zerep1week= " + currentWeekOfMonth + " local_week= "+local_week);
-
-            System.out.println(">>>" + year_event + " " + year_frag_show + " " + month_event + " " + month_frag_show);
+            // ("zerep1week= " + currentWeekOfMonth + " local_week= "+local_week);
 
             if (year_event == year_frag_show && month_event == month_frag_show) {
                 if (day_event == currentDay && year_event == currentYear && month_event == currentMonth) {
@@ -712,7 +701,7 @@ public class MainFragment extends Fragment {
 
                     }
                 } else {
-                    if(time>0){
+                    if (time > 0) {
                         setAdditionalInfo(time);
 
                         if (currentWeekOfMonth == week_event)
@@ -736,7 +725,7 @@ public class MainFragment extends Fragment {
             //     } else if (year_event == year_frag_show && month_event == month_frag_show && day_event == currentDay) {
             //          if (currentYear == year_frag_show && currentMonth == month_frag_show)
 
-            //          System.out.println("totalDayTime= " + CurrentDayTime);
+            //           ("totalDayTime= " + CurrentDayTime);
             //      }
 
             b.putInt("dayPosition", local_day); // for example
@@ -758,9 +747,9 @@ public class MainFragment extends Fragment {
         }
 
         private void createHeaderColumns(int pos, long timeStartOfWeek) {
-            //System.out.println("createHeaderColumns= " + timeStartOfWeek);
+            // ("createHeaderColumns= " + timeStartOfWeek);
 
-            // System.out.println(timeStartOfWeek + " >>>> " + pos + " >>>> " + timeStartOfWeek);
+            //  (timeStartOfWeek + " >>>> " + pos + " >>>> " + timeStartOfWeek);
             int week = LocalTime.getWeekOfYear(timeStartOfWeek);
             //week= week-1;
 
@@ -797,12 +786,12 @@ public class MainFragment extends Fragment {
 
 
         public class DayClassTMP {
-            private List<EventClass> listOfEvents;
+            private List<LocalEvent> listOfEvents;
 
             long totalDuration;
             String durationString;
 
-            public DayClassTMP(List<EventClass> listOfEvents) {
+            public DayClassTMP(List<LocalEvent> listOfEvents) {
                 this.listOfEvents = listOfEvents;
                 setDuration();
             }
@@ -810,9 +799,9 @@ public class MainFragment extends Fragment {
             public void setDuration() {
                 long totalDuration = 0;
 
-                for (EventClass event : listOfEvents
+                for (LocalEvent event : listOfEvents
                         ) {
-                    System.out.println("totalDuration= " + totalDuration);
+
                     totalDuration = totalDuration + event.getData().getDuration();
                 }
 
@@ -852,13 +841,13 @@ public class MainFragment extends Fragment {
         }
 
         private void createTotalWeekHour(int week, long duration) {
-            System.out.println("createTotalWeekHour.duration()= " + duration);
+
             //long totalDuration = listOfWeeks.get(col - 1).getTotalHours();
             String durationString = "-";
             Message message = handler.obtainMessage();
             Bundle b = new Bundle();
 
-            //System.out.println("col= " + col + " > " + listOfWeeks.get(col - 1).getTotalHours());
+            // ("col= " + col + " > " + listOfWeeks.get(col - 1).getTotalHours());
             if (duration > 0) {
                 long numOfDays = 0;
                 if (duration >= 86400000) {
@@ -898,26 +887,6 @@ public class MainFragment extends Fragment {
         }
     }
 
-
-    ;
-
-    private class MyHandlerThread extends HandlerThread {
-
-        private Handler handler;
-
-        public MyHandlerThread(String name) {
-            super(name);
-        }
-
-        public void postTask(Runnable task) {
-            handler.post(task);
-        }
-
-        public void prepareHandler() {
-            handler = new Handler(getLooper());
-        }
-    }
-
     private class CurrentDay {
         private int x;
         private int y;
@@ -941,7 +910,7 @@ public class MainFragment extends Fragment {
 
         Message message = handler.obtainMessage();
         Bundle b = new Bundle();
-        b.putString("monthTime",monthTime); // for example
+        b.putString("monthTime", monthTime); // for example
         message.setData(b);
         message.obj = new WeakReference<Context>(getContext());
         message.what = 7;
@@ -949,7 +918,7 @@ public class MainFragment extends Fragment {
 
         message = handler.obtainMessage();
         b = new Bundle();
-        System.out.println("row= " + row + " col= " + col);
+
         b.putInt("dayPosition", row); // for example
         b.putInt("weekPosition", col); // for example
         b.putString("dayValue", ""); // for example
@@ -964,7 +933,7 @@ public class MainFragment extends Fragment {
         b = new Bundle();
         b.putInt("weekPosition", col); // for example
         b.putString("totalTimeValue", weekTime); // for example
-        // System.out.println("wwww= " + getFormatTime(CurrentWeekTime+time));
+        //  ("wwww= " + getFormatTime(CurrentWeekTime+time));
         message.setData(b);
         message.obj = new WeakReference<Context>(getContext());
         message.what = 3;
@@ -972,7 +941,6 @@ public class MainFragment extends Fragment {
     }
 
     private void showDialogDayDetail(long time) {
-        System.out.println("shwodialog");
         dismissDialog();
         dialog = new DialogDayDetail();
         // Supply num input as an argument.
@@ -982,6 +950,19 @@ public class MainFragment extends Fragment {
 
         //show dialog
         dialog.show(getActivity().getSupportFragmentManager(), TAG_DIALOG_DAY_DETAIL);
+    }
+
+    public void startActivityDetail(long time, String dayDuration) {
+        getActivity().finish();
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        Bundle args = new Bundle();
+        args.putLong("timeDayDetails", time);
+        args.putString("dayDurationDetails", dayDuration);
+
+        intent.putExtras(args);
+        // intent.putExtra("timeDayDetails", time);
+        startActivity(intent);
+        //startActivityForResult(intent, 1);
     }
 
     private void dismissDialog() {
@@ -1008,4 +989,5 @@ public class MainFragment extends Fragment {
         super.onPause();
         dismissDialog();
     }
+
 }

@@ -30,10 +30,16 @@ public class LocalPreferences {
     }
 
     public String getPreference(String key, Context context) {
-        String value;
-
+        String value = "";
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        value = preferences.getString(key, null);
+        value =  preferences.getString(key, null);
+        if(value!=null)
+            return value;
+
+        return null;
+    }
+    public String getIdCalendarPreference(String key, Context context) {
+        String value = getPreference(key, context);
 
         if(value != null)
             return value;

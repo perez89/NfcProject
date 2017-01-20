@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -61,27 +62,25 @@ public class LocalTime {
 
     public static int getWeekOfMonth(long millis) {
         Calendar cl = Calendar.getInstance();
-       // cl.setFirstDayOfWeek(Calendar.MONDAY);
+        // cl.setFirstDayOfWeek(Calendar.MONDAY);
         cl.setTimeInMillis(millis);  //here your time in miliseconds
         return (cl.get(Calendar.WEEK_OF_MONTH));
     }
 
     public static String getMonthStringFormat(int month) {
-        if(month>=0 && month<12){
+        if (month >= 0 && month < 12) {
             DateFormatSymbols dfs = new DateFormatSymbols();
             String[] months = dfs.getMonths();
             return months[month];
         }
         return "";
     }
+
     public static int getMonth(long millis) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(millis);  //here your time in miliseconds
         return cl.get(Calendar.MONTH);
     }
-
-
-
 
 
     public static int getYear(long millis) {
@@ -96,7 +95,7 @@ public class LocalTime {
         return cl.get(Calendar.DAY_OF_WEEK);
     }
 
-    public static int getNumberDaysMonth(int year, int month){
+    public static int getNumberDaysMonth(int year, int month) {
         Calendar mycal = new GregorianCalendar(year, month, 1);
 
         // Get the number of days in that month
@@ -105,14 +104,50 @@ public class LocalTime {
     }
 
     public static long getMillesecondsFromDate() {
-       // Calendar cl = Calendar.getInstance();
+        // Calendar cl = Calendar.getInstance();
         //cl.setTimeInMillis(millis);  //here your time in miliseconds
         //return cl.get(Calendar.DAY_OF_WEEK);
         return 0;
     }
 
-    public static class DateString{
-        String year; String month; String day; String hour; String minute; String seconds;
+    public static String getDayOfWeekFormatText(long time) {
+        DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+        // for the current Locale :
+        //   DateFormatSymbols symbols = new DateFormatSymbols();
+        //   DateFormatSymbols symbols = new DateFormatSymbols();
+        String[] dayNames = symbols.getWeekdays();
+        int dayOfTheWeek = getDayOfWeek(time);
+
+        return dayNames[dayOfTheWeek];
+    }
+
+    public static long getTimeWithoutSeconds() {
+        long time = LocalTime.getCurrentMilliseconds();
+        int year = LocalTime.getYear(time);
+        int month = LocalTime.getMonth(time);
+        month++;
+        int day = LocalTime.getDay(time);
+        int hour = LocalTime.getHour(time);
+        int min = LocalTime.getMinute(time);
+      //  System.out.println("gettime" + year + " " + month + " " + day + " " + hour + " " + min);
+        LocalTime.DateString dataString = new LocalTime.DateString(year + "", month + "", day + "", hour + "", min + "", "");
+
+        try {
+            time = dataString.getMilliseconds();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+
+    }
+
+    public static class DateString {
+        String year;
+        String month;
+        String day;
+        String hour;
+        String minute;
+        String seconds;
 
         public String getYear() {
             return year;
@@ -139,45 +174,45 @@ public class LocalTime {
         }
 
         public void setYear(String year) {
-            if(year == null || year.equals("") || year.equals(""))
+            if (year == null || year.equals("") || year.equals(""))
                 this.year = "1970";
             else
-                this.year=year;
+                this.year = year;
         }
 
         public void setMonth(String month) {
-            if(month == null || month.equals("") || month.equals(""))
+            if (month == null || month.equals("") || month.equals(""))
                 this.month = "01";
             else
-                this.month=month;
+                this.month = month;
         }
 
         public void setDay(String day) {
-            if(day == null || day.equals("") || day.equals(""))
+            if (day == null || day.equals("") || day.equals(""))
                 this.day = "01";
             else
-                this.day=day;
+                this.day = day;
         }
 
         public void setHour(String hour) {
-            if(hour == null || hour.equals("") || hour.equals(""))
+            if (hour == null || hour.equals("") || hour.equals(""))
                 this.hour = "00";
             else
-                this.hour=hour;
+                this.hour = hour;
         }
 
         public void setMinute(String minute) {
-            if(minute == null || minute.equals("00") || minute.equals(""))
+            if (minute == null || minute.equals("00") || minute.equals(""))
                 this.minute = "00";
             else
-                this.minute=minute;
+                this.minute = minute;
         }
 
         public void setSeconds(String seconds) {
-            if(seconds == null || seconds.equals("") || seconds.equals(""))
+            if (seconds == null || seconds.equals("") || seconds.equals(""))
                 this.seconds = "00";
             else
-                this.seconds=seconds;
+                this.seconds = seconds;
         }
 
         public DateString(String year, String month, String day, String hour, String minute, String seconds) {
@@ -190,17 +225,17 @@ public class LocalTime {
         }
 
         public DateString(int year, int month, int day, int hour, int minute, int seconds) {
-            setYear(""+year);
-            setYear(""+month);
-            setYear(""+day);
-            setYear(""+hour);
-            setYear(""+minute);
-            setYear(""+seconds);
+            setYear("" + year);
+            setYear("" + month);
+            setYear("" + day);
+            setYear("" + hour);
+            setYear("" + minute);
+            setYear("" + seconds);
         }
 
         public long getMilliseconds() throws ParseException {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
-            String startDateInString = getDay()+"-"+getMonth()+"-"+getYear()+ " "+getHour()+":"+getMinute()+":"+getSeconds();
+            String startDateInString = getDay() + "-" + getMonth() + "-" + getYear() + " " + getHour() + ":" + getMinute() + ":" + getSeconds();
             Date first_month = sdf.parse(startDateInString);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(first_month);
@@ -235,33 +270,31 @@ public class LocalTime {
     }
 
 
+    public static long getInitialTimeOfLayout(int year, int month) throws ParseException {
+        long startWeeksToShow;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        String startDateInString = "01-" + month + "-" + year + " 00:00:00";
 
 
-        public static long getInitialTimeOfLayout(int year, int month) throws ParseException {
-            long startWeeksToShow;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-            String startDateInString = "01-" + month + "-" + year + " 00:00:00";
+        Date first_month = sdf.parse(startDateInString);
 
 
-            Date first_month = sdf.parse(startDateInString);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(first_month);
+        startWeeksToShow = calendar.getTimeInMillis();
 
+        int weekOfMonth = calendar.get(Calendar.DAY_OF_WEEK);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(first_month);
-            startWeeksToShow = calendar.getTimeInMillis();
+        if (weekOfMonth == 1)
+            weekOfMonth = 7;
+        else
+            weekOfMonth--;
+        startWeeksToShow = startWeeksToShow - (86400000 * (weekOfMonth - 1));
 
-            int weekOfMonth = calendar.get(Calendar.DAY_OF_WEEK);
+        return startWeeksToShow;
+    }
 
-            if(weekOfMonth==1)
-                weekOfMonth = 7;
-            else
-                weekOfMonth--;
-            startWeeksToShow = startWeeksToShow - (86400000*(weekOfMonth-1));
-
-            return startWeeksToShow;
-        }
-
-    public static String getFormatTime(long time){
+    public static String getFormatTime(long time) {
         if (time > 0) {
             String durationString = "";
             long numOfDays = 0;
@@ -272,10 +305,10 @@ public class LocalTime {
 
             int minutes = (int) ((time / (1000 * 60)) % 60);
             int hours = (int) ((time / (1000 * 60 * 60)) % 24);
-            System.out.println("hours= "+ hours);
-            System.out.println("minutes= "+ minutes);
+          //  System.out.println("hours= " + hours);
+            //System.out.println("minutes= " + minutes);
             hours = (int) numOfDays + hours;
-            System.out.println("hours2= "+ hours);
+           // System.out.println("hours2= " + hours);
             if (hours > 0 || minutes > 0) {
                 if (minutes < 10)
                     durationString = hours + ":0" + minutes;
@@ -283,7 +316,7 @@ public class LocalTime {
                     durationString = hours + ":" + minutes;
 
             }
-            if(durationString.equals("") || durationString.equals(" "))
+            if (durationString.equals("") || durationString.equals(" "))
                 return "0";
             else
                 return durationString;
@@ -291,10 +324,10 @@ public class LocalTime {
         return "-";
     }
 
-    public static String getDateFormatIso(long milliseconds){
-        if(milliseconds>0){
+    public static String getDateFormatIso(long milliseconds) {
+        if (milliseconds > 0) {
             TimeZone tz = TimeZone.getTimeZone("UTC");
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
             df.setTimeZone(tz);
             return (df.format(milliseconds));
         }

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CreateMonth{
     WeakReference<Context> mWeakRefContext;
-    private MonthClass monthObj;
+    private LocalMonth monthObj;
     long startWeeksToShow;
     int year;
     int month;
@@ -39,7 +39,7 @@ public class CreateMonth{
     public long getStartWeeksToShow(){
         return startWeeksToShow;
     }
-    public MonthClass loadAndGetMonth(){
+    public LocalMonth loadAndGetMonth(){
         startLoadingDays();
         return monthObj;
     }
@@ -47,12 +47,12 @@ public class CreateMonth{
         int countWeeks = 0;
         int countDaysOfTheWeek = 0;
 
-        monthObj = new MonthClass(year, month);
-        WeekClass weekObject = createWeek(startWeeksToShow);
+        monthObj = new LocalMonth(year, month);
+        LocalWeek weekObject = createWeek(startWeeksToShow);
         LocalEventService lEventService = new LocalEventService(mWeakRefContext);
         while(true){
-            List<EventClass> listOfEvents = lEventService.getEventsForDay(startWeeksToShow, startWeeksToShow+86400000);
-            DayClass dayObject = createDay(startWeeksToShow);
+            List<LocalEvent> listOfEvents = lEventService.getEventsForDay(startWeeksToShow, startWeeksToShow+86400000);
+            LocalDay dayObject = createDay(startWeeksToShow);
             dayObject.addAllEvents(listOfEvents);
             listOfEvents.clear();
             weekObject.addDayToList(dayObject);
@@ -70,30 +70,30 @@ public class CreateMonth{
                 countDaysOfTheWeek=0;
 
             }
-            if(countWeeks == MonthClass.MAX_WEEKS){
+            if(countWeeks == LocalMonth.MAX_WEEKS){
                 break;
             }
         }
 
     }
 
-    private WeekClass createWeek(long startWeeksToShow) {
+    private LocalWeek createWeek(long startWeeksToShow) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(startWeeksToShow);  //here your time in miliseconds
         int weekOfTheMonth = cl.get(Calendar.WEEK_OF_MONTH);
         int weekOfTheYear = cl.get(Calendar.WEEK_OF_YEAR);
 
-        return new WeekClass(weekOfTheMonth,weekOfTheYear);
+        return new LocalWeek(weekOfTheMonth,weekOfTheYear);
     }
 
-    private DayClass createDay(long startWeeksToShow) {
+    private LocalDay createDay(long startWeeksToShow) {
         Calendar cl = Calendar.getInstance();
         cl.setTimeInMillis(startWeeksToShow);  //here your time in miliseconds
         int year = cl.get(Calendar.YEAR);
         int month = cl.get(Calendar.MONTH);
         int day = cl.get(Calendar.DAY_OF_MONTH);
 
-        return new DayClass(day, month, year);
+        return new LocalDay(day, month, year);
     }
 
 }
