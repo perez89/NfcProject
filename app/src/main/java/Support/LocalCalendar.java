@@ -122,8 +122,8 @@ public class LocalCalendar {
             String calAccess = calCursor.getString(6);
             String owner = calCursor.getString(7);
 
-         //   System.out.println("id= " + id + "  | calendarDisplay= " + calendarDisplay + "  | location= " + location + "  | type= " + accType +
-           //         "  | AccName= " + accName + "  | vis= " + vis + "  | calAccess= " + calAccess + "  | owner= " + owner);
+            System.out.println("id= " + id + "  | calendarDisplay= " + calendarDisplay + "  | location= " + location + "  | type= " + accType +
+                   "  | AccName= " + accName + "  | vis= " + vis + "  | calAccess= " + calAccess + "  | owner= " + owner);
         }
         calCursor.close();
         return id;
@@ -245,6 +245,7 @@ public class LocalCalendar {
         if (value == null || value.equals("")) {
             return LocalCalendar.createCalendar(c);
         } else {
+            System.out.println("getIdCalendar-calendar id= " + value);
             return Long.parseLong(value);
         }
     }

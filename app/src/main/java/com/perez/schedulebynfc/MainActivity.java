@@ -408,8 +408,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     }
 
     private void checkLocalCalendar() {
-        System.out.println("checkLocalCalendar");
-
+        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "" + 8, this);
         if (!(LocalCalendar.getIdCalendar(getApplicationContext()) > 0)) {
             Context context = getApplicationContext();
             CharSequence text = "There is a problem with the calendar!";
