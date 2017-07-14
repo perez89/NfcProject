@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("onCreate");
+
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             return;
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     }
 
     private void initialization(Bundle savedInstanceState) {
-        System.out.println("initialization");
+        System.out.println("initialization-1");
         //LocalCalendar.getCalendars(this);
         checkLocalCalendar();
         //deleteCalendarUnderSameAccount(this);
@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
 */
     @Override
     protected void onResume() {
-        System.out.println("onResume");
+
         //enableForgroundDispatchSystem();
         super.onResume();
         getCurrentData();

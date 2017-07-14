@@ -91,7 +91,9 @@ public  class TimeCalculation {
         List<LocalEvent> listOfEvents;
         int month = month_real+1;
         LocalTime.DateString dataString = new LocalTime.DateString(year_real + "", month+"", day_real+"",  "", "", "");
+
         try {
+
             timeStart = dataString.getMilliseconds();
         } catch (ParseException e) {
             e.printStackTrace();
@@ -99,7 +101,9 @@ public  class TimeCalculation {
         //timeStartOfMonth = timeStartOfMonth - DAY_MILLISECONDS;
         int cont = 1;
         do{
-            int test_week = getWeekOfYear(timeStart - DAY_MILLISECONDS);
+
+            int test_week = getWeekOfYear(timeStart);
+
             if(test_week == week_real){
                 cont++;
                 timeStart = timeStart - DAY_MILLISECONDS;

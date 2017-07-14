@@ -245,7 +245,7 @@ public class LocalCalendar {
         if (value == null || value.equals("")) {
             return LocalCalendar.createCalendar(c);
         } else {
-            System.out.println("getIdCalendar-calendar id= " + value);
+          //  System.out.println("getIdCalendar-calendar id= " + value);
             return Long.parseLong(value);
         }
     }

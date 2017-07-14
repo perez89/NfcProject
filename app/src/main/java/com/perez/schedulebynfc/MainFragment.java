@@ -84,7 +84,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-         System.out.println(" MainFragment - OnCreate");
+        System.out.println(" MainFragment - OnCreate");
         rootView = inflater.inflate(R.layout.fragment_show_main_save, container, false);
         context = getActivity();
         Bundle b = getArguments();

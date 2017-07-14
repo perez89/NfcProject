@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -26,14 +27,15 @@ public class NFCService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        System.out.println("onBind");
         return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-
         NfcWorker _nfcWorker = new NfcWorker(getApplicationContext());
+        System.out.println("onStartCommand");
         _nfcWorker.start();
 
         // If we get killed, after returning from here, restart
@@ -43,27 +45,33 @@ public class NFCService extends Service {
     private static class NfcWorker extends Thread {
         private WeakReference<Context> mWeakRefContext;
         private static Lock _lock = new ReentrantLock();
+        private int audioVolume = 0;
+        private AudioManager audioManager;
 
         public NfcWorker(Context applicationContext) {
+            System.out.println("NfcWorker");
             mWeakRefContext = new WeakReference<Context>(applicationContext);
 
         }
 
         @Override
         public void run() {
+            System.out.println("run");
             if (NfcWorker._lock.tryLock()) {
                 // System.out.println("Inside lock");
                 try {
                     long currentTimeWithoutSeconds =  LocalTime.getTimeWithoutSeconds();
                     long currentTime =  LocalTime.getCurrentMilliseconds();
                     if (verifyRangeBetweenNfcDetection(currentTime)) {
+
+                        setVolumeToMax();
                         System.out.println("registerNFC");
                         registerNFC(currentTimeWithoutSeconds);
-
+                        setVolumeToPreviousValue();
                         //notificationRegistered(true, currentMilleseconds);
 
                     } else {
-                        customToast(mWeakRefContext, "Wait a few seconds please.");
+                        customToast(mWeakRefContext, "Wait a few seconds pleaseX.");
 
 
                         //notificationNotRegistered();
@@ -73,6 +81,7 @@ public class NFCService extends Service {
                     System.out.println(e.getMessage());
 
                 } finally {
+
                     System.out.println("finally unlock");
                     NfcWorker._lock.unlock();
                 }
@@ -80,7 +89,24 @@ public class NFCService extends Service {
             finishThread();
         }
 
+        private void setVolumeToMax(){
+            System.out.println("VOLUME= volume UP");
+            audioManager = (AudioManager) mWeakRefContext.get().getSystemService(AUDIO_SERVICE);
+            audioVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            audioManager.setStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    maxVolume,
+                    0);
 
+        }
+
+        private void setVolumeToPreviousValue(){
+            audioManager.setStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    audioVolume,
+                    0);
+        }
 
         private void finishThread() {
             if (isAlive())

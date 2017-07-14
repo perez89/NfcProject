@@ -14,10 +14,12 @@ public class NfcActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //REMOVI O getBaseContext() - se algo correr mal voltar a substituir
+        System.out.println("NfcActivity-onCreate");
         startService(new Intent(getApplicationContext(), NFCService.class));
+        System.out.println("NfcActivity-onCreate-2");
         //setContentView(R.layout.activity_nfc_activity);
         //Toast.makeText(this, "NfcActivity",                Toast.LENGTH_LONG).show();
-        finish();
+       finish();
     }
 }
 
