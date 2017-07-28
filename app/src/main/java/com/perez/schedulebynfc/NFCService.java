@@ -23,6 +23,7 @@ import static com.perez.schedulebynfc.MainActivity.getDefaults;
  * Created by User on 11/11/2016.
  */
 public class NFCService extends Service {
+
     private static String LAST_TIME_NFC_DETECTED = "lastTimeNfcDetected";
 
     @Override

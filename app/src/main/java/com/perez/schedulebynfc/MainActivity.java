@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import Support.CurrentTimeShow;
+import Support.ExcelHandler;
 import Support.LocalCalendar;
 import Support.LocalEvent;
 import Support.LocalEventService;
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             return;
@@ -560,6 +560,8 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     }
 
     private void generatePdf() {
+        ExcelHandler excelHandler = new ExcelHandler(this, null);
+
     }
 
     private void simulateNfc() {

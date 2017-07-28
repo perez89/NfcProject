@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/NfcProject.iml" filepath="$PROJECT_DIR$/NfcProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScheduleByNFC.iml" filepath="$PROJECT_DIR$/ScheduleByNFC.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jxl/jxl.iml" filepath="$PROJECT_DIR$/jxl/jxl.iml" />
     </modules>
   </component>
 </project>
