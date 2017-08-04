@@ -4,6 +4,8 @@ import android.content.Context;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -21,8 +23,6 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-import static android.R.attr.path;
-
 
 /**
  * Created by User on 17/07/2017.
@@ -31,6 +31,7 @@ import static android.R.attr.path;
 public class ExcelHandler{
     private WritableWorkbook m_workbook;
    private WritableSheet sheet;
+    WeakReference<Context> mWeakRefContext;
     private File path;
     int row  = 0;
     int column = 0;
@@ -39,16 +40,17 @@ public class ExcelHandler{
     private WritableCellFormat times;
     private String inputFile;
 
-    public ExcelHandler(Context context, String fileName, List<LocalMonth> list){
-
+    public ExcelHandler(Context context, List<LocalMonth> list, String fileName){
+        this.mWeakRefContext = new WeakReference<Context>(context);
 
        // if(list != null && !list.isEmpty()){
-            this.list = list;
-        createFileDirectory(context, fileName);
+        this.list = list;
+        createFileDirectory(mWeakRefContext.get(), fileName);
             if(!path.exists())
             {
                 try
                 {
+                    loadTime();
                     write();
                    // createWorkBook();
                    // createSheet();
@@ -63,6 +65,7 @@ public class ExcelHandler{
     }
 
     public ExcelHandler(Context context, List<LocalMonth> list){
+        this.mWeakRefContext = new WeakReference<Context>(context);
         String fileName= "nfcExcel"+001;
 
         // if(list != null && !list.isEmpty()){
@@ -72,6 +75,7 @@ public class ExcelHandler{
         {
             try
             {
+                loadTime();
                 write();
             }
             catch (Exception e)
@@ -82,14 +86,51 @@ public class ExcelHandler{
         //}
     }
 
+    private void loadTime() throws ParseException {
+
+        long timeStartOfWeek = LocalTime.getInitialTimeOfLayout(2017, 7);
+        final long week_milli = 604800000;
+
+        for (int week = 0; week < 6; week++) {
+            final long initial_week_time = timeStartOfWeek + (week * week_milli);
+            long iniWeek;
+            long total = 0;
+
+
+            long dayTime = 86400000;
+            long totalWeekDuration = 0;
+
+
+            for (int day = 0; day < 7; day++) {
+
+                // createHeaderColumns(week, timeStartOfWeek, layout); //-> so para verificar que esta correto
+                iniWeek = timeStartOfWeek + (dayTime * day);
+
+                //totalWeekDuration = totalWeekDuration + createDays(week, day, iniWeek);
+                final LocalEventService lEventService = new LocalEventService(mWeakRefContext);
+
+                List<LocalEvent> listOfEvents = lEventService.getEventsForDay(timeStartOfWeek, (timeStartOfWeek + 86400000));
+                for (LocalEvent event: listOfEvents
+                     ) {
+                    if(event.isClose()){
+                        totalWeekDuration =totalWeekDuration + event.getData().getDuration();
+                        //inserir celula inicio e fim
+                    }
+                }
+            }
+            //createTotalWeekHour(week, totalWeekDuration);
+        }
+
+    }
+
     public void write() throws IOException, WriteException {
         CreateWorkBook();
         WritableSheet sheet = CreateSheet("Schedule", 0);
 
         createPages(sheet);
 
-        createLabel(excelSheet);
-        createContent(excelSheet);
+       // createLabel(excelSheet);
+       // createContent(excelSheet);
         WriteAndClose();
     }
     private void WriteAndClose() throws IOException {
@@ -139,7 +180,6 @@ public class ExcelHandler{
         addCaption(sheet, 0, 0, "Header 1");
         addCaption(sheet, 1, 0, "This is another header");
 
-
     }
 
     private void createContent(WritableSheet sheet) throws WriteException,
@@ -181,11 +221,7 @@ public class ExcelHandler{
         sheet.addCell(label);
     }
 
-
-
-
-
-    private void createPages() throws WriteException {
+    private void createPages(WritableSheet sheet) throws WriteException {
         // this will create new new sheet in workbook
 
         //new Month
@@ -199,7 +235,7 @@ public class ExcelHandler{
                 //new Day
                 for (LocalDay day: week.getListOfDays()
                         ) {
-                   createRowEvents(day);
+                   createRowEvents(sheet, day, month.getMonth());
                 }
             row++;
             }
@@ -222,13 +258,21 @@ public class ExcelHandler{
      //   sheet.addCell(m_idValue);
     }
 
-    private void createRowEvents(LocalDay day) throws WriteException {
+    private void createRowEvents(WritableSheet sheet, LocalDay day, int month) throws WriteException {
+
+        addLabel(sheet,column, row, day.getDay()+"");
+        column++;
         for (LocalEvent event : day.getListOfEvents())
         {
-            Object olx = event.getData().getStartTime();
-            createCell(olx+"");
+            long startTime = event.getData().getStartTime();
+            addLabel(sheet,column, row, LocalTime.getFormatTime(startTime));
+            column++;
+
+            long endTime = event.getData().getStartTime();
+            addLabel(sheet,column, row, LocalTime.getFormatTime(endTime));
             column++;
         }
+        column=0;
     }
 
     private void createCell(String text) throws WriteException {
