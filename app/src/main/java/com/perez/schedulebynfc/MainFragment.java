@@ -312,9 +312,11 @@ public class MainFragment extends Fragment {
 
         newFragment.show(getActivity().getSupportFragmentManager(), "dialog");
 */
+        getActivity().finish();
 
-        Intent intent = new Intent(getActivity().getApplicationContext(), ChartActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Intent intent = new Intent(getActivity(), ChartActivity.class);
+
         Bundle bundle = new Bundle();
         bundle.putInt("week_CurrentView", week);
         bundle.putInt("year_CurrentView", year_frag_show);

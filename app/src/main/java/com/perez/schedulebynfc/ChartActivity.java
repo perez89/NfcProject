@@ -245,4 +245,17 @@ public class ChartActivity extends AppCompatActivity{
 
         chart.invalidate();*/ // refresh
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        startMainActivity();
+        //  super.onBackPressed();
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+
+        startActivity(intent);
+    }
 }
