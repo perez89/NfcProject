@@ -5,13 +5,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.androidplot.xy.BarFormatter;
-import com.androidplot.xy.BarRenderer;
-import com.androidplot.xy.CatmullRomInterpolator;
-import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.XYPlot;
-import com.androidplot.xy.XYSeries;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.series.BarGraphSeries;
+import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +19,14 @@ import Support.LocalDay;
 import Support.LocalTime;
 import Support.LocalWeek;
 
+import static com.perez.schedulebynfc.R.id.graph;
+
 /**
  * Created by User on 09/08/2017.
  */
 
 public class ChartActivity extends AppCompatActivity{
-    XYPlot chart;
+    GraphView chart;
     private int yearToShow, monthToShow, weekToShow;
     private int defaultNumber=-1;
     private String chartType = "";
@@ -99,7 +98,7 @@ public class ChartActivity extends AppCompatActivity{
     }
 
     private void initialize(){
-        chart = (XYPlot) findViewById(R.id.plot);
+        chart = (GraphView) findViewById(graph);;
     };
 
 
@@ -109,48 +108,50 @@ public class ChartActivity extends AppCompatActivity{
          monthData = month.loadAndGetMonth();
     }
     private void loadDataWeekChart() {
-        List<Float> entries= new ArrayList<Float>();
-        Number[] series1Numbers ;
+        List<Float> entries = new ArrayList<Float>();
+        Number[] series1Numbers;
         final String[] domainLabels = {"Sab", "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom", "Seg"};
-       LocalWeek week = monthData.getListOfWeeks().get(weekToShow);
-
+        LocalWeek week = monthData.getListOfWeeks().get(weekToShow);
+        BarGraphSeries<DataPoint> series = new BarGraphSeries<DataPoint>();
+        int count = 0;
         for (LocalDay day : week.getListOfDays()) {
-            if(day!=null){
+            if (day != null) {
 
-                long dayTotalHour= LocalTime.getHour(day.getDayTotalDuration());
-                if(dayTotalHour>maxTotalDay)
-                    maxTotalDay=dayTotalHour;
+                long dayTotalHour = LocalTime.getHour(day.getDayTotalDuration());
+                if (dayTotalHour > maxTotalDay)
+                    maxTotalDay = dayTotalHour;
 
-                long dayTotalTime= day.getDayTotalDuration();
+                long dayTotalTime = day.getDayTotalDuration();
                 String dayTime = LocalTime.getFormatTime(dayTotalTime);
                 dayTime = dayTime.replace(':', '.');
 
-                if(dayTime.equals("-")){
+                if (dayTime.equals("-")) {
                     dayTime = "0";
                 }
-                float dayinLongFormat =(float)Double.parseDouble(dayTime);
-
-
-                entries.add(dayinLongFormat);
+                float dayinLongFormat = (float) Double.parseDouble(dayTime);
+System.out.println("valor="+dayinLongFormat);
+                series.appendData(new DataPoint(count, dayinLongFormat), false, 8);
+                count++;
+               // entries.add(dayinLongFormat);
             }
         }
+        chart.addSeries(series);
+// styling
+        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+            @Override
+            public int get(DataPoint data) {
+                return Color.rgb((int) data.getX()*255/4, (int) Math.abs(data.getY()*255/6), 100);
+            }
+        });
 
 
 
-        XYSeries series1 = new SimpleXYSeries(entries,SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Hours of work");
+        series.setSpacing(50);
 
-        LineAndPointFormatter series1Format = new LineAndPointFormatter(Color.RED, Color.GREEN, Color.BLUE, null);
-        series1Format.setInterpolationParams(
-                new CatmullRomInterpolator.Params(10, CatmullRomInterpolator.Type.Centripetal));
+// draw values on top
+        series.setDrawValuesOnTop(true);
+        series.setValuesOnTopColor(Color.RED);
 
-        BarFormatter bf = new BarFormatter(Color.RED, Color.WHITE);
-
-        // add a new series' to the xyplot:
-
-
-        chart.addSeries(series1, bf);
-        BarRenderer renderer = chart.getRenderer(BarRenderer.class);
-        renderer.setBarOrientation(BarRenderer.BarOrientation.OVERLAID);
     }
 
     private void loadMonthChart() {
@@ -191,20 +192,8 @@ public class ChartActivity extends AppCompatActivity{
 
         }
 
-        XYSeries series1 = new SimpleXYSeries(entries,SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Hours of work");
-
-        LineAndPointFormatter series1Format = new LineAndPointFormatter(Color.RED, Color.GREEN, Color.BLUE, null);
-        series1Format.setInterpolationParams(
-                new CatmullRomInterpolator.Params(10, CatmullRomInterpolator.Type.Centripetal));
-
-        BarFormatter bf = new BarFormatter(Color.RED, Color.WHITE);
-
-        // add a new series' to the xyplot:
 
 
-        chart.addSeries(series1, bf);
-        BarRenderer renderer = chart.getRenderer(BarRenderer.class);
-        renderer.setBarOrientation(BarRenderer.BarOrientation.OVERLAID);
      /*  chart.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
             @Override
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
@@ -258,4 +247,5 @@ public class ChartActivity extends AppCompatActivity{
 
         startActivity(intent);
     }
+
 }

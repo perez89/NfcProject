@@ -3,23 +3,11 @@
     xmlns:ap="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background="@color/ap_transparent"
 
     >
 
-    <com.androidplot.xy.XYPlot
-        style="@style/APDefacto.Light"
-        android:id="@+id/plot"
-        android:layout_height="match_parent"
+    <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
-
-        ap:rangeTitle="range"
-        ap:domainTitle="domain"
-        ap:lineLabels="left|bottom"
-        ap:lineLabelRotationBottom="-45"
-        ap:domainLineColor="@color/ap_transparent"
-
-
-
-        />
+        android:layout_height="200dip"
+        android:id="@+id/graph" />
 </LinearLayout>
