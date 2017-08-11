@@ -1,6 +1,7 @@
 package com.perez.schedulebynfc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 import Support.CurrentTimeShow;
 import Support.ExcelHandler;
+import Support.GlobalStrings;
 import Support.LocalCalendar;
 import Support.LocalEvent;
 import Support.LocalEventService;
@@ -77,10 +79,27 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         if (savedInstanceState != null) {
             return;
         }
+        runOnlyFirstTime();
         setContentView(R.layout.activity_main);
         // ArrayOfEvents = new MainFragment[3];
         initialization(savedInstanceState);
         //test(savedInstanceState);
+    }
+
+    private void runOnlyFirstTime() {
+        LocalPreferences lp = LocalPreferences.getInstance();
+        String value =  lp.getPreference(GlobalStrings.RUN_ONLY_FIRST_TIME, this);
+
+        if(value == null || !value.equals("true")){
+            lp.setPreference(GlobalStrings.MINIMIUM_MONTH_APP,"9", this);
+            lp.setPreference(GlobalStrings.MINIMIUM_YEAR_APP,"2016" , this);
+            lp.setPreference(GlobalStrings.MAXIMUM_MONTH_APP,"11", this);
+            lp.setPreference(GlobalStrings.MAXIMUM_YEAR_APP,"2018", this);
+            lp.setPreference(GlobalStrings.RUN_ONLY_FIRST_TIME,"true", this);
+        }
+
+
+
     }
 
 
@@ -407,8 +426,13 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
         super.onPause();
     }
 
+    private void checkLocalCalendarForRelease() {
+       long idCalendar =  LocalCalendar.getCalendars(this);
+    }
+
     private void checkLocalCalendar() {
-        LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "" + 8, this);
+       LocalCalendar.getCalendars(this);
+       // LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "" + 8, this);
         if (!(LocalCalendar.getIdCalendar(getApplicationContext()) > 0)) {
             Context context = getApplicationContext();
             CharSequence text = "There is a problem with the calendar!";
@@ -565,12 +589,26 @@ public class MainActivity extends AppCompatActivity implements BottomFragment.Re
     }
 
     private void simulateNfc() {
+        callNfcActivity();
     }
+
+    private void callNfcActivity() {
+        Intent intent = new Intent(this, NfcActivity.class);
+        startActivity(intent);
+    }
+
 
     private void reportError() {
     }
 
     private void aboutUs() {
+        Intent intent = new Intent(this, ChartActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("year_CurrentView", 2017);
+        bundle.putInt("month_CurrentView", 7);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
     }
 
     private void share()  {

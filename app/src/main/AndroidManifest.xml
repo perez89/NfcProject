@@ -43,7 +43,10 @@
             <!--  <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                   android:resource="@xml/nfc_list" />-->
         </activity>
-
+        <activity
+            android:name=".PdfActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <service
             android:name=".NFCService"
             android:exported="false"
@@ -59,7 +62,12 @@
                 android:resource="@xml/widget_info" />
         </receiver>
         <activity android:name=".DetailActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity android:name=".ChartActivity">
+
+        </activity>
     </application>
 
 </manifest>

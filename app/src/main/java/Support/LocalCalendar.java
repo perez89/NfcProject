@@ -6,12 +6,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
 
 import java.util.TimeZone;
 
 import static android.R.attr.id;
+import static android.provider.CalendarContract.*;
 
 /**
  * Created by User on 10/10/2016.
@@ -23,41 +23,42 @@ public class LocalCalendar {
     private static final String CALENDAR_DISPLAY_NAME = "Calendar NFC work";
 
     public static long createCalendar(Context context) {
-       // System.out.println("createCalendar");
+        // System.out.println("createCalendar");
         ContentValues values = new ContentValues();
         values.put(
-                CalendarContract.Calendars.ACCOUNT_NAME,
+                Calendars.ACCOUNT_NAME,
                 ACCOUNT_NAME);
         values.put(
-                CalendarContract.Calendars.ACCOUNT_TYPE,
-                CalendarContract.ACCOUNT_TYPE_LOCAL);
+                Calendars.ACCOUNT_TYPE,
+                ACCOUNT_TYPE_LOCAL);
         values.put(
-                CalendarContract.Calendars.NAME,
+                Calendars.NAME,
                 NAME_CALENDAR);
         values.put(
-                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                Calendars.CALENDAR_DISPLAY_NAME,
                 CALENDAR_DISPLAY_NAME);
         values.put(
-                CalendarContract.Calendars.CALENDAR_COLOR,
+                Calendars.CALENDAR_COLOR,
                 0x33FF00);
         values.put(
-                CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
-                CalendarContract.Calendars.CAL_ACCESS_OWNER);
+                Calendars.CALENDAR_ACCESS_LEVEL,
+                Calendars.CAL_ACCESS_READ);
+              //  Calendars.CAL_ACCESS_OWNER);
         values.put(
-                CalendarContract.Calendars.OWNER_ACCOUNT,
+                Calendars.OWNER_ACCOUNT,
                 "some.account@googlemail.com");
         values.put(
-                CalendarContract.Calendars.CALENDAR_TIME_ZONE,
+                Calendars.CALENDAR_TIME_ZONE,
                 TimeZone.getDefault() + "");
         //"Europe/Lisbon");
         values.put(
-                CalendarContract.Calendars.SYNC_EVENTS,
+                Calendars.SYNC_EVENTS,
                 1);
 
         Uri uri = context.getContentResolver().insert(buildUri(), values);
 
         long idCalendar = Long.valueOf(uri.getLastPathSegment());
-     //   System.out.println("Calendar created ID= " + idCalendar);
+        //   System.out.println("Calendar created ID= " + idCalendar);
 
         if (idCalendar > 0) {
             setPrefsIdCalendar(idCalendar, context);
@@ -68,32 +69,52 @@ public class LocalCalendar {
 
     }
 
-    public static Uri buildUri(){
+    public static Uri buildUri() {
         Uri.Builder builder =
-                CalendarContract.Calendars.CONTENT_URI.buildUpon();
+                Calendars.CONTENT_URI.buildUpon();
         builder.appendQueryParameter(
-                CalendarContract.Calendars.ACCOUNT_NAME,
+                Calendars.ACCOUNT_NAME,
                 "com.perez");
         builder.appendQueryParameter(
-                CalendarContract.Calendars.ACCOUNT_TYPE,
-                CalendarContract.ACCOUNT_TYPE_LOCAL);
+                Calendars.ACCOUNT_TYPE,
+                ACCOUNT_TYPE_LOCAL);
         builder.appendQueryParameter(
-                CalendarContract.CALLER_IS_SYNCADAPTER,
+                CALLER_IS_SYNCADAPTER,
                 "true");
         return builder.build();
     }
 
+    public static void updateCalendarAction(Context context) {
+        ContentValues values = new ContentValues();
+
+        values.put(
+                Calendars.CALENDAR_ACCESS_LEVEL,
+                Calendars.CAL_ACCESS_READ);
+
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        int uri = context.getContentResolver().update(buildUri(), values, Calendars.CALENDAR_DISPLAY_NAME + "=?", new String[]{CALENDAR_DISPLAY_NAME});
+    }
     public static long getCalendars(Context context) {
         String[] projection =
                 new String[]{
-                        CalendarContract.Calendars._ID,
-                        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                        CalendarContract.Calendars.CALENDAR_LOCATION,
-                        CalendarContract.Calendars.ACCOUNT_TYPE,
-                        CalendarContract.Calendars.ACCOUNT_NAME,
-                        CalendarContract.Calendars.VISIBLE,
-                        CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
-                        CalendarContract.Calendars.OWNER_ACCOUNT
+                        Calendars._ID,
+                        Calendars.CALENDAR_DISPLAY_NAME,
+                        Calendars.CALENDAR_LOCATION,
+                        Calendars.ACCOUNT_TYPE,
+                        Calendars.ACCOUNT_NAME,
+                        Calendars.VISIBLE,
+                        Calendars.CALENDAR_ACCESS_LEVEL,
+                        Calendars.OWNER_ACCOUNT
                 };
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -107,11 +128,11 @@ public class LocalCalendar {
         }
         Cursor calCursor =
                 context.getContentResolver().
-                        query(CalendarContract.Calendars.CONTENT_URI,
+                        query(Calendars.CONTENT_URI,
                                 projection,
                                 null,
                                 null,
-                                CalendarContract.Calendars._ID + " ASC");
+                                Calendars._ID + " ASC");
         while (calCursor.moveToNext()) {
             long id = calCursor.getLong(0);
             String calendarDisplay = calCursor.getString(1);
@@ -197,7 +218,7 @@ public class LocalCalendar {
             return;
         }
 
-        context.getContentResolver().delete(CalendarContract.Calendars.CONTENT_URI, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME + "=?", new String[]{CALENDAR_DISPLAY_NAME});
+        context.getContentResolver().delete(Calendars.CONTENT_URI, Calendars.CALENDAR_DISPLAY_NAME + "=?", new String[]{CALENDAR_DISPLAY_NAME});
         // context.getContentResolver().delete(CalendarContract.Calendars.CONTENT_URI, CalendarContract.Calendars._ID+"=?" , new String[] {"9"} );
 
         LocalPreferences.getInstance().setPreference(LocalPreferences.ID_CALENDAR, "8", context);
@@ -208,8 +229,8 @@ public class LocalCalendar {
         long id = 0;
         String[] projection =
                 new String[]{
-                        CalendarContract.Calendars._ID,
-                        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
+                        Calendars._ID,
+                        Calendars.CALENDAR_DISPLAY_NAME
                 };
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -221,16 +242,16 @@ public class LocalCalendar {
             // for ActivityCompat#requestPermissions for more details.
 
         }
-        String selection = CalendarContract.Calendars.NAME + " = ? ";
+        String selection = Calendars.NAME + " = ? ";
         String[] selectionArgs = new String[]{NAME_CALENDAR};
 
         Cursor calCursor =
                 context.getContentResolver().
-                        query(CalendarContract.Calendars.CONTENT_URI,
+                        query(Calendars.CONTENT_URI,
                                 projection,
                                 selection,
                                 selectionArgs,
-                                CalendarContract.Calendars._ID + " ASC");
+                                Calendars._ID + " ASC");
         while (calCursor.moveToNext()) {
             id = calCursor.getLong(0);
             String calendarDisplay = calCursor.getString(1);
@@ -245,7 +266,6 @@ public class LocalCalendar {
         if (value == null || value.equals("")) {
             return LocalCalendar.createCalendar(c);
         } else {
-          //  System.out.println("getIdCalendar-calendar id= " + value);
             return Long.parseLong(value);
         }
     }
@@ -257,29 +277,29 @@ public class LocalCalendar {
 
             String[] projection =
                     new String[]{
-                            CalendarContract.Events._ID,
-                            CalendarContract.Events.ACCOUNT_NAME,
-                            CalendarContract.Events.DTSTART,
-                            CalendarContract.Events.DTEND,
-                            CalendarContract.Events.OWNER_ACCOUNT,
-                            CalendarContract.Events.VISIBLE,
-                            CalendarContract.Events.ACCOUNT_TYPE,
-                            CalendarContract.Events.CALENDAR_ACCESS_LEVEL,
-                            CalendarContract.Events.CALENDAR_DISPLAY_NAME,
-                            CalendarContract.Events.CALENDAR_ID
+                            Events._ID,
+                            Events.ACCOUNT_NAME,
+                            Events.DTSTART,
+                            Events.DTEND,
+                            Events.OWNER_ACCOUNT,
+                            Events.VISIBLE,
+                            Events.ACCOUNT_TYPE,
+                            Events.CALENDAR_ACCESS_LEVEL,
+                            Events.CALENDAR_DISPLAY_NAME,
+                            Events.CALENDAR_ID
                     };
-            String selection = CalendarContract.Events.CALENDAR_ID + " = ?";
+            String selection = Events.CALENDAR_ID + " = ?";
             String[] selectionArgs = new String[]{Long.toString(idCalendar)};
 
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             }
             Cursor calCursor =
                     context.getContentResolver().
-                            query(CalendarContract.Events.CONTENT_URI,
+                            query(Events.CONTENT_URI,
                                     projection,
                                     selection,
                                     selectionArgs,
-                                    CalendarContract.Events._ID + " DESC");
+                                    Events._ID + " DESC");
             while (calCursor.moveToNext()) {
                 long id = calCursor.getLong(0);
                 String accName = calCursor.getString(1);

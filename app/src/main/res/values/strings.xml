@@ -10,4 +10,7 @@
     <string name="reporterror">Report</string>
     <string name="simulatenfc">NFC</string>
     <string name="genpdf">PDF</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

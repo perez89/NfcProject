@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import Support.GlobalStrings;
 import Support.LocalEvent;
 import Support.LocalEventService;
 import Support.LocalTime;
@@ -49,6 +50,7 @@ public class MainFragment extends Fragment {
     List<TextView> listWeekTotalTime;
     long month_time = 0;
     TextView tvMinTime, tvMaxTime, tvAverageTime, tvMonthTime;
+    CardView cvMonth;
     TextView[][] tvDayTime = new TextView[7][6];
     //static TextView[][] tvDay = new TextView[7][5];
     static TextView[][] tvDay = new TextView[7][6];
@@ -241,6 +243,7 @@ public class MainFragment extends Fragment {
         tvMaxTime = (TextView) rootView.findViewById(R.id.tvMaxTime);
         tvAverageTime = (TextView) rootView.findViewById(R.id.tvAverageTime);
         tvMonthTime = (TextView) rootView.findViewById(R.id.tvMonthTime);
+        cvMonth = (CardView) rootView.findViewById(R.id.cvMonth);
     }
 
     private void setMinTime(String text) {
@@ -257,6 +260,12 @@ public class MainFragment extends Fragment {
 
     private void setMonthTime(String text) {
         tvMonthTime.setText("" + text);
+        cvMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDialogChart(-1, GlobalStrings.MONTH_TYPE);
+            }
+        });
     }
 
     private void initializationTotalWeekTime() {
@@ -281,8 +290,40 @@ public class MainFragment extends Fragment {
         listWeekTotalTime.add(tvDay);
     }
 
-    void setTvWeekTotalTime(int week, String value) {
+    void setTvWeekTotalTime(final int week, String value) {
         listWeekTotalTime.get(week).setText("" + value);
+        listWeekTotalTime.get(week).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDialogChart(week, GlobalStrings.WEEK_TYPE);
+            }
+        });
+    }
+
+    private void startDialogChart(int week, String chart_type){
+
+  /*    Bundle bundle = new Bundle();
+        bundle.putInt("week_CurrentView", week);
+        bundle.putInt("year_CurrentView", year_frag_show);
+        bundle.putInt("month_CurrentView", month_frag_show);
+        bundle.putString("chartType", chart_type);
+
+        DialogChart newFragment = DialogChart.newInstance(bundle);
+
+        newFragment.show(getActivity().getSupportFragmentManager(), "dialog");
+*/
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), ChartActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putInt("week_CurrentView", week);
+        bundle.putInt("year_CurrentView", year_frag_show);
+        bundle.putInt("month_CurrentView", month_frag_show);
+        bundle.putString("chartType", chart_type);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+
     }
 
     private void initializationDaysTime() {

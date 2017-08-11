@@ -38,6 +38,7 @@ public class LocalPreferences {
 
         return null;
     }
+
     public String getIdCalendarPreference(String key, Context context) {
         String value = getPreference(key, context);
 
